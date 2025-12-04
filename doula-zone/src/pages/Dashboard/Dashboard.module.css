@@ -1,0 +1,38 @@
+.dashboardRoot {
+    display: flex;
+    background: #ffff;
+    height: 100vh;
+    width: 100%;
+}
+
+.contentArea {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.pageContent {
+    padding: 22px 32px;
+}
+
+.title {
+    font-size: 16px;
+    font-weight: 400;
+    color: #0F172B;
+}
+
+.zoneStatus {
+    font-size: 16px;
+    font-weight: 400;
+    color: #62748E;
+    margin-top: 4px;
+}
+
+.activeTag {
+    background-color: #DCFCE7;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #008236;
+}
