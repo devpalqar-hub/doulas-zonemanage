@@ -1,0 +1,53 @@
+.root {
+  display: flex;
+  height: 100vh;
+  background: #f8fafc;
+}
+
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pageContent {
+  padding: 24px 28px;
+  overflow: auto;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 500;
+  color: #0F172B;
+  margin-bottom: 20px;
+}
+
+.viewCard {
+  background: #ffffff;
+  border: 1px solid #0000001A;
+  border-radius: 14px;
+  padding: 24px;
+  max-width: 630px;
+  font-size: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.viewCard h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #0F172B;
+}
+
+.viewCard p {
+  margin: 0;
+  color: #314158;
+}
+
+.date {
+  font-size: 13px;
+  margin-top: 8px;
+  color: #94a3b8;
+}

@@ -1,0 +1,823 @@
+.root {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.pageContent {
+  padding: 24px 28px;
+  overflow: auto;
+}
+
+.backLink {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: #0A0A0A;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 25px;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 500;
+  color: #0f172b;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #62748e;
+  margin-top: 4px;
+  margin-bottom: 18px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #0000001a;
+  padding: 18px 20px 20px;
+}
+
+/* Stepper */
+.stepperWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding: 24px 24px 24px 70px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.stepItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stepCircleWrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding-left: 130px;
+}
+
+.stepCircle {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #62748E;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.stepCircleActive {
+  border-color: #F7EBED;
+  background: #F7EBED;
+  color: black;
+}
+
+.stepCircleCompleted {
+  border-color: #F94355;
+  background: #F94355;
+  color: #ffff;
+}
+
+.stepConnector {
+  flex: 1;
+  height: 2px;
+  width: 24.4px;
+  background: #e2e8f0;
+  margin-left: 1px;
+  margin-right: -14px;
+}
+
+.stepConnectorActive {
+  background: #F94355;
+}
+
+.stepLabel {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #64748b;
+  text-align: center;
+  padding-right: 60px;
+}
+
+/* Step body */
+.stepBody {
+  margin-top: 10px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: #0f172b;
+  margin-bottom: 14px;
+}
+
+/* Form */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 20px;
+  margin-bottom: 18px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.fieldGroup label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #314158;
+  margin-bottom: 6px;
+}
+
+.fieldGroup input {
+  width: 100%;
+  height: 38px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+  background: #f3f3f5;
+  box-sizing: border-box;
+}
+
+.inputError {
+  border-color: #f97373;
+}
+
+.required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.errorText {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #ef4444;
+}
+
+/* Upload */
+.uploadBox {
+  border-radius: 10px;
+  border: 1px dashed #CAD5E2;
+  background: #f8fafc;
+  padding: 26px;
+  margin-top: 4px;
+  cursor: pointer;
+}
+
+.uploadIcon {
+  padding-bottom: 10px;
+}
+
+.uploadPlaceholder {
+  text-align: center;
+  font-size: 16px;
+  color: #45556C;
+}
+
+.uploadPlaceholder p {
+  margin: 0 0 4px;
+}
+
+.uploadPlaceholder span {
+  font-size: 14px;
+  color: #90A1B9;
+}
+
+.uploadPreviewWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.availabilityWrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 12px;
+  border-radius: 10px;
+  border: 1px solid #CAD5E2;
+  background: #f8fafc;
+  padding: 26px;
+  margin-top: 4px;
+}
+
+.availabilityWrapper p {
+  margin: 0 10px 4px;
+  margin-bottom: 0;
+  color: #0F172B;
+  font-size: 16px;
+}
+
+.availabilityWrapper span {
+  font-size: 16px;
+  color: #45556C;
+  margin-top: 0;
+}
+
+.calenderIcon {
+  padding-bottom: 10px;
+}
+
+.uploadPreviewImg {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.uploadChangeText {
+  font-size: 13px;
+  color: #4f46e5;
+}
+
+/* Buttons */
+.stepNavRow {
+  margin-top: 22px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.primaryBtn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  background: #F94355;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.secondaryBtn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #0a0a0a;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.placeholderStep {
+  font-size: 14px;
+  color: #64748b;
+}
+
+@media (max-width: 1023px) {
+  .pageContent {
+    padding: 20px 24px;
+  }
+
+  .stepperWrapper {
+    padding: 20px 20px 20px 40px;
+  }
+
+  .stepCircleWrapper {
+    padding-left: 80px;
+  }
+
+  .stepLabel {
+    padding-right: 40px;
+    font-size: 11px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+}
+
+/* Small Tablet (600px - 767px) */
+@media (max-width: 767px) {
+  .pageContent {
+    padding: 16px 20px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .card {
+    padding: 16px 18px 18px;
+  }
+
+  /* Stack form fields on smaller screens */
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* Simplify stepper for smaller screens */
+  .stepperWrapper {
+    padding: 16px;
+    overflow-x: auto;
+  }
+
+  .stepCircleWrapper {
+    padding-left: 0;
+    justify-content: center;
+  }
+
+  .stepLabel {
+    padding-right: 0;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .stepConnector {
+    min-width: 20px;
+    margin-right: -10px;
+  }
+
+  .stepCircle {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+  }
+
+  .stepNavRow {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 18px;
+  }
+
+  .primaryBtn,
+  .secondaryBtn {
+    flex: 1;
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .backLink {
+    gap: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+  }
+}
+
+/* Mobile (below 600px) */
+@media (max-width: 599px) {
+  .root {
+    height: 100dvh;
+  }
+
+  .availabilityWrapper span {
+    font-size: 13px;
+  }
+
+  .pageContent {
+    padding: 12px 16px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+
+  .backLink {
+    gap: 10px;
+    margin-bottom: 16px;
+    font-size: 12px;
+  }
+
+  .card {
+    padding: 14px 16px 16px;
+    border-radius: 12px;
+  }
+
+  .sectionTitle {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  /* Vertical stepper for mobile */
+  .stepperWrapper {
+    flex-direction: column;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .stepItem {
+    width: 100%;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .stepCircleWrapper {
+    width: auto;
+    padding-left: 0;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stepConnector {
+    width: 2px;
+    height: 30px;
+    margin: 4px 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .stepLabel {
+    padding-right: 0;
+    text-align: left;
+    margin-top: 0;
+    align-self: center;
+    flex: 1;
+  }
+
+  .stepCircle {
+    width: 26px;
+    height: 26px;
+    font-size: 11px;
+  }
+
+  /* Form adjustments */
+  .formGrid {
+    gap: 12px;
+  }
+
+  .fieldGroup label {
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+
+  .fieldGroup input {
+    height: 40px;
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  /* Upload box */
+  .uploadBox {
+    padding: 20px;
+  }
+
+  .uploadPlaceholder {
+    font-size: 12px;
+  }
+
+  .uploadPlaceholder span {
+    font-size: 10px;
+  }
+
+  .uploadPreviewImg {
+    width: 48px;
+    height: 48px;
+  }
+
+  .uploadChangeText {
+    font-size: 12px;
+  }
+
+  /* Buttons */
+  .stepNavRow {
+    margin-top: 16px;
+    gap: 8px;
+  }
+
+  .primaryBtn,
+  .secondaryBtn {
+    padding: 11px 14px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+}
+
+/* Extra small mobile (below 375px) */
+@media (max-width: 374px) {
+  .pageContent {
+    padding: 10px 12px;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .subtitle {
+    font-size: 11px;
+  }
+
+  .card {
+    padding: 12px 14px 14px;
+  }
+
+  .stepLabel {
+    font-size: 10px;
+  }
+
+  .fieldGroup label {
+    font-size: 12px;
+  }
+
+  .fieldGroup input {
+    font-size: 12px;
+  }
+
+  .primaryBtn,
+  .secondaryBtn {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+}
+
+      /* /////////// PERSONAL INFO PAGE /////////// */
+
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: #0F172B;
+  margin-bottom: 18px;
+}
+
+.formGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fieldRow {
+  display: flex;
+  gap: 20px;
+}
+
+.fieldGroup {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.fieldGroupFull {
+  display: flex;
+  flex-direction: column;
+}
+
+.fieldGroup label,
+.fieldGroupFull label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #314158;
+  margin-bottom: 6px;
+}
+
+.input,
+.textarea {
+  border-radius: 10px;
+  border: 1px solid #E2E8F0;
+  padding: 8px 12px;
+  font-size: 14px;
+  background: #F3F3F5;
+  color: #0F172B;
+}
+
+.textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.req {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.errorText {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #ef4444;
+}
+
+.langChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.langChip {
+  border-radius: 999px;
+  border: 1px solid #E2E8F0;
+  padding: 4px 10px;
+  font-size: 12px;
+  background: #ffffff;
+  color: #314158;
+  cursor: pointer;
+}
+
+.langChipActive {
+  background: #EEF2FF;
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+.stepFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.primaryBtn {
+  padding: 9px 22px;
+  border-radius: 10px;
+  background: #4f46e5;
+  border: none;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.secondaryBtn {
+  padding: 9px 18px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #E2E8F0;
+  color: #0F172B;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.subtleText {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .fieldRow {
+    flex-direction: column;
+  }
+}
+
+
+/* ---------- Services & Pricing (Step 3) ---------- */
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.serviceCard {
+  padding: 14px 18px;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  background: #ffffff;
+  font-size: 15px;
+  color: #0F172B;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-align: left;
+}
+
+.serviceCard:hover {
+  border-color: #6366F1;
+}
+
+.serviceCardActive {
+  background: #EEF2FF;
+  border: 2px solid #6366F1;
+  color: #4F46E5;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+/* Pricing section */
+
+.pricingList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 15px;
+}
+
+.pricingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.pricingServiceName {
+  font-size: 15px;
+  color: #0F172B;
+  font-weight: 500;
+}
+
+.pricingInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.currency {
+  font-size: 14px;
+  color: #475569;
+}
+
+.unit {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.pricingInput {
+  width: 110px;
+  padding: 8px 10px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #F8F9FC;
+  text-align: right;
+}
+
+.pricingInput:focus {
+  border-color: #6366F1;
+  outline: none;
+}
+
+/* Error */
+.errorText {
+  margin-top: 8px;
+  color: #EF4444;
+  font-size: 13px;
+}
+
+/* ///// REVIEW AND SUBMIT ///// */
+
+.reviewCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.reviewProfileImg {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.reviewServiceRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.reviewServicePrice {
+  font-weight: 600;
+  color: #0f172b;
+}
+

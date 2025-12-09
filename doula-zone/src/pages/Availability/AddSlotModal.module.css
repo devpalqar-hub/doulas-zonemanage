@@ -1,0 +1,57 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.fieldRow {
+  display: flex;
+  gap: 20px;
+}
+
+.field label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.field input {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  font-size: 14px;
+  outline: none;
+}
+
+.field input:focus {
+  border-color: #7a5cff;
+  box-shadow: 0 0 0 2px rgba(122, 92, 255, 0.15);
+}
+
+.saveBtn {
+  margin-top: 10px;
+  background: #F94355;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.saveBtn:hover {
+  background: #5938d8;
+}
+
+.saveBtn:disabled {
+  background: #b9a7ff;
+  cursor: not-allowed;
+}

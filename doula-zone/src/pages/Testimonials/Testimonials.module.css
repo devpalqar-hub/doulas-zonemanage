@@ -1,0 +1,199 @@
+/* PAGE LAYOUT */
+.root {
+  display: flex;
+  height: 100vh;
+  background: #f8fafc;
+}
+
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pageContent {
+  padding: 24px 28px;
+  overflow: auto;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 500;
+  color: #0F172B;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #62748E;
+  margin-top: 4px;
+  margin-bottom: 20px;
+}
+
+/* FILTERS CARD */
+
+.filterCard {
+  background: #ffffff;
+  border: 1px solid #0000001A;
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.filterInput {
+  width: 180px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  font-size: 14px;
+  color: #314158;
+}
+
+.resetBtn {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  color: #0A0A0A;
+}
+
+/* STATS */
+
+.statsRow {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.statBox {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 18px;
+  border: 1px solid #0000001A;
+  width: 200px;
+  font-size: 14px;
+  color: #314158;
+}
+
+.statBox span {
+  display: block;
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 6px;
+  color: #0F172B;
+}
+
+/* TESTIMONIAL CARD GRID */
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 18px;
+}
+
+/* CARD */
+
+.card {
+  background: #ffffff;
+  border: 1px solid #0000001A;
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* CARD HEADER */
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: #65a5ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.clientInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.clientInfo strong {
+  font-size: 16px;
+  color: #0F172B;
+}
+
+.clientInfo p {
+  margin: 0;
+  font-size: 13px;
+  color: #62748E;
+}
+
+/* RATING */
+
+.ratingRow {
+  font-size: 18px;
+  color: #facc15; /* star yellow */
+  margin-top: -4px;
+}
+
+/* REVIEW TEXT */
+
+.reviewText {
+  font-size: 14px;
+  color: #314158;
+  line-height: 20px;
+}
+
+/* FOOTER AREA */
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tag {
+  background: #ECEEF2;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #030213;
+  font-weight: 500;
+}
+
+.eyeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #475569;
+}
+
+.dateText {
+  font-size: 12px;
+  color: #94a3b8;
+}

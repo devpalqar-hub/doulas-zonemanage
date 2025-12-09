@@ -1,0 +1,691 @@
+.root {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pageContent {
+  padding: 24px 28px;
+  overflow: auto;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 500;
+  color: #0F172B;
+  margin-bottom: 2px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #62748E;
+  margin-top: 0;
+}
+
+.countBadge {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #0f172b;
+  background: #e5edff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.createBtn {
+  margin-top: 30px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #F94355;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.createBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.filtersCard {
+  background: #ffffff;
+  border-radius: 8px;
+  border: #0000001A 1px solid;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  min-width: 180px;
+  position: relative;
+  width: 100%;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 12px;
+  top: 30%;
+}
+
+input {
+  width: 100%;
+  padding: 10px 12px 10px 38px; 
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.searchInput input {
+  width: 100%;
+  max-width: 1080px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px;
+  padding-left: 30px;
+  font-size: 14px;
+  background: #F3F3F5;
+  color: #717182;
+  box-sizing: border-box;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.filterRow {
+  display: flex;
+  flex-direction: row;
+  gap: 4rem;
+  flex-wrap: wrap;
+}
+
+.filterSelect label {
+  display: block;
+  font-size: 14px;
+  color: #314158;
+  margin-bottom: 7px;
+  margin-top: 5px;
+}
+
+.filterSelect select {
+  width: 224px;
+  border-radius: 10px;
+  border: 1px solid #E2E8F0;
+  padding: 7px 10px;
+  font-size: 13px;
+  background: #ffff;
+}
+
+.resetContainer {
+  padding-left: 60px;
+  padding-top: 26px;
+}
+
+.resetBtn {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  width: 199px;
+  height: 36px;
+  font-size: 14px;
+  font-weight: 500;
+  background: #ffff;
+  border: 1px solid #E2E8F0;
+  color: #0A0A0A;
+  cursor: pointer;
+}
+
+.tableCard {
+  background: #ffffff;
+  border-radius: 14px;
+  border: #0000001A 1px solid;
+  padding: 10px 0;
+  overflow-x: auto;
+}
+
+.tableHeader,
+.tableRow {
+  display: grid;
+  grid-template-columns: 2.3fr 1.6fr 1.5fr 1.4fr 1fr 1.2fr;
+  padding: 10px 20px;
+  column-gap: 8px;
+  align-items: center;
+}
+
+.tableHeader > :last-child {
+  padding-left: 20px;
+}
+
+.tableHeader {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #314158;
+  border-bottom: 1px solid #0000001A;
+}
+
+.tableRow {
+  font-size: 13px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.doulaCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: #8335A0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  color: #F7EBED;
+  flex-shrink: 0;
+}
+
+.doulaText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.doulaName {
+  font-weight: 400;
+  font-size: 16px;
+  color: #0F172B;
+  line-height: 24px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.doulaEmail {
+  font-size: 14px;
+  color: #62748E;
+  line-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.servicesCell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.serviceTag {
+  font-size: 12px;
+  font-weight: 500;
+  background: #ECEEF2;
+  color: #030213;
+  padding: 4px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.regionText {
+  font-size: 16px;
+  color: #314158;
+  line-height: 24px;
+}
+
+.subMuted {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.nextAvail {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  color: #314158;
+}
+
+.statusBadge {
+  font-size: 11px;
+  border-radius: 999px;
+  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.statusActive {
+  background: #DCFCE7;
+  color: #008236;
+}
+
+.statusInactive {
+  background: #F1F5F9;
+  color: #314158;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-start;
+}
+
+.actionBtn {
+  border: none;
+  padding: 4px 8px;
+  font-size: 11px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.actionBtnPrimary {
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+.emptyState,
+.errorState {
+  padding: 20px;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.loadingState {
+  padding: 20px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ===========================
+   RESPONSIVE MEDIA QUERIES
+   =========================== */
+
+/* Tablet (768px - 1023px) */
+@media (max-width: 1023px) {
+  .pageContent {
+    padding: 20px 24px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 15px;
+  }
+
+  .filterRow {
+    gap: 2rem;
+  }
+
+  .resetContainer {
+    padding-left: 30px;
+  }
+
+  .tableHeader,
+  .tableRow {
+    padding: 10px 16px;
+  }
+}
+
+/* Tablet and below - Start adjusting table */
+@media (max-width: 900px) {
+  .tableHeader,
+  .tableRow {
+    grid-template-columns: 2fr 1.3fr 1.2fr 1fr 0.8fr 1fr;
+    font-size: 12px;
+  }
+
+  .doulaName {
+    font-size: 14px;
+  }
+
+  .doulaEmail {
+    font-size: 12px;
+  }
+
+  .regionText {
+    font-size: 14px;
+  }
+
+  .serviceTag {
+    font-size: 11px;
+  }
+}
+
+/* Small Tablet (600px - 767px) */
+@media (max-width: 767px) {
+  .pageContent {
+    padding: 16px 20px;
+  }
+
+  .headerRow {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .createBtn {
+    margin-top: 0;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .filtersCard {
+    padding: 14px;
+  }
+
+  .filterRow {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .filterSelect {
+    width: 100%;
+  }
+
+  .filterSelect select {
+    width: 100%;
+  }
+
+  .resetContainer {
+    padding-left: 0;
+    padding-top: 0;
+    width: 100%;
+  }
+
+  .resetBtn {
+    width: 100%;
+  }
+
+  /* Hide table header on smaller screens */
+  .tableHeader {
+    display: none;
+  }
+
+  /* Convert table rows to card layout */
+  .tableCard {
+    padding: 0;
+  }
+
+  .tableRow {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 0;
+  }
+
+  .tableRow:last-child {
+    border-bottom: none;
+  }
+
+  .doulaCell {
+    width: 100%;
+  }
+
+  .doulaText {
+    flex: 1;
+  }
+
+  .doulaName,
+  .doulaEmail {
+    white-space: normal;
+  }
+
+  .servicesCell,
+  .regionText,
+  .nextAvail,
+  .statusBadge,
+  .actions {
+    width: 100%;
+  }
+
+  .servicesCell::before,
+  .regionText::before,
+  .nextAvail::before {
+    content: attr(data-label);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #314158;
+    display: block;
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+  }
+
+  .statusBadge {
+    align-self: flex-start;
+  }
+
+  .actions {
+    justify-content: flex-start;
+    padding-top: 8px;
+    border-top: 1px solid #f1f5f9;
+  }
+}
+
+/* Mobile (below 600px) */
+@media (max-width: 599px) {
+  .pageContent {
+    padding: 12px 16px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .countBadge {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .createBtn {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .filtersCard {
+    padding: 12px;
+  }
+
+  .searchInput input {
+    font-size: 13px;
+    padding: 10px 12px 10px 32px;
+  }
+
+  .filterSelect label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .filterSelect select {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .resetBtn {
+    font-size: 13px;
+    height: 40px;
+    justify-content: center;
+  }
+
+  .tableCard {
+    border-radius: 12px;
+  }
+
+  .tableRow {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 15px;
+  }
+
+  .doulaName {
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  .doulaEmail {
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .serviceTag {
+    font-size: 11px;
+    padding: 3px 7px;
+  }
+
+  .regionText {
+    font-size: 14px;
+  }
+
+  .nextAvail {
+    font-size: 13px;
+  }
+
+  .statusBadge {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  .actionBtn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+
+@media (max-width: 374px) {
+  .pageContent {
+    padding: 10px 12px;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
+
+  .createBtn {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
+  .tableRow {
+    padding: 12px;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+  }
+
+  .doulaName {
+    font-size: 14px;
+  }
+
+  .doulaEmail {
+    font-size: 12px;
+  }
+
+  .actionBtn {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+}
+
+/* Horizontal scroll for very wide tables on small screens */
+@media (max-width: 767px) {
+  .tableCard {
+    overflow-x: visible;
+  }
+}
+
+/* Landscape mobile optimization */
+@media (max-width: 900px) and (orientation: landscape) {
+  .pageContent {
+    padding: 12px 20px;
+  }
+
+  .headerRow {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .createBtn {
+    width: auto;
+    margin-top: 0;
+  }
+}

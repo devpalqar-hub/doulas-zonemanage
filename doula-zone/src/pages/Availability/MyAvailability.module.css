@@ -16,7 +16,7 @@
 
 .title {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 500;
   color: #111827;
 }
 
@@ -59,7 +59,7 @@
   border: none;
   border-radius: 999px;
   padding: 8px 16px;
-  background: #4f46e5;
+  background: #F94355;
   color: #ffffff;
   font-size: 13px;
   font-weight: 500;

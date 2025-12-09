@@ -53,27 +53,51 @@ const Sidebar = () => {
                 </div>
 
                 <nav className={styles.menu}>
-                    <NavLink to="/dashboard" className={styles.item} onClick={closeSidebar}>
+                    <NavLink to="/dashboard" 
+                    className={({ isActive }) => 
+                        `${styles.item} ${isActive ? styles.active : ""}`
+                    }
+                    onClick={closeSidebar}>
                         <img src='/dashboard.png' alt='' /> DashBoard
                     </NavLink>
 
-                    <NavLink to="/availability" className={styles.item} onClick={closeSidebar}>
+                    <NavLink to="/availability" 
+                    className={({ isActive }) => 
+                        `${styles.item} ${isActive ? styles.active : ""}`
+                    }
+                    onClick={closeSidebar}>
                         <img src='/testimonials-icon.png' alt='' /> My Availability
                     </NavLink>
 
-                    <NavLink to="/doulas" className={styles.item} onClick={closeSidebar}>
+                    <NavLink to="/doulas"
+                    className={({ isActive }) => 
+                        `${styles.item} ${isActive ? styles.active : ""}`
+                    }
+                    onClick={closeSidebar}>
                         <img src='/manage.png' alt='' /> Manage Doulas
                     </NavLink>
 
-                    <NavLink to="/appointments" className={styles.item} onClick={closeSidebar}> 
+                    <NavLink to="/appointments"
+                    className={({ isActive }) => 
+                        `${styles.item} ${isActive ? styles.active : ""}`
+                    }
+                    onClick={closeSidebar}> 
                         <img src='/appointments.png' alt='' /> Appointments
                     </NavLink>
 
-                    <NavLink to="/bookings" className={styles.item} onClick={closeSidebar}> 
+                    <NavLink to="/bookings"
+                    className={({ isActive }) => 
+                        `${styles.item} ${isActive ? styles.active : ""}`
+                    }
+                    onClick={closeSidebar}> 
                         <img src='/bookings.png' alt='' /> Bookings
                     </NavLink>
 
-                    <NavLink to="/testimonials" className={styles.item} onClick={closeSidebar}>
+                    <NavLink to="/testimonials"
+                    className={({ isActive }) => 
+                        `${styles.item} ${isActive ? styles.active : ""}`
+                    }
+                    onClick={closeSidebar}>
                         <img src='/testimonials.png' alt='' /> Testimonials
                     </NavLink>
                 </nav>

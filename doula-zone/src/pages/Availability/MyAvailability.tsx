@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "../Dashboard/components/sidebar/Sidebar";
 import Topbar from "../Dashboard/components/topbar/Topbar";
 import styles from "./MyAvailability.module.css";
+import AddSlotModal from "./AddSlotModal";
 import {
   fetchSlots,
   deleteSlot,
@@ -11,7 +12,7 @@ import {
 
 const REGION_ID =
   import.meta.env.VITE_REGION_ID ||
-  "9b16b1ab-ea79-498f-8ac4-8b6bfe3466a7"; 
+  "cd3281d9-94ed-41df-9506-4bc833c7f9e6"; 
 
 const isoToTime = (iso: string) => {
   const d = new Date(iso);
@@ -27,9 +28,9 @@ const MyAvailability = () => {
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+  const [openAdd, setOpenAdd] = useState(false);
  
-  useEffect(() => {
+  
     const fetchData = async () => {
       try {
         setError(null);
@@ -48,6 +49,8 @@ const MyAvailability = () => {
         setLoading(false);
       }
     };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -87,11 +90,16 @@ const MyAvailability = () => {
               </div>
               <button
                 className={styles.addBtn}
-                type="button"
-                // onClick={}
+                onClick={() => setOpenAdd(true)}
               >
                 + Add Time Slot
               </button>
+
+              <AddSlotModal
+                isOpen={openAdd}
+                onClose={() => setOpenAdd(false)}
+                refresh={fetchData}
+              />
             </div>
 
             {loading ? (

@@ -105,13 +105,11 @@ export const createSlot = async (payload: {
   startTime: string; 
   endTime: string;
 }) => {
+  
   const res = await api.post("/slots", {
     date: payload.date,
-    timeslot: {
       startTime: payload.startTime,
       endTime: payload.endTime,
-      available: true,
-    },
   });
   return res.data;
 };

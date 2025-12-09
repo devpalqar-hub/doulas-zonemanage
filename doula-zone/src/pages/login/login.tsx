@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import styles from "./Login.module.css";
 import { sendOtp, verifyOtp } from "../../services/auth.service";
 import { useToast } from "../../shared/ToastContext";
+import { getZoneManagerProfile } from "../../services/zoneManager.service";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,36 +13,70 @@ const Login = () => {
   const { showToast } = useToast();
 
   // Send OTP
-  const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
+const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      await sendOtp(email);
-      setOtpSent(true);
-      showToast("OTP sent to your email!","success");
-    } catch (err) {
-      showToast("Failed to send OTP","error");
-    }
+  console.log("Sending OTP for:", email);
 
-    setLoading(false);
-  };
+  try {
+    const res = await sendOtp(email);
+    console.log("OTP SENT SUCCESS:", res);
+    setOtpSent(true);
+    showToast("OTP sent to your email!", "success");
+  } catch (err) {
+    console.error("OTP SEND FAILED:", err);
+    showToast("Failed to send OTP", "error");
+  }
+
+  setLoading(false);
+};
+
 
   // Verify OTP
   const handleVerifyOtp = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const res = await verifyOtp(email, otp);
-      localStorage.setItem("token", res.token);
-      window.location.href = "/dashboard";
-    } catch (err) {
-      showToast("Invalid OTP","error");
+  try {
+    const res = await verifyOtp(email, otp);
+    console.log("VERIFY OTP RESPONSE:", res);
+
+    // Store token and user
+    localStorage.setItem("token", res.data.accessToken);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+
+    // Fetch Zone Manager Profile
+    const profile = await getZoneManagerProfile(res.data.user.id);
+
+    if (!profile?.zonemanagerprofile) {
+      showToast("Profile not linked to Zone Manager", "error");
+      return;
     }
 
-    setLoading(false);
-  };
+    const zm = profile.zonemanagerprofile;
+
+    if (!zm.managingRegion?.length) {
+      showToast("No region assigned to this Zone Manager", "error");
+      return;
+    }
+
+    const zoneManagerProfileId = zm.id;
+    const regionId = zm.managingRegion[0].id;
+
+    // Store values
+    localStorage.setItem("zoneManagerProfileId", zoneManagerProfileId);
+    localStorage.setItem("regionId", regionId);
+
+    window.location.href = "/dashboard";
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
+    showToast("Login failed. Please try again.", "error");
+  }
+
+  setLoading(false);
+};
+
 
   return (
     <div className={styles.container}>
@@ -81,7 +116,7 @@ const Login = () => {
             disabled={otpSent} 
           />
 
-          {/* OTP Field (shown only after sending OTP) */}
+          {/* OTP Field */}
           {otpSent && (
             <>
               <label>Enter OTP</label>
