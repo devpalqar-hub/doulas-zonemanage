@@ -1,0 +1,301 @@
+/* ===================== Layout ===================== */
+.root {
+  display: flex;
+  height: 100vh;
+  background: #f8fafc;
+}
+
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pageContent {
+  padding: 24px 28px;
+  overflow: auto;
+}
+
+/* ===================== Header ===================== */
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 500;
+  color: #0F172B;
+  margin-bottom: 2px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #62748E;
+  margin-top: 0;
+}
+
+.createBtn {
+  margin-top: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: none;
+  background: #F94355;
+  color: #fff;
+  font-size: 14px;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* ===================== Filters ===================== */
+.filtersCard {
+  background: #ffffff;
+  border-radius: 8px;
+  border: #0000001A 1px solid;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.searchInput {
+  position: relative;
+}
+
+.searchInput input {
+  width: 420px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px;
+  padding-left: 34px;
+  font-size: 14px;
+  background: #F3F3F5;
+  color: #717182;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.filterRow {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-end;
+}
+
+.filterSelect label {
+  display: block;
+  font-size: 14px;
+  color: #314158;
+  margin-bottom: 7px;
+}
+
+.filterSelect select,
+.filterSelect input {
+  width: 200px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  padding: 7px 10px;
+  font-size: 13px;
+  background: #fff;
+}
+
+.resetContainer {
+  padding-left: 10px;
+}
+
+.resetBtn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* ===================== List Cards ===================== */
+.listCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.meetingRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff;
+  align-items: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+}
+
+.meetingLeft {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #8335A0;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.meetingInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.clientName {
+  font-weight: 600;
+  color: #3A2639;
+}
+
+.metaRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.meetingId {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.mode {
+  font-size: 12px;
+  color: #62748E;
+  background: #F7EBED;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.whenRow {
+  display: flex;
+  gap: 12px;
+  color: #62748E;
+  font-size: 13px;
+}
+
+.date {
+  font-weight: 600;
+  color: #3A2639;
+}
+
+.time {
+  color: #62748E;
+}
+
+.remarks {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #62748E;
+}
+
+/* ===================== Actions ===================== */
+.meetingRight {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.viewBtn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  background: #fff;
+  cursor: default;
+}
+
+.joinBtn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #8335A0;
+  color: #fff;
+  text-decoration: none;
+}
+
+/* ===================== Footer ===================== */
+.footerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.rowsInfo {
+  color: #62748E;
+}
+
+.pagination {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.pageBtn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  background: #fff;
+  cursor: pointer;
+}
+
+.pageIndicator {
+  color: #62748E;
+}
+
+/* ===================== Empty / State ===================== */
+.stateRow {
+  padding: 24px;
+  text-align: center;
+  color: #64748b;
+}
+
+/* ===================== Status Pills (Your Color Palette) ===================== */
+.statusPill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.scheduled {
+  background: #F7EBED;
+  color: #F94355;
+}
+
+.completed {
+  background: #ECEEF2;
+  color: #8335A0;
+}
+
+.cancelled {
+  background: #FDEDEB;
+  color: #3A2639;
+}

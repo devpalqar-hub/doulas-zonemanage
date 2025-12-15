@@ -17,7 +17,7 @@ export interface ServicePricing {
     id: string;
     serviceId: string;
     doulaProfileId: string;
-    price: string;
+    price: number;
 }
 
 export interface Region {
@@ -56,21 +56,43 @@ export interface Doula {
     doulaProfile: DoulaProfile | null;
 }
 
+export interface DoulaListItem {
+  userId: string;
+  name: string;
+  email: string;
+  profileId: string;
+  profileImage: string | null;
+  yoe: number;
+  serviceNames: string[];
+  regionNames: string[];
+  ratings: number | null;
+  reviewsCount: number;
+  nextImmediateAvailabilityDate: string | null;
+}
+
+
 export interface Service {
     id: string;
     name: string;
 }
 
-export const fetchDoulas = async (): Promise<{
-    doulas: Doula[];
-    total: number;
-}> => {
-    const res = await api.get("/doula");
-    const data = res.data;
-    return {
-        doulas: data.data as Doula[],
-        total: data.meta?.total ?? (data.data?.length || 0),
-    };
+export const fetchDoulas = async (params?: {
+  search?: string;
+  page?: number;
+  limit?: number;
+}) => {
+  const cleanParams: any = {};
+
+  if (params?.search?.trim()) cleanParams.search = params.search;
+  if (params?.page) cleanParams.page = params.page;
+  if (params?.limit) cleanParams.limit = params.limit;
+
+  const res = await api.get("/doula", { params: cleanParams });
+
+  return {
+    doulas: res.data.data as Doula[],
+    total: res.data.meta?.total ?? res.data.data.length,
+  };
 };
 
 export const fetchServices = async (): Promise<Service[]> => {

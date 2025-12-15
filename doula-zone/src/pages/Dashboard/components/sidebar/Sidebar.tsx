@@ -77,7 +77,7 @@ const Sidebar = () => {
                         <img src='/manage.png' alt='' /> Manage Doulas
                     </NavLink>
 
-                    <NavLink to="/appointments"
+                    <NavLink to="/meetings"
                     className={({ isActive }) => 
                         `${styles.item} ${isActive ? styles.active : ""}`
                     }

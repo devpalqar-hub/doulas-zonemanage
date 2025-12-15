@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "../CreateDoula/CreateDoula.module.css";
-import { fetchRegionById, type Region } from "../../../services/region.service";
+import { type Region, fetchAllRegions } from "../../../services/region.service";
 
 export type ProfessionalInfoData = {
   description: string;
@@ -21,10 +21,11 @@ type Props = {
 const AVAILABLE_LANGUAGES = ["English", "Hindi", "Malayalam"];
 
 const ProfessionalInfoStep = ({ data, setFormData, onNext, onPrev }: Props) => {
-  const [region, setRegion] = useState<Region | null>(null);
-  const [loadingRegion, setLoadingRegion] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const hasSyncedRegion = useRef(false);
+  const [regions, setRegions] = useState<Region[]>([]);
+  const [loadingRegions, setLoadingRegions] = useState(false);
+
  // load region from regionId in formData OR localStorage
   useEffect(() => {
     if (hasSyncedRegion.current) 
@@ -39,21 +40,24 @@ const ProfessionalInfoStep = ({ data, setFormData, onNext, onPrev }: Props) => {
     hasSyncedRegion.current = true;
 
     setFormData(prev => ({ ...prev, regionId: idToUse }));
-
-    const loadRegion = async () => {
-      try {
-        setLoadingRegion(true);
-        const reg = await fetchRegionById(idToUse);
-        setRegion(reg);
-      } catch (e) {
-        console.error("Failed to load region", e);
-      } finally {
-        setLoadingRegion(false);
-      }
-    };
-
-    loadRegion();
   }, []);
+
+  useEffect(() => {
+  const loadRegions = async () => {
+    try {
+      setLoadingRegions(true);
+      const list = await fetchAllRegions();
+      setRegions(list);
+    } catch (e) {
+      console.error("Failed to load regions", e);
+    } finally {
+      setLoadingRegions(false);
+    }
+  };
+
+  loadRegions();
+}, []);
+
 
   const updateField = (field: keyof ProfessionalInfoData, value: any) => {
     setFormData(prev => ({
@@ -78,11 +82,15 @@ const ProfessionalInfoStep = ({ data, setFormData, onNext, onPrev }: Props) => {
       newErrors.description = "Description is required";
     }
     if (!data.qualification?.trim()) {
-      newErrors.qualifications = "Qualifications are required";
+      newErrors.qualification = "Qualifications are required";
     }
     if (data.yoe === null || (data.yoe) < 0) {
       newErrors.yoe = "Years of experience is required";
     }
+    if (!data.regionId) {
+      newErrors.regionId = "Region is required";
+    }
+
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -136,7 +144,7 @@ const ProfessionalInfoStep = ({ data, setFormData, onNext, onPrev }: Props) => {
             value={data.qualification}
             onChange={e => updateField("qualification", e.target.value)}
           />
-          {errors.qualifications && (
+          {errors.qualification && (
             <p className={styles.errorText}>{errors.qualifications}</p>
           )}
         </div>
@@ -166,17 +174,32 @@ const ProfessionalInfoStep = ({ data, setFormData, onNext, onPrev }: Props) => {
           </div>
 
           <div className={styles.fieldGroup}>
-            <label>Region</label>
-            <input
-              className={styles.input}
-              value={
-                loadingRegion
-                  ? "Loading..."
-                  : region?.regionName || "Not assigned"
-              }
-              disabled
-            />
-          </div>
+          <label>
+            Region <span className={styles.req}>*</span>
+          </label>
+
+          <select
+            className={styles.input}
+            value={data.regionId || ""}
+            onChange={(e) => updateField("regionId", e.target.value)}
+            disabled={loadingRegions}
+          >
+            <option value="" disabled>
+              {loadingRegions ? "Loading regions..." : "Select a region"}
+            </option>
+
+            {regions.map((reg) => (
+              <option key={reg.id} value={reg.id}>
+                {reg.regionName}
+              </option>
+            ))}
+          </select>
+
+          {errors.regionId && (
+            <p className={styles.errorText}>{errors.regionId}</p>
+          )}
+        </div>
+
         </div>
 
         {/* Languages */}

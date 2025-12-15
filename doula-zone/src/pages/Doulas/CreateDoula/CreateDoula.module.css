@@ -650,8 +650,8 @@
 
 .langChipActive {
   background: #EEF2FF;
-  border-color: #4f46e5;
-  color: #4f46e5;
+  border-color: #F94355;
+  color: #F94355;
 }
 
 .stepFooter {
@@ -664,7 +664,7 @@
 .primaryBtn {
   padding: 9px 22px;
   border-radius: 10px;
-  background: #4f46e5;
+  background: #EF4444;
   border: none;
   color: #ffffff;
   font-size: 14px;
@@ -695,7 +695,7 @@
 }
 
 
-/* ---------- Services & Pricing (Step 3) ---------- */
+/* ---------- Services & Pricing ---------- */
 
 .servicesGrid {
   display: grid;
@@ -718,14 +718,13 @@
 }
 
 .serviceCard:hover {
-  border-color: #6366F1;
+  border-color: #F94355;
 }
 
 .serviceCardActive {
-  background: #EEF2FF;
-  border: 2px solid #6366F1;
-  color: #4F46E5;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  background: #F7EBED;
+  border: 2px solid #F94355;
+  color: #070707;
 }
 
 /* Pricing section */
@@ -780,7 +779,7 @@
 }
 
 .pricingInput:focus {
-  border-color: #6366F1;
+  border-color: #EF4444;
   outline: none;
 }
 

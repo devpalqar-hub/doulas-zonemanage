@@ -6,8 +6,10 @@ import type React from 'react';
 import MyAvailability from './pages/Availability/MyAvailability';
 import ManageDoulas from './pages/Doulas/ManageDoula/ManageDoulas';
 import CreateDoula from './pages/Doulas/CreateDoula/CreateDoula';
+import Bookings from './pages/Bookings/Bookings';
 import Testimonials from './pages/Testimonials/Testimonials';
 import TestimonialView from './pages/Testimonials/TestimonialView';
+import Meetings from './pages/Meetings/Meetings';
 
 function PrivaterRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem("token");
@@ -41,6 +43,18 @@ function App() {
         <Route path='/doulas/create' element={
           <PrivaterRoute>
             <CreateDoula />
+          </PrivaterRoute>
+        } />
+
+        <Route path="meetings" element={
+          <PrivaterRoute>
+            <Meetings />
+          </PrivaterRoute>
+        } />
+
+        <Route path="/bookings" element={
+          <PrivaterRoute>
+            <Bookings />
           </PrivaterRoute>
         } />
 

@@ -1,7 +1,7 @@
 import styles from "../CreateDoula/CreateDoula.module.css";
-import { FaCheckCircle } from "react-icons/fa";
 import { createDoula } from "../../../services/doula.service";
 import { useToast } from "../../../shared/ToastContext";
+// import { jsx } from "react/jsx-runtime";
 
 type Props = {
   data: any;
@@ -21,9 +21,8 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
       form.append("phone", data.phone);
       form.append("password", data.password);
 
-      // PROFILE IMAGE IF UPLOADED
       if (data.profileImageFile) {
-        form.append("profileImage", data.profileImageFile);
+        form.append("images", data.profileImageFile);
       }
 
       // PROFESSIONAL INFO
@@ -31,15 +30,24 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
       form.append("qualification", data.qualification);
       form.append("achievements", data.achievements || "");
       form.append("yoe", String(data.yoe || 0));
-      form.append("languages", JSON.stringify(data.languages)); // array of strings
+      form.append("languages", JSON.stringify(data.languages)); 
 
       // REGION
-      form.append("regionId", data.regionId);
+      form.append("regionIds", JSON.stringify([data.regionId]));
 
-      // SERVICES (array of { serviceId, price })
-      form.append("services", JSON.stringify(data.services || []));
+      // SERVICES 
+      const services: Record<string, number> = {};
+      (data.services || []).forEach((s: any) => {
+        services[s.serviceId] = Number(s.price);
+      });
+      form.append("services", JSON.stringify(services));
 
       // CREATE DOULA
+      console.log("===== DOULA FORM DATA =====");
+      for (const pair of form.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
       const res = await createDoula(form);
       console.log("Created",res);
 
@@ -47,8 +55,9 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
 
       // REDIRECT
       window.location.href = "/doulas";
-    } catch (err) {
+    } catch (err: any) {
       console.error("DOULA CREATE ERROR:", err);
+      console.error("BACKEND RESPONSE:", err?.response?.data);
       showToast("Failed to create doula", "error");
     }
   };
@@ -94,8 +103,8 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
         <h4>Services & Pricing</h4>
 
         {data.services?.length > 0 ? (
-          data.services.map((srv: any, i: number) => (
-            <div key={i} className={styles.reviewServiceRow}>
+          data.services.map((srv: any) => (
+            <div key={srv.serviceId} className={styles.reviewServiceRow}>
               <span>{srv.serviceName}</span>
               <span className={styles.reviewServicePrice}>₹{srv.price}</span>
             </div>
@@ -112,7 +121,6 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
         </button>
 
         <button type="button" className={styles.primaryBtn} onClick={handleSubmit}>
-          <FaCheckCircle style={{ marginRight: 6 }} />
           Submit
         </button>
       </div>

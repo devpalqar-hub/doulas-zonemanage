@@ -114,15 +114,19 @@ const ManageDoulas = () => {
     });
   }, [doulas, search, serviceFilter, availabilityFilter, statusFilter]);
 
-  const getServiceNamesForDoula = (doula: Doula): string[] => {
-    const profile = doula.doulaProfile;
-    if (!profile || !profile.ServicePricing) return [];
+  const getServiceNamesForDoula = (doula: Doula) => {
+  const profile = doula.doulaProfile;
+  if (!profile?.ServicePricing) return [];
 
-    return profile.ServicePricing.map((sp) => {
-      const svc = services.find((s) => s.id === sp.serviceId);
-      return svc?.name || "Service";
-    });
-  };
+  return profile.ServicePricing.map((sp) => {
+    const svc = services.find((s) => s.id === sp.serviceId);
+    return {
+      id: sp.serviceId,
+      name: svc?.name || "Service"
+    };
+  });
+};
+
 
   const getRegionLabel = (doula: Doula): string => {
     const region = doula.doulaProfile?.Region?.[0];
@@ -133,7 +137,6 @@ const ManageDoulas = () => {
   const getNextAvailable = (doula: Doula) => {
     const slots = doula.doulaProfile?.AvailableSlotsForService || [];
     if (!slots.length) return null;
-    // pick earliest by date
     const sorted = [...slots].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
@@ -284,14 +287,14 @@ const ManageDoulas = () => {
                       {servicesNames.length === 0 ? (
                         <span className={styles.subMuted}>No services set</span>
                       ) : (
-                        servicesNames.map((name, idx) => (
-                          <span
-                            key={`${doula.id}-svc-${idx}`}
-                            className={styles.serviceTag}
-                          >
-                            {name}
-                          </span>
-                        ))
+                       servicesNames.map((svc) => (
+                        <span
+                          key={`${doula.id}-${svc.id}`}
+                          className={styles.serviceTag}
+                        >
+                          {svc.name}
+                        </span>
+                      ))
                       )}
                     </div>
 
@@ -350,8 +353,7 @@ const ManageDoulas = () => {
                         type="button"
                         className={styles.actionBtn}
                         onClick={() => {
-                          console.log("Edit doula", doula.id);
-                          // later: navigate(`/doulas/${doula.id}/edit`)
+                        
                         }}
                       >
                         <FiEdit size={15} color="black"/>
@@ -360,8 +362,7 @@ const ManageDoulas = () => {
                         type="button"
                         className={styles.actionBtn}
                         onClick={() => {
-                          console.log("Disable / toggle", doula.id);
-                          // later: call updateDoulaStatus
+                      
                         }}
                       >
                         ⋯

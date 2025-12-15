@@ -53,7 +53,7 @@ export const fetchSlots = async (
   limit = 20
 ) => {
   try {
-    const res = await api.get("/slots", {
+    const res = await api.get("/slots/my/availability", {
       params: {
         regionId,
         startDate: formatDate(startDate),
