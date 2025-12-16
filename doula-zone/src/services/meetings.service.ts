@@ -1,4 +1,3 @@
-// File: src/services/meetings.service.ts
 import api from "./api";
 
 export type Meeting = {

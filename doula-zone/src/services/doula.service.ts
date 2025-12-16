@@ -90,7 +90,7 @@ export const fetchDoulas = async (params?: {
   const res = await api.get("/doula", { params: cleanParams });
 
   return {
-    doulas: res.data.data as Doula[],
+    doulas: res.data.data as DoulaListItem[],
     total: res.data.meta?.total ?? res.data.data.length,
   };
 };
