@@ -40,10 +40,7 @@ const StepPersonalInfo = ({ data, onChange, onNext }: Props) => {
 
     if (!data.fullName.trim()) newErrors.fullName = "Full name is required";
     if (!data.email.trim()) newErrors.email = "Email is required";
-    if (!/^\+91\d{10}$/.test(data.phone)) {
-      newErrors.phone = "Phone number must be valid.";
-    }
-
+    if (!data.phone.trim()) newErrors.phone = "Phone number is required";
     if (!data.password.trim()) newErrors.password = "Password is required";
 
     setErrors(newErrors);
@@ -97,28 +94,17 @@ const StepPersonalInfo = ({ data, onChange, onNext }: Props) => {
           <label>
             Phone Number <span className={styles.required}>*</span>
           </label>
-
-          <div className={styles.phoneInputWrapper}>
-            <span className={styles.phonePrefix}>+91</span>
-
-            <input
-              type="tel"
-              placeholder="9876543243"
-              value={data.phone.startsWith("+91") ? data.phone.slice(3) : data.phone}
-              onChange={(e) => {
-                const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 10);
-                handleInputChange("phone", `+91${digitsOnly}`);
-              }}
-              className={errors.phone ? styles.inputError : undefined}
-            />
-
-          </div>
-
+          <input
+            type="tel"
+            placeholder="+1 (234) 567-890"
+            value={data.phone}
+            onChange={(e) => handleInputChange("phone", e.target.value)}
+            className={errors.phone ? styles.inputError : undefined}
+          />
           {errors.phone && (
             <p className={styles.errorText}>{errors.phone}</p>
           )}
         </div>
-
 
         <div className={styles.fieldGroup}>
           <label>

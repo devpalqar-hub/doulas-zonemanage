@@ -232,6 +232,7 @@ input {
   font-size: 14px;
   color: #F7EBED;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .doulaText {
