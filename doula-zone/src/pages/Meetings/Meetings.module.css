@@ -35,13 +35,11 @@
   font-size: 24px;
   font-weight: 500;
   color: #0F172B;
-  margin-bottom: 2px;
 }
 
 .subtitle {
   font-size: 14px;
   color: #62748E;
-  margin-top: 0;
 }
 
 .createBtn {
@@ -60,12 +58,17 @@
 .filtersCard {
   background: #ffffff;
   border-radius: 8px;
-  border: #0000001A 1px solid;
-  padding: 12px 16px;
+  border: 1px solid #0000001A;
+  padding: 14px 16px;
   margin-bottom: 18px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+}
+
+.searchRow {
+  display: flex;
+  align-items: center;
 }
 
 .searchInput {
@@ -73,11 +76,10 @@
 }
 
 .searchInput input {
-  width: 420px;
+  width: 1100px;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
-  padding: 8px 12px;
-  padding-left: 34px;
+  padding: 8px 12px 8px 34px;
   font-size: 14px;
   background: #F3F3F5;
   color: #717182;
@@ -94,12 +96,17 @@
 
 .filterRow {
   display: flex;
-  gap: 2rem;
+  gap: 24px;
   align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.filterSelect {
+  display: flex;
+  flex-direction: column;
 }
 
 .filterSelect label {
-  display: block;
   font-size: 14px;
   color: #314158;
   margin-bottom: 7px;
@@ -116,11 +123,12 @@
 }
 
 .resetContainer {
-  padding-left: 10px;
+  padding-left: 4px;
 }
 
 .resetBtn {
-  padding: 8px 12px;
+  width: 200px;
+  padding: 8px 14px;
   border-radius: 8px;
   border: 1px solid #E2E8F0;
   background: #fff;
@@ -131,36 +139,36 @@
 .listCard {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .meetingRow {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  padding: 16px;
+  align-items: flex-start;
+  padding: 16px 18px;
   border-radius: 12px;
   background: #fff;
-  align-items: center;
   box-shadow: 0 6px 20px rgba(0,0,0,0.04);
 }
 
 .meetingLeft {
   display: flex;
-  gap: 12px;
-  align-items: center;
+  gap: 14px;
+  align-items: flex-start;
 }
 
 .avatar {
   width: 48px;
   height: 48px;
-  border-radius: 10px;
+  border-radius: 50%;
   background: #8335A0;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 .meetingInfo {
@@ -176,7 +184,7 @@
 
 .metaRow {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -185,19 +193,13 @@
   color: #94a3b8;
 }
 
-.mode {
-  font-size: 12px;
-  color: #62748E;
-  background: #F7EBED;
-  padding: 4px 8px;
-  border-radius: 999px;
-}
-
 .whenRow {
   display: flex;
-  gap: 12px;
-  color: #62748E;
+  flex-direction: column;
+  gap: 10px;
   font-size: 13px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .date {
@@ -211,27 +213,40 @@
 
 .remarks {
   margin-top: 6px;
-  font-size: 13px;
-  color: #62748E;
+  font-size: 14px;
+  width: 685px;
+  height: 34px;
+  color: #45556C;
+  background: #F8FAFC;
+  padding: 4px 8px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
 }
 
 /* ===================== Actions ===================== */
 .meetingRight {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 10px;
   align-items: center;
+  padding-top: 6px;
 }
 
 .viewBtn {
-  padding: 8px 12px;
+  padding: 8px 14px;
   border-radius: 8px;
   border: 1px solid #E2E8F0;
   background: #fff;
   cursor: default;
 }
 
+.viewBtn:hover {
+  cursor: pointer;
+}
+
 .joinBtn {
-  padding: 8px 12px;
+  padding: 8px 14px;
   border-radius: 8px;
   border: none;
   background: #8335A0;
@@ -239,12 +254,16 @@
   text-decoration: none;
 }
 
+.joinBtn:hover {
+  cursor: pointer;
+}
+
 /* ===================== Footer ===================== */
 .footerRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 10px 2px;
 }
 
 .rowsInfo {
@@ -258,7 +277,7 @@
 }
 
 .pageBtn {
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 8px;
   border: 1px solid #E2E8F0;
   background: #fff;
@@ -276,13 +295,12 @@
   color: #64748b;
 }
 
-/* ===================== Status Pills (Your Color Palette) ===================== */
+/* ===================== Status Pills ===================== */
 .statusPill {
   padding: 6px 10px;
   border-radius: 999px;
   font-weight: 600;
   font-size: 12px;
-  display: inline-block;
 }
 
 .scheduled {
@@ -299,3 +317,16 @@
   background: #FDEDEB;
   color: #3A2639;
 }
+
+.service {
+  display: flex;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #314158;
+  background: #ECEEF2;
+  padding: 4px 8px;
+  border-radius: 999px;
+  max-width: 100px;
+}
+

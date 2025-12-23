@@ -22,8 +22,12 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
       form.append("password", data.password);
 
       if (data.profileImageFile) {
-        form.append("images", data.profileImageFile);
+        form.append("profile_image", data.profileImageFile);
       }
+
+      data.galleryImages.forEach((file: any) => {
+        form.append("gallery_image", file);
+      });
 
       // PROFESSIONAL INFO
       form.append("description", data.description);
@@ -33,7 +37,15 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
       form.append("languages", JSON.stringify(data.languages)); 
 
       // REGION
-      form.append("regionIds", JSON.stringify([data.regionId]));
+      const zmRegionId = localStorage.getItem("regionId");
+
+        if (!zmRegionId) {
+          showToast("Zone manager region not found", "error");
+          return;
+        }
+
+        form.append("regionIds", JSON.stringify([zmRegionId]));
+
 
       // SERVICES 
       const services: Record<string, number> = {};
@@ -113,6 +125,24 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
           <p>No services added.</p>
         )}
       </div>
+
+      {/* GALLERY */}
+      <div className={styles.reviewCard}>
+        <h4>Gallery</h4>
+
+        {data.galleryPreviews && data.galleryPreviews.length > 0 ? (
+          <div className={styles.reviewGalleryGrid}>
+            {data.galleryPreviews.map((src: string, idx: number) => (
+              <div key={idx} className={styles.reviewGalleryItem}>
+                <img src={src} alt={`Gallery ${idx + 1}`} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No gallery images added.</p>
+        )}
+      </div>
+
 
       {/* SUBMIT FOOTER */}
       <div className={styles.stepFooter}>
