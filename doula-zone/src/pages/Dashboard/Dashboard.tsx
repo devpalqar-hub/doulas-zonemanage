@@ -4,6 +4,11 @@ import Topbar from "./components/topbar/Topbar";
 import StatsCards from "./components/statscards/StatsCards";
 import { useEffect, useState } from "react";
 import { fetchCardsStats, type CardsStats } from "../../services/analytics.services";
+import QuickActions from "./components/quickactions/QuickActions";
+import RecentActivity from "./components/recentactivity/RecentActivity";
+import RecentTestimonials from "./components/recenttestimonials/RecentTestimonials";
+import PendingMeetingRequests from "./components/pendingmeeting/PendingMeetingRequests";
+import ScheduleOverview from "./components/scheduleoverview/ScheduleOverview";
 
 const Dashboard = () => {
     const [cardsStats, setCardsStats] = useState<CardsStats | null>(null);
@@ -35,6 +40,22 @@ const Dashboard = () => {
                     <h2 className={styles.title}>Dashboard</h2>
                     <p className={styles.zoneStatus}>Zone: North Region <span className={styles.activeTag}>Active</span></p>
                     <StatsCards data={cardsStats} loading={loadingCards}></StatsCards>
+                    <QuickActions/>
+                    <div className={styles.row}>
+                        <div className={styles.child1}>
+                            <ScheduleOverview/>
+                        </div>
+                        <div className={styles.child2}>
+                            <RecentActivity/>
+                        </div>
+                        
+                        
+                    </div>
+                    <div className={styles.row}>
+                        <RecentTestimonials/>
+                    </div>
+                    <PendingMeetingRequests/>
+
                 </div>
             </div>
         </div>  

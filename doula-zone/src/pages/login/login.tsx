@@ -47,28 +47,31 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
     localStorage.setItem("user", JSON.stringify(res.data.user));
 
     // Fetch Zone Manager Profile
-    const profile = await getZoneManagerProfile(res.data.user.id);
+    const profileRes = await getZoneManagerProfile(res.data.user.id);
 
-    if (!profile?.zonemanagerprofile) {
-      showToast("Profile not linked to Zone Manager", "error");
+    console.log("ZONE MANAGER PROFILE:", profileRes);
+
+    const zm = profileRes;
+
+    if (!zm) {
+      showToast("Zone Manager profile not found", "error");
+      setLoading(false);
       return;
     }
 
-    const zm = profile.zonemanagerprofile;
-
-    if (!zm.managingRegion?.length) {
+    if (!zm.regions || zm.regions.length === 0) {
       showToast("No region assigned to this Zone Manager", "error");
+      setLoading(false);
       return;
     }
-
-    const zoneManagerProfileId = zm.id;
-    const regionId = zm.managingRegion[0].id;
 
     // Store values
-    localStorage.setItem("zoneManagerProfileId", zoneManagerProfileId);
-    localStorage.setItem("regionId", regionId);
+    localStorage.setItem("zoneManagerProfileId", zm.profileId);
+    localStorage.setItem("regionId", zm.regions[0].id);
 
     window.location.href = "/dashboard";
+
+
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     showToast("Login failed. Please try again.", "error");
