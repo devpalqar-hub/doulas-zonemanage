@@ -2,9 +2,17 @@ import { useEffect, useMemo, useState } from "react";
 import Sidebar from "../../Dashboard/components/sidebar/Sidebar";
 import Topbar from "../../Dashboard/components/topbar/Topbar";
 import styles from "./ManageDoulas.module.css";
-import { fetchDoulas, type DoulaListItem } from "../../../services/doula.service";
+
+import {
+  fetchDoulas,
+  deleteDoula,
+  type DoulaListItem,
+} from "../../../services/doula.service";
+
 import { useToast } from "../../../shared/ToastContext";
-import { FiFilter, FiSearch, FiEdit } from "react-icons/fi";
+import ConfirmationModal from "../../../shared/ConfirmationModal";
+
+import { FiFilter, FiSearch, FiEdit, FiTrash } from "react-icons/fi";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
@@ -23,28 +31,51 @@ const formatDate = (iso: string) => {
 const ManageDoulas = () => {
   const [doulas, setDoulas] = useState<DoulaListItem[]>([]);
   const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
   // Filters
   const [search, setSearch] = useState("");
-  const [serviceFilter, setServiceFilter] = useState<string>("ALL");
+  const [serviceFilter, setServiceFilter] = useState("ALL");
   const [availabilityFilter, setAvailabilityFilter] =
     useState<AvailabilityFilter>("ALL");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
+  const [statusFilter, setStatusFilter] =
+    useState<StatusFilter>("ALL");
+
+  // Delete modal
+  const [deleteTarget, setDeleteTarget] =
+    useState<DoulaListItem | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const { showToast } = useToast();
   const navigate = useNavigate();
 
+  /* =========================
+     LOAD DATA (BACKEND FILTERING)
+     ========================= */
   useEffect(() => {
     const load = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const res = await fetchDoulas();
+        const res = await fetchDoulas({
+          search,
+          page,
+          limit,
+          service: serviceFilter !== "ALL" ? serviceFilter : undefined,
+          availability:
+            availabilityFilter !== "ALL" ? availabilityFilter : undefined,
+          status: statusFilter !== "ALL" ? statusFilter : undefined,
+        });
+
         setDoulas(res.doulas);
         setTotal(res.total);
+        setTotalPages(res.totalPages);
       } catch (err) {
         console.error(err);
         setError("Failed to load doulas");
@@ -55,52 +86,52 @@ const ManageDoulas = () => {
     };
 
     load();
-  }, [showToast]);
+  }, [
+    search,
+    page,
+    serviceFilter,
+    availabilityFilter,
+    statusFilter,
+    showToast,
+  ]);
 
   const resetFilters = () => {
     setSearch("");
     setServiceFilter("ALL");
     setAvailabilityFilter("ALL");
     setStatusFilter("ALL");
+    setPage(1);
   };
 
-  // Collect unique service names for filter dropdown
+  // Unique service names (from current page only – correct)
   const allServiceNames = useMemo(() => {
     const set = new Set<string>();
     doulas.forEach((d) => d.serviceNames.forEach((s) => set.add(s)));
     return Array.from(set);
   }, [doulas]);
 
-  const filteredDoulas = useMemo(() => {
-    const q = search.trim().toLowerCase();
+  // Delete
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
 
-    return doulas.filter((d) => {
-      // search
-      if (q) {
-        const hay = `${d.name} ${d.email}`.toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
+    try {
+      setDeleting(true);
+      await deleteDoula(deleteTarget.userId);
 
-      // service filter
-      if (serviceFilter !== "ALL" && !d.serviceNames.includes(serviceFilter)) {
-        return false;
-      }
+      setDoulas((prev) =>
+        prev.filter((d) => d.userId !== deleteTarget.userId)
+      );
+      setTotal((prev) => prev - 1);
 
-      // availability filter
-      if (availabilityFilter !== "ALL") {
-        const hasAvailability = Boolean(d.nextImmediateAvailabilityDate);
-        if (availabilityFilter === "AVAILABLE" && !hasAvailability) return false;
-        if (availabilityFilter === "UNAVAILABLE" && hasAvailability) return false;
-      }
-
-      // status filter (if backend sends status later, hook here)
-      // if (statusFilter === "ACTIVE" && !d.is_active) return false;
-      // if (statusFilter === "INACTIVE" && d.is_active) return false;
-
-
-      return true;
-    });
-  }, [doulas, search, serviceFilter, availabilityFilter, statusFilter]);
+      showToast("Doula deleted successfully!", "success");
+      setDeleteTarget(null);
+    } catch (error) {
+      console.error(error);
+      showToast("Failed to delete doula", "error");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <div className={styles.root}>
@@ -134,7 +165,10 @@ const ManageDoulas = () => {
                 type="text"
                 placeholder="Search by name or email"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
               />
             </div>
 
@@ -143,7 +177,10 @@ const ManageDoulas = () => {
                 <label>Service</label>
                 <select
                   value={serviceFilter}
-                  onChange={(e) => setServiceFilter(e.target.value)}
+                  onChange={(e) => {
+                    setServiceFilter(e.target.value);
+                    setPage(1);
+                  }}
                 >
                   <option value="ALL">All services</option>
                   {allServiceNames.map((name) => (
@@ -158,9 +195,12 @@ const ManageDoulas = () => {
                 <label>Availability</label>
                 <select
                   value={availabilityFilter}
-                  onChange={(e) =>
-                    setAvailabilityFilter(e.target.value as AvailabilityFilter)
-                  }
+                  onChange={(e) => {
+                    setAvailabilityFilter(
+                      e.target.value as AvailabilityFilter
+                    );
+                    setPage(1);
+                  }}
                 >
                   <option value="ALL">All</option>
                   <option value="AVAILABLE">Available</option>
@@ -172,16 +212,16 @@ const ManageDoulas = () => {
                 <label>Status</label>
                 <select
                   value={statusFilter}
-                  onChange={(e) =>
-                    setStatusFilter(e.target.value as StatusFilter)
-                  }
+                  onChange={(e) => {
+                    setStatusFilter(e.target.value as StatusFilter);
+                    setPage(1);
+                  }}
                 >
                   <option value="ALL">All</option>
                   <option value="ACTIVE">Active</option>
                   <option value="INACTIVE">Inactive</option>
                 </select>
               </div>
-
 
               <div className={styles.resetContainer}>
                 <button className={styles.resetBtn} onClick={resetFilters}>
@@ -206,12 +246,12 @@ const ManageDoulas = () => {
               <div className={styles.loadingState}>Loading doulas…</div>
             ) : error ? (
               <div className={styles.errorState}>{error}</div>
-            ) : filteredDoulas.length === 0 ? (
+            ) : doulas.length === 0 ? (
               <div className={styles.emptyState}>
                 No doulas match the selected filters
               </div>
             ) : (
-              filteredDoulas.map((d) => {
+              doulas.map((d) => {
                 const initials =
                   d.name
                     ?.split(" ")
@@ -222,13 +262,11 @@ const ManageDoulas = () => {
 
                 return (
                   <div key={d.userId} className={styles.tableRow}>
-                    {/* Doula */}
                     <div className={styles.doulaCell}>
                       <div className={styles.avatar}>
                         {d.profileImage ? (
                           <img
                             src={d.profileImage}
-                            alt={d.name}
                             className={styles.avatarImg}
                           />
                         ) : (
@@ -242,7 +280,6 @@ const ManageDoulas = () => {
                       </div>
                     </div>
 
-                    {/* Services */}
                     <div className={styles.servicesCell}>
                       {d.serviceNames.length === 0 ? (
                         <span className={styles.subMuted}>
@@ -260,17 +297,13 @@ const ManageDoulas = () => {
                       )}
                     </div>
 
-                    {/* Region */}
                     <div className={styles.regionText}>
                       {d.regionNames.join(", ") || "Not assigned"}
                     </div>
 
-                    {/* Availability */}
                     <div className={styles.nextAvail}>
                       {d.nextImmediateAvailabilityDate ? (
-                        <span>
-                          {formatDate(d.nextImmediateAvailabilityDate)}
-                        </span>
+                        formatDate(d.nextImmediateAvailabilityDate)
                       ) : (
                         <span className={styles.subMuted}>
                           No availability
@@ -281,21 +314,32 @@ const ManageDoulas = () => {
                     <div>
                       <span
                         className={`${styles.statusBadge} ${
-                          d.is_active ? styles.statusActive : styles.statusInactive
+                          d.isActive
+                            ? styles.statusActive
+                            : styles.statusInactive
                         }`}
                       >
-                        {d.is_active ? "Active" : "Inactive"}
+                        {d.isActive ? "Active" : "Inactive"}
                       </span>
                     </div>
 
-
-                    {/* Actions */}
                     <div className={styles.actions}>
-                      <button className={styles.actionBtn}>
+                      <button
+                        className={styles.actionBtn}
+                        onClick={() => navigate(`/doulas/${d.userId}`)}
+                      >
                         <MdOutlineRemoveRedEye size={15} />
                       </button>
+
                       <button className={styles.actionBtn}>
                         <FiEdit size={15} />
+                      </button>
+
+                      <button
+                        className={styles.actionBtn}
+                        onClick={() => setDeleteTarget(d)}
+                      >
+                        <FiTrash size={15} color="red" />
                       </button>
                     </div>
                   </div>
@@ -303,8 +347,44 @@ const ManageDoulas = () => {
               })
             )}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className={styles.pagination}>
+              <button
+                className={styles.pageBtn}
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                Previous
+              </button>
+
+              <span className={styles.pageInfo}>
+                Page {page} of {totalPages}
+              </span>
+
+              <button
+                className={styles.pageBtn}
+                disabled={page === totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      <ConfirmationModal
+        open={!!deleteTarget}
+        title="Delete Doula"
+        description={`Are you sure you want to delete ${deleteTarget?.name}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        loading={deleting}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 };

@@ -1,6 +1,13 @@
 import { NavLink } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import styles from './Sidebar.module.css';
+import { GrSchedules } from "react-icons/gr";
+import { LuLayoutDashboard } from "react-icons/lu";
+import { MdOutlineEventAvailable } from "react-icons/md";
+import { LuUsers } from "react-icons/lu";
+import { HiOutlineVideoCamera } from "react-icons/hi";
+import { FiBookOpen } from "react-icons/fi";
+import { FiMessageSquare } from "react-icons/fi";
 
 const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -58,7 +65,7 @@ const Sidebar = () => {
                         `${styles.item} ${isActive ? styles.active : ""}`
                     }
                     onClick={closeSidebar}>
-                        <img src='/dashboard.png' alt='' /> DashBoard
+                        <LuLayoutDashboard size={20}/> DashBoard
                     </NavLink>
 
                     <NavLink to="/availability" 
@@ -66,7 +73,7 @@ const Sidebar = () => {
                         `${styles.item} ${isActive ? styles.active : ""}`
                     }
                     onClick={closeSidebar}>
-                        <img src='/testimonials-icon.png' alt='' /> My Availability
+                        <MdOutlineEventAvailable size={20}/> My Availability
                     </NavLink>
 
                     <NavLink to="/doulas"
@@ -74,7 +81,7 @@ const Sidebar = () => {
                         `${styles.item} ${isActive ? styles.active : ""}`
                     }
                     onClick={closeSidebar}>
-                        <img src='/manage.png' alt='' /> Manage Doulas
+                        <LuUsers size={20}/> Manage Doulas
                     </NavLink>
 
                     <NavLink to="/meetings"
@@ -82,7 +89,7 @@ const Sidebar = () => {
                         `${styles.item} ${isActive ? styles.active : ""}`
                     }
                     onClick={closeSidebar}> 
-                        <img src='/appointments.png' alt='' /> Appointments
+                      <HiOutlineVideoCamera size={20}/> Appointments
                     </NavLink>
 
                     <NavLink to="/bookings"
@@ -90,7 +97,15 @@ const Sidebar = () => {
                         `${styles.item} ${isActive ? styles.active : ""}`
                     }
                     onClick={closeSidebar}> 
-                        <img src='/bookings.png' alt='' /> Bookings
+                        <FiBookOpen size={20}/> Bookings
+                    </NavLink>
+
+                    <NavLink to="/schedules"
+                    className={({ isActive }) => 
+                        `${styles.item} ${isActive ? styles.active : ""}`
+                    }
+                    onClick={closeSidebar}> 
+                        <GrSchedules size={20}/> Schedules
                     </NavLink>
 
                     <NavLink to="/testimonials"
@@ -98,7 +113,7 @@ const Sidebar = () => {
                         `${styles.item} ${isActive ? styles.active : ""}`
                     }
                     onClick={closeSidebar}>
-                        <img src='/testimonials.png' alt='' /> Testimonials
+                        <FiMessageSquare size={20}/>Testimonials
                     </NavLink>
                 </nav>
             </div>

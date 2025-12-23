@@ -1,17 +1,17 @@
-// File: src/pages/Meetings/Meetings.tsx
 import { useEffect, useMemo, useState } from "react";
 import Sidebar from "../Dashboard/components/sidebar/Sidebar";
 import Topbar from "../Dashboard/components/topbar/Topbar";
 import styles from "./Meetings.module.css";
-import { fetchMeetings, type Meeting } from "../../services/meetings.service";
+import { fetchMeetings, type EnquiryMeeting  } from "../../services/meetings.service";
 import { fetchServices, type Service } from "../../services/doula.service";
 import { useToast } from "../../shared/ToastContext";
 import { FiSearch } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 const Meetings = () => {
   const { showToast } = useToast();
-
-  const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const navigate = useNavigate();
+  const [meetings, setMeetings] = useState<EnquiryMeeting []>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -89,20 +89,18 @@ const Meetings = () => {
     setPage(1);
   };
 
-  const getStatusClass = (st: string) => {
-    switch (st) {
-      case "SCHEDULED":
-        return `${styles.statusPill} ${styles.scheduled}`;
-      case "SCHEDULED":
-        return `${styles.statusPill} ${styles.scheduled}`;
-      case "COMPLETED":
-        return `${styles.statusPill} ${styles.completed}`;
-      case "CANCELLED":
-        return `${styles.statusPill} ${styles.cancelled}`;
-      default:
-        return styles.statusPill;
-    }
-  };
+  // const getStatusClass = (st: string) => {
+  //   switch (st) {
+  //     case "SCHEDULED":
+  //       return `${styles.statusPill} ${styles.scheduled}`;
+  //     case "COMPLETED":
+  //       return `${styles.statusPill} ${styles.completed}`;
+  //     case "CANCELLED":
+  //       return `${styles.statusPill} ${styles.cancelled}`;
+  //     default:
+  //       return styles.statusPill;
+  //   }
+  // };
 
   return (
     <div className={styles.root}>
@@ -115,13 +113,9 @@ const Meetings = () => {
           {/* HEADER */}
           <div className={styles.headerRow}>
             <div className={styles.titleBlock}>
-              <h2 className={styles.title}>Scheduled Meetings</h2>
-              <p className={styles.subtitle}>Manage your scheduled client meetings ({total} total)</p>
+              <h2 className={styles.title}>Customer Appointments</h2>
+              {/* <p className={styles.subtitle}>Manage your scheduled client meetings ({total} total)</p> */}
             </div>
-
-            <button className={styles.createBtn} disabled>
-              + Create Meeting
-            </button>
           </div>
 
           {/* FILTERS */}
@@ -184,37 +178,70 @@ const Meetings = () => {
             ) : meetings.length === 0 ? (
               <div className={styles.stateRow}>No meetings found.</div>
             ) : (
-              meetings.map((m) => (
-                <div key={m.id} className={styles.meetingRow}>
-                  <div className={styles.meetingLeft}>
-                    <div className={styles.avatar}>{m.bookedBy?.userId ? (m.bookedBy?.userId.slice(0,2).toUpperCase()) : "CL"}</div>
-                    <div className={styles.meetingInfo}>
-                      <div className={styles.clientName}>{m.bookedBy?.userId ? (m.bookedBy?.userId) : m.bookedBy?.id || 'Client'}</div>
-                      <div className={styles.metaRow}>
-                        <span className={getStatusClass(m.status)}>{m.status}</span>
-                        <span className={styles.meetingId}>ID: {m.id.slice(0,8)}</span>
-                        <span className={styles.mode}>Virtual</span>
+              meetings.map((m) => {
+                const [start, end] = m.meetingsTimeSlots.split("-");
+
+                return (
+                  <div key={m.id} className={styles.meetingRow}>
+                    <div className={styles.meetingLeft}>
+                      <div className={styles.avatar}>
+                        {m.name.slice(0, 2).toUpperCase()}
                       </div>
 
-                      <div className={styles.whenRow}>
-                        {m.slot ? (
-                          <>
-                            <div className={styles.date}>{new Date(m.slot.startTime).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric'})}</div>
-                            <div className={styles.time}>{new Date(m.slot.startTime).toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'})} - {new Date(m.slot.endTime).toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'})}</div>
-                          </>
-                        ) : '—'}
-                      </div>
+                      <div className={styles.meetingInfo}>
+                        <div className={styles.metaRow}>
+                          <div className={styles.clientName}>{m.name}</div>
+                            <span className={`${styles.statusPill} ${styles.scheduled}`}>
+                              Scheduled
+                            </span>
+                          </div>
 
-                      {m.remarks && <div className={styles.remarks}>{m.remarks}</div>}
+                          {/* <span className={styles.meetingId}>
+                            ID: {m.id.slice(0, 8)}
+                          </span> */}
+                          {/* <span className={styles.mode}>Virtual</span> */}
+
+                        <div className={styles.whenRow}>
+                          <div className={styles.date}>
+                            {new Date(m.meetingsDate).toLocaleDateString("en-IN", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </div>
+                          <div className={styles.time}>
+                            {start} - {end}
+                          </div>
+                                                  
+                          <span className={styles.service}>
+                            {m.serviceName}
+                          </span>
+
+                        </div>
+
+                        {m.additionalNotes && (
+                          <div className={styles.remarks}>
+                            {m.additionalNotes}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className={styles.meetingRight}>
+                      <button
+                          className={styles.viewBtn}
+                          onClick={() => navigate(`/meetings/${m.meetingsId}`)}
+                        >
+                          View Details
+                        </button>
+                      <button className={styles.joinBtn} disabled>
+                        Join Meeting
+                      </button>
                     </div>
                   </div>
+                );
+              })
 
-                  <div className={styles.meetingRight}>
-                    <button className={styles.viewBtn} aria-disabled>View</button>
-                    <a className={styles.joinBtn} href={m.link || '#'} target="_blank" rel="noreferrer">Join Meeting</a>
-                  </div>
-                </div>
-              ))
             )}
 
             {/* Footer */}

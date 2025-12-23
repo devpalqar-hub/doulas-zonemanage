@@ -21,7 +21,11 @@ const isoToTime = (iso: string) => {
   return `${hh}:${mm}`;
 };
 
-const isoToDate = (iso: string) => iso.slice(0, 10);
+const isoToDate = (iso: string) => {
+  if (!iso) return "--" ;
+  return iso.slice(0, 10);
+}
+
 
 const MyAvailability = () => {
   const [slots, setSlots] = useState<FlatSlot[]>([]);

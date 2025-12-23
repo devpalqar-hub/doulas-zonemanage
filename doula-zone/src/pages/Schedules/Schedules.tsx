@@ -1,22 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
 import Sidebar from "../Dashboard/components/sidebar/Sidebar";
 import Topbar from "../Dashboard/components/topbar/Topbar";
-import styles from "./Bookings.module.css";
-import { fetchBookings, type Booking } from "../../services/booking.service";
+import styles from "./Schedules.module.css";
+
+import { fetchSchedules, type Schedule } from "../../services/schedule.service";
 import { fetchServices, type Service } from "../../services/doula.service";
 import { useToast } from "../../shared/ToastContext";
+
 import { FiSearch } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
 
-const Bookings = () => {
+const Schedules = () => {
   const { showToast } = useToast();
 
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // filters
   const [search, setSearch] = useState("");
   const [services, setServices] = useState<Service[]>([]);
   const [serviceId, setServiceId] = useState("");
@@ -24,13 +24,10 @@ const Bookings = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  // pagination
   const [page, setPage] = useState(1);
   const limit = 10;
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const loadServices = async () => {
@@ -45,37 +42,45 @@ const Bookings = () => {
     loadServices();
   }, []);
 
-  // fetch data
   useEffect(() => {
     const load = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const { bookings, meta } = await fetchBookings({
-          search: search.trim(),
+        const { schedules, meta } = await fetchSchedules({
+          page,
+          limit,
+          search,
           serviceId,
           status,
           startDate,
           endDate,
-          page,
-          limit,
         });
 
-        setBookings(bookings);
+        setSchedules(schedules);
         setTotal(meta.total);
         setTotalPages(meta.totalPages);
       } catch (err) {
         console.error(err);
-        setError("Failed to load bookings.");
-        showToast("Failed to load bookings", "error");
+        setError("Failed to load schedules");
+        showToast("Failed to load schedules", "error");
       } finally {
         setLoading(false);
       }
     };
 
     load();
-  }, [search, serviceId, status, startDate, endDate, page, showToast]);
+  }, [page, search, serviceId, status, startDate, endDate, showToast]);
+
+  const resetFilters = () => {
+    setSearch("");
+    setServiceId("");
+    setStatus("");
+    setStartDate("");
+    setEndDate("");
+    setPage(1);
+  };
 
   const visibleRange = useMemo(() => {
     if (total === 0) return { from: 0, to: 0 };
@@ -83,21 +88,6 @@ const Bookings = () => {
     const to = Math.min(total, page * limit);
     return { from, to };
   }, [page, limit, total]);
-
-  const resetFilters = () => {
-    setSearch("");
-    setStatus("");
-    setStartDate("");
-    setEndDate("");
-    setServiceId("");
-    setPage(1);
-  };
-
-  const getStatusClass = (status: string) => {
-    if (status === "ACTIVE") return `${styles.statusPill} ${styles.statusActive}`;
-    if (status === "COMPLETED") return `${styles.statusPill} ${styles.statusCompleted}`;
-    return styles.statusPill;
-  };
 
   return (
     <div className={styles.root}>
@@ -110,20 +100,14 @@ const Bookings = () => {
           {/* HEADER */}
           <div className={styles.headerRow}>
             <div className={styles.titleBlock}>
-              <h2 className={styles.title}>Booking Management</h2>
+              <h2 className={styles.title}>Schedule Management</h2>
               <p className={styles.subtitle}>
-                Manage all client bookings ({total} total)
+                Manage all client schedules ({total} total)
               </p>
             </div>
-
-            {/* CREATE BOOKING */}
-            <button className={styles.createBtn} 
-            onClick={() => navigate("/doulas/create")}>
-              +  Create Booking
-            </button>
           </div>
 
-          {/* FILTERS CARD */}
+           {/* FILTERS CARD */}
           <div className={styles.filtersCard}>
             {/* Search Input */}
             <div className={styles.searchRow}>
@@ -213,7 +197,6 @@ const Bookings = () => {
             </div>
           </div>
 
-          {/* TABLE CARD */}
           <div className={styles.tableCard}>
             <div className={styles.tableInner}>
               <div className={styles.tableHeader}>
@@ -221,86 +204,43 @@ const Bookings = () => {
                 <div>Doula</div>
                 <div>Service</div>
                 <div>Start Date</div>
-                <div>End Date</div>
-                <div>Time Slot</div>
+                <div>Duration</div>
                 <div>Status</div>
                 <div>Actions</div>
               </div>
 
-              {/* TABLE BODY */}
               {loading ? (
                 <div className={styles.stateRow}>Loading...</div>
               ) : error ? (
                 <div className={styles.stateRow}>{error}</div>
-              ) : bookings.length === 0 ? (
-                <div className={styles.stateRow}>No bookings found</div>
+              ) : schedules.length === 0 ? (
+                <div className={styles.stateRow}>No schedules found</div>
               ) : (
-                bookings.map((b) => (
-                  <div key={b.id} className={styles.tableRow}>
-                    {/* NAME */}
-                    <div className={styles.mainText}>{b.clientName}</div>
-
-                    {/* DOULA */}
-                    <div className={styles.mainText}>{b.doulaName}</div>
-
-                    {/* SERVICE */}
+                schedules.map((s) => (
+                  <div key={s.scheduleId} className={styles.tableRow}>
+                    <div className={styles.mainText}>{s.clientName}</div>
                     <div className={styles.mainText}>
-                      <span className={styles.serviceStatusPill}>
-                        {b.serviceName}
-                      </span>
+                      {s.doulaName || "—"}
                     </div>
 
-                    {/* START DATE */}
-                    <div className={styles.mainText}>
-                      {new Date(b.startDate).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </div>
-
-                    {/* END DATE */}
-                    <div className={styles.mainText}>
-                      {new Date(b.endDate).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </div>
-
-                    {/* TIME SLOT */}
-                    <div className={styles.mainText}>
-                      {b.slots.length > 0 ? (
-                        <>
-                          {new Date(b.slots[0].startTime).toLocaleTimeString(
-                            "en-IN",
-                            {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                          {" - "}
-                          {new Date(b.slots[0].endTime).toLocaleTimeString(
-                            "en-IN",
-                            {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </>
-                      ) : (
-                        "—"
-                      )}
-                    </div>
-
-                    {/* STATUS */}
                     <div>
-                      <span className={getStatusClass(b.status)}>
-                        {b.status}
+                      <span className={styles.serviceStatusPill}>
+                        {s.serviceName}
                       </span>
                     </div>
 
-                    {/* ACTION DOTS */}
+                    <div className={styles.mainText}>
+                      {new Date(s.startDate).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </div>
+
+                    <div className={styles.mainText}>{s.duration}</div>
+
+                    <div className={styles.mainText}>{s.status}</div>
+
                     <div className={styles.actionsCell}>
                       <button className={styles.iconBtn}>
                         <BsThreeDotsVertical />
@@ -321,7 +261,7 @@ const Bookings = () => {
                 <button
                   className={styles.pageBtn}
                   disabled={page === 1}
-                  onClick={() => setPage(page - 1)}
+                  onClick={() => setPage((p) => p - 1)}
                 >
                   Previous
                 </button>
@@ -333,7 +273,7 @@ const Bookings = () => {
                 <button
                   className={styles.pageBtn}
                   disabled={page === totalPages}
-                  onClick={() => setPage(page + 1)}
+                  onClick={() => setPage((p) => p + 1)}
                 >
                   Next
                 </button>
@@ -346,4 +286,4 @@ const Bookings = () => {
   );
 };
 
-export default Bookings;
+export default Schedules;
