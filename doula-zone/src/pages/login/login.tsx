@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import styles from "./Login.module.css";
+import styles from "./login.module.css";
 import { sendOtp, verifyOtp } from "../../services/auth.service";
 import { useToast } from "../../shared/ToastContext";
 import { getZoneManagerProfile } from "../../services/zoneManager.service";
