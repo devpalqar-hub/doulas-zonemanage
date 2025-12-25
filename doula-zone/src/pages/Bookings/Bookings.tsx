@@ -84,6 +84,11 @@ const Bookings = () => {
     return { from, to };
   }, [page, limit, total]);
 
+  const getDerivedTimeSlot = () => {
+    return "09:00 AM - 06:00 PM";
+  };
+
+
   const resetFilters = () => {
     setSearch("");
     setStatus("");
@@ -118,7 +123,7 @@ const Bookings = () => {
 
             {/* CREATE BOOKING */}
             <button className={styles.createBtn} 
-            onClick={() => navigate("/doulas/create")}>
+            onClick={() => navigate("/bookings/create")}>
               +  Create Booking
             </button>
           </div>
@@ -270,28 +275,9 @@ const Bookings = () => {
 
                     {/* TIME SLOT */}
                     <div className={styles.mainText}>
-                      {b.slots.length > 0 ? (
-                        <>
-                          {new Date(b.slots[0].startTime).toLocaleTimeString(
-                            "en-IN",
-                            {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                          {" - "}
-                          {new Date(b.slots[0].endTime).toLocaleTimeString(
-                            "en-IN",
-                            {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </>
-                      ) : (
-                        "—"
-                      )}
+                      {getDerivedTimeSlot()}
                     </div>
+
 
                     {/* STATUS */}
                     <div>

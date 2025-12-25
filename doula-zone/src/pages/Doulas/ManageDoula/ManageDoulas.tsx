@@ -331,7 +331,9 @@ const ManageDoulas = () => {
                         <MdOutlineRemoveRedEye size={15} />
                       </button>
 
-                      <button className={styles.actionBtn}>
+                      <button className={styles.actionBtn}
+                        onClick={() => navigate(`/doulas/${d.userId}/edit`)}
+                      >
                         <FiEdit size={15} />
                       </button>
 

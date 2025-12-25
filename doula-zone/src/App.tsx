@@ -13,6 +13,8 @@ import Meetings from './pages/Meetings/Meetings';
 import Schedules from './pages/Schedules/Schedules';
 import ViewDoulaPage from './pages/Doulas/ViewDoula';
 import MeetingDetailsPage from './pages/Meetings/MeetingDetails';
+import CreateBooking from './pages/Bookings/CreateBooking';
+import EditDoula from './pages/EditDoula/EditDoula';
 
 function PrivaterRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem("token");
@@ -55,6 +57,12 @@ function App() {
           </PrivaterRoute>
         } />
 
+        <Route path='/doulas/:doulaId/edit' element={
+          <PrivaterRoute>
+            <EditDoula />
+          </PrivaterRoute>
+        } />
+
         <Route path="meetings" element={
           <PrivaterRoute>
             <Meetings />
@@ -70,6 +78,12 @@ function App() {
         <Route path="/bookings" element={
           <PrivaterRoute>
             <Bookings />
+          </PrivaterRoute>
+        } />
+
+        <Route path="/bookings/create" element={
+          <PrivaterRoute>
+            <CreateBooking />
           </PrivaterRoute>
         } />
 

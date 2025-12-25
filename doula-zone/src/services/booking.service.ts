@@ -1,37 +1,19 @@
 import api from "./api";
 
-export type PaymentDetails = {
-  amount: number;
-  method: string;
-};
-
-export type BookingSlot = {
-  id: string;
-  startTime: string;
-  endTime: string;
-};
-
 export type Booking = {
   id: string;
   clientName: string;
   clientUserId: string;
+
   doulaName: string;
   doulaUserId: string;
-  regionName: string;
-  serviceName: string;
 
+  serviceName: string;
   startDate: string;
   endDate: string;
-            
-  createdAt: string;
-  status: string;
 
-  slots: {
-    id: string;
-    startTime: string;
-    endTime: string;
-  }[];
-}
+  status: string;
+};
 
 export type BookingMeta = {
   total: number;
@@ -46,14 +28,14 @@ export type BookingFilters = {
   search?: string;
   serviceId?: string;
   status?: string;
-  startDate?: string; 
-  endDate?: string;   
+  startDate?: string;
+  endDate?: string;
   page?: number;
   limit?: number;
 };
 
 export const fetchBookings = async (filters: BookingFilters) => {
-  const res = await api.get("/service-booked", {
+  const res = await api.get("/zonemanager/booked-services/list", {
     params: {
       search: filters.search || undefined,
       serviceId: filters.serviceId || undefined,
@@ -68,25 +50,25 @@ export const fetchBookings = async (filters: BookingFilters) => {
   const bookings: Booking[] = res.data.data.map((b: any) => ({
     id: b.bookingId,
     clientName: b.clientName,
-    clientUserId: b.clientUserId,
+    clientUserId: b.clientId,
 
     doulaName: b.doulaName,
-    doulaUserId: b.doulaUserId,
+    doulaUserId: b.doulaId,
 
-    regionName: b.regionName,
     serviceName: b.serviceName,
+    startDate: b.startDate,
+    endDate: b.endDate,
 
-    startDate: b.start_date,
-    endDate: b.end_date,
-
-    createdAt: b.createdAt,
     status: b.status,
-
-    slots: b.timeSlots || [],
   }));
 
   return {
     bookings,
     meta: res.data.meta,
   };
+};
+
+export const createBooking = async (payload: any) => {
+  const res = await api.post("/intake/forms", payload);
+  return res.data;
 };

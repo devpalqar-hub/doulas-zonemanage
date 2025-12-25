@@ -105,6 +105,7 @@
   padding: 8px 10px;
   font-size: 13px;
   background: #ffffff;
+  box-sizing: border-box;
 }
 
 .deleteBtn {

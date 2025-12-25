@@ -1,9 +1,5 @@
 import api from "./api";
 
-/* =====================
-   TYPES
-   ===================== */
-
 export interface Language {
   id: string;
   name: string;
@@ -80,9 +76,6 @@ export interface Service {
   name: string;
 }
 
-/* =====================
-   FETCH DOULAS (BACKEND FILTERING)
-   ===================== */
 
 export const fetchDoulas = async (params?: {
   search?: string;
@@ -161,5 +154,151 @@ export const createDoula = async (formData: FormData) => {
   const res = await api.post("/doula", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+  return res.data;
+};
+
+export const fetchZonemanagerDoulas = async (): Promise<DoulaListItem[]> => {
+  const res = await api.get("/zonemanager/doulas/list");
+  return res.data.data;
+};
+
+
+/* =====================
+   Edit Types
+===================== */
+
+export interface DoulaGalleryImage {
+  id: string;
+  url: string;
+  isPrimary?: boolean;
+}
+
+export interface DoulaProfileResponse {
+  userId: string;
+  name: string;
+  email: string;
+  yoe: number;
+  description: string;
+  qualification: string;
+  achievements: string;
+  specialities: string[];
+  ratings: number | null;
+  reviewsCount: number;
+  profileImage: string | null;
+  isActive: boolean;
+  services: {
+    servicePricingId: string;
+    serviceId: string;
+    serviceName: string;
+    price: number;
+  }[];
+  regions: string[];
+  galleryImages: DoulaGalleryImage[];
+}
+
+/* =====================
+   FETCH DOULA PROFILE
+===================== */
+
+export const fetchDoulaProfile = async (
+  doulaId: string
+): Promise<DoulaProfileResponse> => {
+  const res = await api.get(`/doula/${doulaId}`);
+  const d = res.data.data;
+
+  const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
+
+  return {
+    userId: d.userId,
+    name: d.name,
+    email: d.email,
+    yoe: d.yoe ?? 0,
+    description: d.description ?? "",
+    qualification: d.qualification ?? "",
+    achievements: d.achievements ?? "",
+    specialities: d.specialities ?? [],
+    ratings: d.ratings ?? null,
+    reviewsCount: d.reviewsCount ?? 0,
+    isActive: d.isActive ?? true,
+
+    profileImage: d.profileImage
+      ? d.profileImage.startsWith("http")
+        ? d.profileImage
+        : `${IMAGE_BASE_URL}/${d.profileImage}`
+      : null,
+
+    services: (d.serviceNames ?? []).map((s: any) => ({
+      servicePricingId: s.servicePricingId,
+      serviceId: s.serviceId,
+      serviceName: s.serviceName,
+      price: Number(s.price),
+    })),
+
+    regions: (d.regionNames ?? []).map((r: any) => r.name),
+
+    galleryImages: (d.galleryImages ?? []).map((g: any) => ({
+      id: g.id,
+      url: g.url.startsWith("http")
+        ? g.url
+        : `${IMAGE_BASE_URL}/${g.url}`,
+    })),
+  };
+};
+
+/* =====================
+   UPDATE DOULA PROFILE
+===================== */
+
+export const updateDoulaProfile = async (
+  doulaId: string,
+  payload: {
+    name: string;
+    is_active: boolean;
+    description: string;
+    achievements: string;
+    qualification: string;
+    yoe: number;
+    specialities: string[];
+  }
+) => {
+  const res = await api.patch(
+    "/zonemanager/doulas/profile",
+    payload,
+    { params: { doulaId } }
+  );
+  return res.data;
+};
+
+/* =====================
+   GALLERY
+===================== */
+
+export const uploadDoulaGalleryImages = async (
+  doulaId: string,
+  files: File[]
+) => {
+  const formData = new FormData();
+  files.forEach((f) => formData.append("images", f));
+
+  const res = await api.post(
+    "/zonemanager/doulas/gallery/images",
+    formData,
+    {
+      params: { doulaId },
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  );
+
+  return res.data;
+};
+
+export const deleteDoulaGalleryImage = async (
+  doulaId: string,
+  imageId: string
+) => {
+  const res = await api.delete(
+    "/zonemanager/doulas/gallery/images",
+    { params: { doulaId, imageId } }
+  );
   return res.data;
 };

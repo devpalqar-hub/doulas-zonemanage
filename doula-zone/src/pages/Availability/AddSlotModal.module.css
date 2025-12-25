@@ -27,6 +27,7 @@
   border: 1px solid #dcdcdc;
   font-size: 14px;
   outline: none;
+  box-sizing: border-box;
 }
 
 .field input:focus {
