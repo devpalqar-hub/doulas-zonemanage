@@ -1,4 +1,4 @@
-import styles from "../Createdoula/CreateDoula.module.css";
+import styles from "../CreateDoula/CreateDoula.module.css";
 
 interface StepProgressProps {
   currentStep: number;
