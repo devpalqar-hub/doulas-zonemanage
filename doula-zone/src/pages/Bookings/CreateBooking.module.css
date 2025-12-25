@@ -1,0 +1,161 @@
+
+.root {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pageContent {
+  padding: 32px;
+  overflow: auto;
+}
+
+/* Card */
+.formCard {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+/* Section title */
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172b;
+  margin-bottom: 20px;
+}
+
+/* Grid */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 25px;
+}
+
+/* Inputs */
+.formGrid input,
+.formGrid select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.formGrid input:focus,
+.formGrid select:focus {
+  border-color: #4f46e5;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.cancelBtn {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelBtn:hover {
+  background: #f8fafc;
+}
+
+.createBtn {
+  background: #f94355;
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.createBtn:hover {
+  background: #e63946;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1024px) {
+  .pageContent {
+    padding: 24px;
+  }
+  
+  .formCard {
+    padding: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageContent {
+    padding: 20px;
+  }
+  
+  .formCard {
+    padding: 24px;
+    gap: 28px;
+  }
+  
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .sectionTitle {
+    margin-bottom: 16px;
+  }
+  
+  .actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  
+  .cancelBtn,
+  .createBtn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageContent {
+    padding: 16px;
+  }
+  
+  .formCard {
+    padding: 20px;
+    gap: 24px;
+  }
+  
+  .formGrid {
+    gap: 16px;
+  }
+}

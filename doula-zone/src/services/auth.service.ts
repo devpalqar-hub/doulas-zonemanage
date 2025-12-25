@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://31.97.237.63/doulas/backend/v1";
+const API_URL = "https://api.bambinidoulas.com/backend/v1";
 
 //  Send OTP
 export const sendOtp = async (email: string) => {

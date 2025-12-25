@@ -7,6 +7,7 @@ import { fetchServices, type Service } from "../../services/doula.service";
 import { useToast } from "../../shared/ToastContext";
 import { FiSearch } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 const Bookings = () => {
   const { showToast } = useToast();
@@ -28,6 +29,8 @@ const Bookings = () => {
   const limit = 10;
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadServices = async () => {
@@ -81,6 +84,11 @@ const Bookings = () => {
     return { from, to };
   }, [page, limit, total]);
 
+  const getDerivedTimeSlot = () => {
+    return "09:00 AM - 06:00 PM";
+  };
+
+
   const resetFilters = () => {
     setSearch("");
     setStatus("");
@@ -114,7 +122,8 @@ const Bookings = () => {
             </div>
 
             {/* CREATE BOOKING */}
-            <button className={styles.createBtn}>
+            <button className={styles.createBtn} 
+            onClick={() => navigate("/bookings/create")}>
               +  Create Booking
             </button>
           </div>
@@ -220,7 +229,7 @@ const Bookings = () => {
                 <div>End Date</div>
                 <div>Time Slot</div>
                 <div>Status</div>
-                <div></div>
+                <div>Actions</div>
               </div>
 
               {/* TABLE BODY */}
@@ -266,28 +275,9 @@ const Bookings = () => {
 
                     {/* TIME SLOT */}
                     <div className={styles.mainText}>
-                      {b.slots.length > 0 ? (
-                        <>
-                          {new Date(b.slots[0].startTime).toLocaleTimeString(
-                            "en-IN",
-                            {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                          {" - "}
-                          {new Date(b.slots[0].endTime).toLocaleTimeString(
-                            "en-IN",
-                            {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </>
-                      ) : (
-                        "—"
-                      )}
+                      {getDerivedTimeSlot()}
                     </div>
+
 
                     {/* STATUS */}
                     <div>

@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import type { DoulaFormData } from "../CreateDoula/CreateDoula";
 import styles from "../CreateDoula/CreateDoula.module.css";
 import { FiUpload } from "react-icons/fi";
+import AvatarCropper from "../../../components/AvatarCropper";
 
 interface Props {
   data: DoulaFormData;
@@ -12,6 +13,10 @@ interface Props {
 
 const StepPersonalInfo = ({ data, onChange, onNext }: Props) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const [showCropper, setShowCropper] = useState(false);
+  const [rawImage, setRawImage] = useState<string | null>(null);
+
 
   const handleInputChange = (
     field: keyof DoulaFormData,
@@ -27,6 +32,8 @@ const StepPersonalInfo = ({ data, onChange, onNext }: Props) => {
     if (!file) return;
 
     const preview = URL.createObjectURL(file);
+    setRawImage(preview);
+    setShowCropper(true);
 
     onChange({
       ...data,
@@ -162,6 +169,29 @@ const StepPersonalInfo = ({ data, onChange, onNext }: Props) => {
             handleFileChange(file);
           }}
         />
+        {showCropper && rawImage && (
+        <AvatarCropper
+          image={rawImage}
+          onCropComplete={(croppedBlob) => {
+            const croppedFile = new File(
+              [croppedBlob],
+              "profile.jpg",
+              { type: "image/jpeg" }
+            );
+
+            const preview = URL.createObjectURL(croppedBlob);
+
+            onChange({
+              ...data,
+              profileImageFile: croppedFile,
+              profileImagePreview: preview,
+            });
+
+            setShowCropper(false);
+          }}
+        />
+      )}
+
       </div>
 
       {/* Actions */}

@@ -10,6 +10,11 @@ import Bookings from './pages/Bookings/Bookings';
 import Testimonials from './pages/Testimonials/Testimonials';
 import TestimonialView from './pages/Testimonials/TestimonialView';
 import Meetings from './pages/Meetings/Meetings';
+import Schedules from './pages/Schedules/Schedules';
+import ViewDoulaPage from './pages/Doulas/ViewDoula';
+import MeetingDetailsPage from './pages/Meetings/MeetingDetails';
+import CreateBooking from './pages/Bookings/CreateBooking';
+import EditDoula from './pages/EditDoula/EditDoula';
 
 function PrivaterRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem("token");
@@ -40,9 +45,21 @@ function App() {
           </PrivaterRoute>
         } />
 
+        <Route path='/doulas/:id' element={
+          <PrivaterRoute>
+            <ViewDoulaPage />
+          </PrivaterRoute>
+        } />
+
         <Route path='/doulas/create' element={
           <PrivaterRoute>
             <CreateDoula />
+          </PrivaterRoute>
+        } />
+
+        <Route path='/doulas/:doulaId/edit' element={
+          <PrivaterRoute>
+            <EditDoula />
           </PrivaterRoute>
         } />
 
@@ -52,9 +69,27 @@ function App() {
           </PrivaterRoute>
         } />
 
+        <Route path="meetings/:id" element={
+          <PrivaterRoute>
+            <MeetingDetailsPage />
+          </PrivaterRoute>
+        } />
+
         <Route path="/bookings" element={
           <PrivaterRoute>
             <Bookings />
+          </PrivaterRoute>
+        } />
+
+        <Route path="/bookings/create" element={
+          <PrivaterRoute>
+            <CreateBooking />
+          </PrivaterRoute>
+        } />
+
+        <Route path="/schedules" element={
+          <PrivaterRoute>
+            <Schedules />
           </PrivaterRoute>
         } />
 
@@ -68,9 +103,7 @@ function App() {
           <PrivaterRoute>
             <TestimonialView />
           </PrivaterRoute>
-        } />
-
-        
+        } />     
 
       </Routes>
     </BrowserRouter>

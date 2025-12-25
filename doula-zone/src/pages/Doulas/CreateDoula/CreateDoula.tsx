@@ -8,7 +8,7 @@ import ProfessionalInfoStep from "../steps/ProfessionalInfoStep";
 import styles from "./CreateDoula.module.css";
 import { FaArrowLeft } from "react-icons/fa6";
 import PricingServicesStep from "../steps/PricingServicesStep";
-import AvailabilityStep from "../steps/AvailabilityServicesStep";
+import GalleryStep from "../steps/GalleryStep";
 import ReviewSubmitStep from "../steps/ReviewSubmitStep";
 
 export type DoulaFormData = {
@@ -26,10 +26,11 @@ export type DoulaFormData = {
   yoe?: number | null;
   languages: string[]
   regionId: string;
-
-  services?: Array<{ serviceId: string; price: string }>;
-
+  services?: Array<{ serviceId: string; price: string; serviceName?: string }>;
   availabilitySlots?: any[];
+
+  galleryImages: File[];
+  galleryPreviews: string[];
 };
 
 const initialFormData: DoulaFormData = {
@@ -47,13 +48,16 @@ const initialFormData: DoulaFormData = {
   regionId: "",
   services: [],
   availabilitySlots: [],
+
+  galleryImages: [],
+  galleryPreviews: [],
 };
 
 const steps = [
   "Personal Information",
   "Professional Information",
   "Services & Pricing",
-  "Availability",
+  "Gallery",
   "Review & Submit",
 ];
 
@@ -152,7 +156,10 @@ const CreateDoula = () => {
 
               {currentStep === 4 && (
                 <div className={styles.placeholderStep}>
-                  <AvailabilityStep />
+                  <GalleryStep
+                    data={formData}
+                    onChange={setFormData}
+                  />
                   <div className={styles.stepNavRow}>
                     <button
                       type="button"

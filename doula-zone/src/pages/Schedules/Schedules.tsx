@@ -1,21 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
 import Sidebar from "../Dashboard/components/sidebar/Sidebar";
 import Topbar from "../Dashboard/components/topbar/Topbar";
-import styles from "./Meetings.module.css";
-import { fetchMeetings, type EnquiryMeeting  } from "../../services/meetings.service";
+import styles from "./Schedules.module.css";
+
+import { fetchSchedules, type Schedule } from "../../services/schedule.service";
 import { fetchServices, type Service } from "../../services/doula.service";
 import { useToast } from "../../shared/ToastContext";
-import { FiSearch } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
 
-const Meetings = () => {
+import { FiSearch } from "react-icons/fi";
+import { BsThreeDotsVertical } from "react-icons/bs";
+
+const Schedules = () => {
   const { showToast } = useToast();
-  const navigate = useNavigate();
-  const [meetings, setMeetings] = useState<EnquiryMeeting []>([]);
+
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // filters
   const [search, setSearch] = useState("");
   const [services, setServices] = useState<Service[]>([]);
   const [serviceId, setServiceId] = useState("");
@@ -23,7 +24,6 @@ const Meetings = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  // pagination
   const [page, setPage] = useState(1);
   const limit = 10;
   const [total, setTotal] = useState(0);
@@ -48,30 +48,39 @@ const Meetings = () => {
         setLoading(true);
         setError(null);
 
-        const { meetings: items, meta } = await fetchMeetings({
-          search: search.trim(),
+        const { schedules, meta } = await fetchSchedules({
+          page,
+          limit,
+          search,
           serviceId,
           status,
           startDate,
           endDate,
-          page,
-          limit,
         });
 
-        setMeetings(items);
+        setSchedules(schedules);
         setTotal(meta.total);
         setTotalPages(meta.totalPages);
       } catch (err) {
         console.error(err);
-        setError("Failed to load meetings.");
-        showToast("Failed to load meetings", "error");
+        setError("Failed to load schedules");
+        showToast("Failed to load schedules", "error");
       } finally {
         setLoading(false);
       }
     };
 
     load();
-  }, [search, serviceId, status, startDate, endDate, page]);
+  }, [page, search, serviceId, status, startDate, endDate, showToast]);
+
+  const resetFilters = () => {
+    setSearch("");
+    setServiceId("");
+    setStatus("");
+    setStartDate("");
+    setEndDate("");
+    setPage(1);
+  };
 
   const visibleRange = useMemo(() => {
     if (total === 0) return { from: 0, to: 0 };
@@ -79,28 +88,6 @@ const Meetings = () => {
     const to = Math.min(total, page * limit);
     return { from, to };
   }, [page, limit, total]);
-
-  const resetFilters = () => {
-    setSearch("");
-    setStatus("");
-    setStartDate("");
-    setEndDate("");
-    setServiceId("");
-    setPage(1);
-  };
-
-  // const getStatusClass = (st: string) => {
-  //   switch (st) {
-  //     case "SCHEDULED":
-  //       return `${styles.statusPill} ${styles.scheduled}`;
-  //     case "COMPLETED":
-  //       return `${styles.statusPill} ${styles.completed}`;
-  //     case "CANCELLED":
-  //       return `${styles.statusPill} ${styles.cancelled}`;
-  //     default:
-  //       return styles.statusPill;
-  //   }
-  // };
 
   return (
     <div className={styles.root}>
@@ -113,12 +100,14 @@ const Meetings = () => {
           {/* HEADER */}
           <div className={styles.headerRow}>
             <div className={styles.titleBlock}>
-              <h2 className={styles.title}>Customer Appointments</h2>
-              {/* <p className={styles.subtitle}>Manage your scheduled client meetings ({total} total)</p> */}
+              <h2 className={styles.title}>Schedule Management</h2>
+              <p className={styles.subtitle}>
+                Manage all client schedules ({total} total)
+              </p>
             </div>
           </div>
 
-                   {/* FILTERS CARD */}
+           {/* FILTERS CARD */}
           <div className={styles.filtersCard}>
             {/* Search Input */}
             <div className={styles.searchRow}>
@@ -208,89 +197,86 @@ const Meetings = () => {
             </div>
           </div>
 
-          {/* LIST */}
-          <div className={styles.listCard}>
-            {loading ? (
-              <div className={styles.stateRow}>Loading meetings...</div>
-            ) : error ? (
-              <div className={styles.stateRow}>{error}</div>
-            ) : meetings.length === 0 ? (
-              <div className={styles.stateRow}>No meetings found.</div>
-            ) : (
-              meetings.map((m) => {
-                const [start, end] = m.meetingsTimeSlots.split("-");
+          <div className={styles.tableCard}>
+            <div className={styles.tableInner}>
+              <div className={styles.tableHeader}>
+                <div>Name</div>
+                <div>Doula</div>
+                <div>Service</div>
+                <div>Start Date</div>
+                <div>Duration</div>
+                <div>Status</div>
+                <div>Actions</div>
+              </div>
 
-                return (
-                  <div key={m.id} className={styles.meetingRow}>
-                    <div className={styles.meetingLeft}>
-                      <div className={styles.avatar}>
-                        {m.name.slice(0, 2).toUpperCase()}
-                      </div>
-
-                      <div className={styles.meetingInfo}>
-                        <div className={styles.metaRow}>
-                          <div className={styles.clientName}>{m.name}</div>
-                            <span className={`${styles.statusPill} ${styles.scheduled}`}>
-                              Scheduled
-                            </span>
-                          </div>
-
-                          {/* <span className={styles.meetingId}>
-                            ID: {m.id.slice(0, 8)}
-                          </span> */}
-                          {/* <span className={styles.mode}>Virtual</span> */}
-
-                        <div className={styles.whenRow}>
-                          <div className={styles.date}>
-                            {new Date(m.meetingsDate).toLocaleDateString("en-IN", {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            })}
-                          </div>
-                          <div className={styles.time}>
-                            {start} - {end}
-                          </div>
-                                                  
-                          <span className={styles.service}>
-                            {m.serviceName}
-                          </span>
-
-                        </div>
-
-                        {m.additionalNotes && (
-                          <div className={styles.remarks}>
-                            {m.additionalNotes}
-                          </div>
-                        )}
-                      </div>
+              {loading ? (
+                <div className={styles.stateRow}>Loading...</div>
+              ) : error ? (
+                <div className={styles.stateRow}>{error}</div>
+              ) : schedules.length === 0 ? (
+                <div className={styles.stateRow}>No schedules found</div>
+              ) : (
+                schedules.map((s) => (
+                  <div key={s.scheduleId} className={styles.tableRow}>
+                    <div className={styles.mainText}>{s.clientName}</div>
+                    <div className={styles.mainText}>
+                      {s.doulaName || "—"}
                     </div>
 
-                    <div className={styles.meetingRight}>
-                      <button
-                          className={styles.viewBtn}
-                          onClick={() => navigate(`/meetings/${m.meetingsId}`)}
-                        >
-                          View Details
-                        </button>
-                      <button className={styles.joinBtn} disabled>
-                        Join Meeting
+                    <div>
+                      <span className={styles.serviceStatusPill}>
+                        {s.serviceName}
+                      </span>
+                    </div>
+
+                    <div className={styles.mainText}>
+                      {new Date(s.startDate).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </div>
+
+                    <div className={styles.mainText}>{s.duration}</div>
+
+                    <div className={styles.mainText}>{s.status}</div>
+
+                    <div className={styles.actionsCell}>
+                      <button className={styles.iconBtn}>
+                        <BsThreeDotsVertical />
                       </button>
                     </div>
                   </div>
-                );
-              })
+                ))
+              )}
+            </div>
 
-            )}
-
-            {/* Footer */}
-            <div className={styles.footerRow}>
-              <div className={styles.rowsInfo}>Showing {visibleRange.from} of {total}</div>
+            {/* FOOTER */}
+            <div className={styles.tableFooter}>
+              <div className={styles.rowsInfo}>
+                Showing {visibleRange.from} of {total}
+              </div>
 
               <div className={styles.pagination}>
-                <button className={styles.pageBtn} disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</button>
-                <span className={styles.pageIndicator}>Page {page} of {totalPages}</span>
-                <button className={styles.pageBtn} disabled={page === totalPages} onClick={() => setPage(page + 1)}>Next</button>
+                <button
+                  className={styles.pageBtn}
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => p - 1)}
+                >
+                  Previous
+                </button>
+
+                <span className={styles.pageIndicator}>
+                  Page {page} of {totalPages}
+                </span>
+
+                <button
+                  className={styles.pageBtn}
+                  disabled={page === totalPages}
+                  onClick={() => setPage((p) => p + 1)}
+                >
+                  Next
+                </button>
               </div>
             </div>
           </div>
@@ -300,5 +286,4 @@ const Meetings = () => {
   );
 };
 
-export default Meetings;
-
+export default Schedules;
