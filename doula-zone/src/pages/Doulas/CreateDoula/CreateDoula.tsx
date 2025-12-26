@@ -1,4 +1,3 @@
-// src/pages/Doulas/CreateDoula.tsx
 import { useState } from "react";
 import Sidebar from "../../Dashboard/components/sidebar/Sidebar";
 import Topbar from "../../Dashboard/components/topbar/Topbar";
@@ -11,21 +10,30 @@ import PricingServicesStep from "../steps/PricingServicesStep";
 import GalleryStep from "../steps/GalleryStep";
 import ReviewSubmitStep from "../steps/ReviewSubmitStep";
 
-export type DoulaFormData = {
+export type Certificate = {
+  name: string;
+  issuedBy: string;
+  year: string;
+};
 
+export type DoulaFormData = {
   fullName: string;
   email: string;
   phone: string;
-  password: string;
+
   profileImageFile: File | null;
   profileImagePreview: string | null;
 
   description: string;
-  qualification?: string;
-  achievements?: string;
-  yoe?: number | null;
-  languages: string[]
+  qualification: string;
+  yoe: number | null;
+
+  languages: string[];
   regionId: string;
+
+  specialities: string[];
+  certificates: Certificate[];
+
   services?: Array<{ serviceId: string; price: string; serviceName?: string }>;
   availabilitySlots?: any[];
 
@@ -33,19 +41,25 @@ export type DoulaFormData = {
   galleryPreviews: string[];
 };
 
+
 const initialFormData: DoulaFormData = {
   fullName: "",
   email: "",
   phone: "",
-  password: "",
+
   profileImageFile: null,
   profileImagePreview: null,
+
   description: "",
   qualification: "",
-  achievements: "",
   yoe: null,
+
   languages: [],
   regionId: "",
+
+  specialities: [],
+  certificates: [],
+
   services: [],
   availabilitySlots: [],
 
@@ -53,10 +67,11 @@ const initialFormData: DoulaFormData = {
   galleryPreviews: [],
 };
 
+
 const steps = [
   "Personal Information",
   "Professional Information",
-  "Services & Pricing",
+  "Services",
   "Gallery",
   "Review & Submit",
 ];
@@ -112,11 +127,12 @@ const CreateDoula = () => {
                 <ProfessionalInfoStep
                   data={{
                     description: formData.description,
-                    achievements: formData.achievements ?? "",
-                    qualification: formData.qualification ?? "",
-                    yoe: formData.yoe ?? null,
+                    qualification: formData.qualification,
+                    yoe: formData.yoe,
                     languages: formData.languages,
                     regionId: formData.regionId,
+                    specialities: formData.specialities,
+                    certificates: formData.certificates,
                   }}
                   setFormData={(updater) =>
                     setFormData((prev) => {
@@ -125,11 +141,12 @@ const CreateDoula = () => {
                       return {
                         ...prev,
                         description: updated.description,
-                        achievements: updated.achievements,
                         qualification: updated.qualification,
                         yoe: updated.yoe,
                         languages: updated.languages,
                         regionId: updated.regionId,
+                        specialities: updated.specialities,
+                        certificates: updated.certificates,
                       };
                     })
                   }
@@ -137,6 +154,7 @@ const CreateDoula = () => {
                   onPrev={goPrev}
                 />
               )}
+
 
 
               {currentStep === 3 && (

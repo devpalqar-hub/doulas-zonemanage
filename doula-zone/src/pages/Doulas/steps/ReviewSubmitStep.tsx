@@ -1,7 +1,6 @@
 import styles from "../CreateDoula/CreateDoula.module.css";
 import { createDoula } from "../../../services/doula.service";
 import { useToast } from "../../../shared/ToastContext";
-// import { jsx } from "react/jsx-runtime";
 
 type Props = {
   data: any;
@@ -15,57 +14,67 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
     try {
       const form = new FormData();
 
-      // BASIC USER INFO
+      /* ================= BASIC INFO ================= */
+
       form.append("name", data.fullName);
       form.append("email", data.email);
       form.append("phone", data.phone);
-      form.append("password", data.password);
 
       if (data.profileImageFile) {
         form.append("profile_image", data.profileImageFile);
       }
 
-      data.galleryImages.forEach((file: any) => {
+      data.galleryImages.forEach((file: File) => {
         form.append("gallery_image", file);
       });
 
-      // PROFESSIONAL INFO
+      /* ================= PROFESSIONAL INFO ================= */
+
       form.append("description", data.description);
       form.append("qualification", data.qualification);
-      form.append("achievements", data.achievements || "");
-      form.append("yoe", String(data.yoe || 0));
-      form.append("languages", JSON.stringify(data.languages)); 
+      form.append("yoe", String(data.yoe ?? 0));
+      form.append("languages", JSON.stringify(data.languages || []));
 
-      // REGION
-      const zmRegionId = localStorage.getItem("regionId");
+      form.append(
+        "specialities",
+        JSON.stringify(data.specialities || [])
+      );
 
-        if (!zmRegionId) {
-          showToast("Zone manager region not found", "error");
-          return;
-        }
+      form.append(
+        "certificates",
+        JSON.stringify(data.certificates || [])
+      );
 
-        form.append("regionIds", JSON.stringify([zmRegionId]));
+      /* ================= REGION ================= */
 
+      const regionId = localStorage.getItem("regionId");
+      if (!regionId) {
+        showToast("Zone manager region not found", "error");
+        return;
+      }
 
-      // SERVICES 
+      form.append("regionIds", JSON.stringify([regionId]));
+
+      /* ================= SERVICES ================= */
+
       const services: Record<string, number> = {};
       (data.services || []).forEach((s: any) => {
         services[s.serviceId] = Number(s.price);
       });
       form.append("services", JSON.stringify(services));
 
-      // CREATE DOULA
+      /* ================= DEBUG ================= */
+
       console.log("===== DOULA FORM DATA =====");
       for (const pair of form.entries()) {
         console.log(pair[0], pair[1]);
       }
 
-      const res = await createDoula(form);
-      console.log("Created",res);
+      /* ================= API CALL ================= */
+
+      await createDoula(form);
 
       showToast("Doula created successfully!", "success");
-
-      // REDIRECT
       window.location.href = "/doulas";
     } catch (err: any) {
       console.error("DOULA CREATE ERROR:", err);
@@ -78,7 +87,7 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
     <div className={styles.stepCard}>
       <h3 className={styles.sectionTitle}>Review & Submit</h3>
 
-      {/* PERSONAL INFO */}
+      {/* ================= PERSONAL INFO ================= */}
       <div className={styles.reviewCard}>
         <h4>Personal Information</h4>
 
@@ -86,6 +95,7 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
           <img
             src={data.profileImagePreview}
             className={styles.reviewProfileImg}
+            alt="Profile"
           />
         )}
 
@@ -94,23 +104,47 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
         <p><strong>Phone:</strong> {data.phone}</p>
       </div>
 
-      {/* PROFESSIONAL INFO */}
+      {/* ================= PROFESSIONAL INFO ================= */}
       <div className={styles.reviewCard}>
         <h4>Professional Information</h4>
 
         <p><strong>Description:</strong> {data.description}</p>
         <p><strong>Qualification:</strong> {data.qualification}</p>
-        <p><strong>Achievements:</strong> {data.achievements || "—"}</p>
-        <p><strong>Years of Experience:</strong> {data.yoe || "0"}</p>
+        <p><strong>Years of Experience:</strong> {data.yoe ?? 0}</p>
 
-        <p><strong>Languages:</strong>
-          {data.languages.length > 0
-            ? " " + data.languages.join(", ")
-            : " None"}
+        <p>
+          <strong>Languages:</strong>{" "}
+          {data.languages?.length
+            ? data.languages.join(", ")
+            : "None"}
+        </p>
+
+        <p>
+          <strong>Specialities:</strong>{" "}
+          {data.specialities?.length
+            ? data.specialities.join(", ")
+            : "None"}
         </p>
       </div>
 
-      {/* SERVICES */}
+      {/* ================= CERTIFICATES ================= */}
+      <div className={styles.reviewCard}>
+        <h4>Certificates</h4>
+
+        {data.certificates?.length > 0 ? (
+          data.certificates.map((c: any, idx: number) => (
+            <div key={idx} className={styles.reviewServiceRow}>
+              <span>
+                <strong>{c.name}</strong> — {c.issuedBy} ({c.year})
+              </span>
+            </div>
+          ))
+        ) : (
+          <p>No certificates added.</p>
+        )}
+      </div>
+
+      {/* ================= SERVICES ================= */}
       <div className={styles.reviewCard}>
         <h4>Services & Pricing</h4>
 
@@ -126,11 +160,11 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
         )}
       </div>
 
-      {/* GALLERY */}
+      {/* ================= GALLERY ================= */}
       <div className={styles.reviewCard}>
         <h4>Gallery</h4>
 
-        {data.galleryPreviews && data.galleryPreviews.length > 0 ? (
+        {data.galleryPreviews?.length > 0 ? (
           <div className={styles.reviewGalleryGrid}>
             {data.galleryPreviews.map((src: string, idx: number) => (
               <div key={idx} className={styles.reviewGalleryItem}>
@@ -143,14 +177,21 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
         )}
       </div>
 
-
-      {/* SUBMIT FOOTER */}
+      {/* ================= FOOTER ================= */}
       <div className={styles.stepFooter}>
-        <button type="button" className={styles.secondaryBtn} onClick={onPrev}>
+        <button
+          type="button"
+          className={styles.secondaryBtn}
+          onClick={onPrev}
+        >
           Previous
         </button>
 
-        <button type="button" className={styles.primaryBtn} onClick={handleSubmit}>
+        <button
+          type="button"
+          className={styles.primaryBtn}
+          onClick={handleSubmit}
+        >
           Submit
         </button>
       </div>

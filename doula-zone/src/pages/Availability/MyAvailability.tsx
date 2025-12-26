@@ -1,152 +1,225 @@
-// src/pages/Availability/MyAvailability.tsx
 import { useEffect, useState } from "react";
 import Sidebar from "../Dashboard/components/sidebar/Sidebar";
 import Topbar from "../Dashboard/components/topbar/Topbar";
 import styles from "./MyAvailability.module.css";
+
 import AddSlotModal from "./AddSlotModal";
+import AddOffDayModal from "./AddOffDayModal";
+
 import {
   fetchSlots,
   deleteSlot,
+  fetchOffDays,
+  deleteOffDay,
   type FlatSlot,
+  type OffDay,
 } from "../../services/availability.service";
 
-const REGION_ID =
-  import.meta.env.VITE_REGION_ID ||
-  "cd3281d9-94ed-41df-9506-4bc833c7f9e6"; 
+import { FiTrash } from "react-icons/fi";
 
-const isoToTime = (iso: string) => {
+/* ================= HELPERS ================= */
+
+const isoToTime = (iso?: string | null) => {
+  if (!iso) return "--";
   const d = new Date(iso);
-  const hh = String(d.getHours()).padStart(2, "0");
-  const mm = String(d.getMinutes()).padStart(2, "0");
-  return `${hh}:${mm}`;
+  return `${String(d.getHours()).padStart(2, "0")}:${String(
+    d.getMinutes()
+  ).padStart(2, "0")}`;
 };
 
-const isoToDate = (iso: string) => {
-  if (!iso) return "--" ;
-  return iso.slice(0, 10);
-}
+const isoToDate = (iso: string) => iso.slice(0, 10);
 
+/* ================= COMPONENT ================= */
 
 const MyAvailability = () => {
+  const [tab, setTab] = useState<"slots" | "offdays">("slots");
+
+  // slots
   const [slots, setSlots] = useState<FlatSlot[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [openAdd, setOpenAdd] = useState(false);
- 
-  
-    const fetchData = async () => {
-      try {
-        setError(null);
-        const start = new Date();
-        start.setDate(start.getDate() - 7);
-        
-        const end = new Date();
-        end.setDate(end.getDate() + 30);
+  const [loadingSlots, setLoadingSlots] = useState(true);
+  const [openAddSlot, setOpenAddSlot] = useState(false);
+  const [deletingSlotId, setDeletingSlotId] = useState<string | null>(null);
 
-        const res = await fetchSlots(REGION_ID, start, end);
-        setSlots(res.slots);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load availability.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // off days
+  const [offDays, setOffDays] = useState<OffDay[]>([]);
+  const [loadingOffDays, setLoadingOffDays] = useState(true);
+  const [openOffDay, setOpenOffDay] = useState(false);
+  const [deletingOffDayId, setDeletingOffDayId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  /* ================= FETCH ================= */
 
-  const handleDelete = async (slotId: string) => {
-    if (!confirm("Delete this time slot?")) return;
+  const loadSlots = async () => {
     try {
-      setDeletingId(slotId);
-      await deleteSlot(slotId);
-      setSlots((prev) => prev.filter((s) => s.id !== slotId));
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete slot");
+      setLoadingSlots(true);
+      const data = await fetchSlots();
+      setSlots(data);
     } finally {
-      setDeletingId(null);
+      setLoadingSlots(false);
     }
   };
+
+  const loadOffDays = async () => {
+    try {
+      setLoadingOffDays(true);
+      const data = await fetchOffDays();
+      setOffDays(data);
+    } finally {
+      setLoadingOffDays(false);
+    }
+  };
+
+  useEffect(() => {
+    loadSlots();
+    loadOffDays();
+  }, []);
+
+  /* ================= DELETE ================= */
+
+  const handleDeleteSlot = async (id: string) => {
+    if (!confirm("Delete this time slot?")) return;
+    try {
+      setDeletingSlotId(id);
+      await deleteSlot(id);
+      setSlots((prev) => prev.filter((s) => s.id !== id));
+    } finally {
+      setDeletingSlotId(null);
+    }
+  };
+
+  const handleDeleteOffDay = async (id: string) => {
+    if (!confirm("Delete this off day?")) return;
+    try {
+      setDeletingOffDayId(id);
+      await deleteOffDay(id);
+      setOffDays((prev) => prev.filter((d) => d.id !== id));
+    } finally {
+      setDeletingOffDayId(null);
+    }
+  };
+
+  /* ================= RENDER ================= */
 
   return (
     <div className={styles.root}>
       <Sidebar />
+
       <div className={styles.contentArea}>
         <Topbar />
 
         <div className={styles.pageContent}>
           <h2 className={styles.title}>My Availability</h2>
-          <p className={styles.subtitle}>
-            Set your availability schedule for client meetings
-          </p>
 
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <div>
-                <h3 className={styles.cardTitle}>Weekly Schedule</h3>
-                <p className={styles.cardSubtitle}>
-                  Configure your available time slots for each day
-                </p>
-              </div>
+          {/* ===== TABS + ACTION ===== */}
+          <div className={styles.tabsRow}>
+            <div className={styles.tabs}>
               <button
-                className={styles.addBtn}
-                onClick={() => setOpenAdd(true)}
+                className={`${styles.tab} ${
+                  tab === "slots" ? styles.activeTab : ""
+                }`}
+                onClick={() => setTab("slots")}
               >
-                + Add Time Slot
+                Time Slots
               </button>
 
-              <AddSlotModal
-                isOpen={openAdd}
-                onClose={() => setOpenAdd(false)}
-                refresh={fetchData}
-              />
+              <button
+                className={`${styles.tab} ${
+                  tab === "offdays" ? styles.activeTab : ""
+                }`}
+                onClick={() => setTab("offdays")}
+              >
+                Off Days
+              </button>
             </div>
 
-            {loading ? (
-              <div className={styles.empty}>Loading availability...</div>
-            ) : error ? (
-              <div className={styles.error}>{error}</div>
-            ) : slots.length === 0 ? (
-              <div className={styles.empty}>
-                No availability slots yet. Click “Add Time Slot” to create one.
-              </div>
-            ) : (
-              <div className={styles.rows}>
-                {slots.map((slot) => (
-                  <div key={slot.id} className={styles.row}>
-                    <div className={styles.fieldGroup}>
-                      <label>Day</label>
+            <button
+              className={styles.addBtn}
+              onClick={() =>
+                tab === "slots"
+                  ? setOpenAddSlot(true)
+                  : setOpenOffDay(true)
+              }
+            >
+              {tab === "slots" ? "+ Add Time Slot" : "+ Mark Off Day"}
+            </button>
+          </div>
+
+          {/* ================= TIME SLOTS ================= */}
+          {tab === "slots" && (
+            <>
+              <AddSlotModal
+                isOpen={openAddSlot}
+                onClose={() => setOpenAddSlot(false)}
+                refresh={loadSlots}
+              />
+
+              {loadingSlots ? (
+                <div>Loading…</div>
+              ) : slots.length === 0 ? (
+                <div className={styles.empty}>No time slots added.</div>
+              ) : (
+                <div className={styles.rows}>
+                  {slots.map((slot) => (
+                    <div key={slot.id} className={styles.row}>
+                      <input value={slot.weekday} disabled />
+                      <input value={isoToTime(slot.startTime)} disabled />
+                      <input value={isoToTime(slot.endTime)} disabled />
+
+                      <button
+                        onClick={() => handleDeleteSlot(slot.id)}
+                        disabled={deletingSlotId === slot.id}
+                        className={styles.deleteBtn}
+                      >
+                        <FiTrash />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ================= OFF DAYS ================= */}
+          {tab === "offdays" && (
+            <>
+              <AddOffDayModal
+                isOpen={openOffDay}
+                onClose={() => setOpenOffDay(false)}
+                refresh={loadOffDays}
+              />
+
+              {loadingOffDays ? (
+                <div>Loading…</div>
+              ) : offDays.length === 0 ? (
+                <div className={styles.empty}>No off days marked.</div>
+              ) : (
+                <div className={styles.rows}>
+                  {offDays.map((d) => (
+                    <div key={d.id} className={styles.row}>
+                      <input value={isoToDate(d.date)} disabled />
                       <input
-                        value={`${slot.weekday} (${isoToDate(slot.date)})`}
+                        value={
+                          d.startTime ? isoToTime(d.startTime) : "Full Day"
+                        }
                         disabled
                       />
-                    </div>
-                    <div className={styles.fieldGroup}>
-                      <label>Start Time</label>
-                      <input value={isoToTime(slot.startTime)} disabled />
-                    </div>
-                    <div className={styles.fieldGroup}>
-                      <label>End Time</label>
-                      <input value={isoToTime(slot.endTime)} disabled />
-                    </div>
+                      <input
+                        value={d.endTime ? isoToTime(d.endTime) : "Off"}
+                        disabled
+                      />
 
-                    <button
-                      type="button"
-                      className={styles.deleteBtn}
-                      onClick={() => handleDelete(slot.id)}
-                      disabled={deletingId === slot.id}
-                    >
-                      🗑
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                      <button
+                        onClick={() => handleDeleteOffDay(d.id)}
+                        disabled={deletingOffDayId === d.id}
+                        className={styles.deleteBtn}
+                      >
+                        <FiTrash />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>

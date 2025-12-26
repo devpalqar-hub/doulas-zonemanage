@@ -43,6 +43,7 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
     console.log("VERIFY OTP RESPONSE:", res);
 
     // Store token and user
+    localStorage.setItem("userId", res.data.user.id);
     localStorage.setItem("token", res.data.accessToken);
     localStorage.setItem("user", JSON.stringify(res.data.user));
 
