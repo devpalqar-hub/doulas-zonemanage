@@ -790,7 +790,6 @@
   font-size: 13px;
 }
 
-/* ///// REVIEW AND SUBMIT ///// */
 
 .reviewCard {
   background: #f8fafc;
@@ -819,8 +818,6 @@
   font-weight: 600;
   color: #0f172b;
 }
-
-/* GALLERY STEP */
 
 .uploadBox {
   display: flex;
@@ -885,6 +882,23 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.certificatesList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px; 
+  margin-top: 8px;
+}
+
+.certificateRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.addCertificateBtn {
+  margin-top: 18px; 
 }
 
 
