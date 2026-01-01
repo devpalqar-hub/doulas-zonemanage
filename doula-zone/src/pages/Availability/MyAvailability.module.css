@@ -54,7 +54,7 @@
 }
 
 .activeTab {
-  color: #4f46e5;
+  color: #F94355;
   font-weight: 600;
 }
 
@@ -65,7 +65,7 @@
   right: 0;
   bottom: -1px;
   height: 2px;
-  background: #4f46e5;
+  background: #F94355;
   border-radius: 2px;
 }
 

@@ -18,7 +18,7 @@ const Meetings = () => {
   // filters
   const [search, setSearch] = useState("");
   const [services, setServices] = useState<Service[]>([]);
-  const [serviceId, setServiceId] = useState("");
+  const [serviceName, setServiceName] = useState("");
   const [status, setStatus] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -50,7 +50,7 @@ const Meetings = () => {
 
         const { meetings: items, meta } = await fetchMeetings({
           search: search.trim(),
-          serviceId,
+          serviceName,
           status,
           startDate,
           endDate,
@@ -71,7 +71,7 @@ const Meetings = () => {
     };
 
     load();
-  }, [search, serviceId, status, startDate, endDate, page]);
+  }, [search, serviceName, status, startDate, endDate, page]);
 
   const visibleRange = useMemo(() => {
     if (total === 0) return { from: 0, to: 0 };
@@ -85,7 +85,7 @@ const Meetings = () => {
     setStatus("");
     setStartDate("");
     setEndDate("");
-    setServiceId("");
+    setServiceName("");
     setPage(1);
   };
 
@@ -141,15 +141,15 @@ const Meetings = () => {
               <div className={styles.filterSelect}>
                 <label>Service</label>
                 <select
-                  value={serviceId}
+                  value={serviceName}
                   onChange={(e) => {
-                    setServiceId(e.target.value);
+                    setServiceName(e.target.value);
                     setPage(1);
                   }}
                 >
                   <option value="">All Services</option>
                   {services.map((s) => (
-                    <option key={s.id} value={s.id}>
+                    <option key={s.id} value={s.name}>
                       {s.name}
                     </option>
                   ))}
@@ -167,10 +167,11 @@ const Meetings = () => {
                   }}
                 >
                   <option value="">All</option>
-                  <option value="ACTIVE">Active</option>
+                  <option value="SCHEDULED">Scheduled</option>
                   <option value="COMPLETED">Completed</option>
-                  {/* <option value="CANCELLED">Cancelled</option> */}
+                  <option value="CANCELLED">Cancelled</option>
                 </select>
+
               </div>
 
               {/* DATE RANGE – start */}
@@ -230,9 +231,18 @@ const Meetings = () => {
                       <div className={styles.meetingInfo}>
                         <div className={styles.metaRow}>
                           <div className={styles.clientName}>{m.name}</div>
-                            <span className={`${styles.statusPill} ${styles.scheduled}`}>
-                              Scheduled
-                            </span>
+                            {/* <span
+                              className={`${styles.statusPill} ${
+                                m.status === "COMPLETED"
+                                  ? styles.completed
+                                  : m.status === "CANCELLED"
+                                  ? styles.cancelled
+                                  : styles.scheduled
+                              }`}
+                            >
+                              {m.status}
+                            </span> */}
+
                           </div>
 
                           {/* <span className={styles.meetingId}>

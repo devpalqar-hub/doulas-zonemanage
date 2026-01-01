@@ -258,7 +258,6 @@
   color: #94a3b8;
 }
 
-/* Status pill */
 .serviceStatusPill {
   font-size: 12px;
   border-radius: 8px;
@@ -275,6 +274,9 @@
   align-items: center;
   justify-content: center;
   font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1;
 }
 
 .statusActive {
@@ -395,11 +397,10 @@
   .filterSelect select,
   .filterSelect input[type='date'] {
     width: 100%;
-    box-sizing: border-box;
   }
 
   .searchInput input {
-    width: 93%;
+    width: 105%;
   }
 
   .resetContainer {
@@ -411,6 +412,10 @@
     align-items: flex-start;
     gap: 8px;
     background: #ffff
+  }
+  .statusPill {
+    font-size: 10px;
+    padding: 4px 10px;
   }
 }
 

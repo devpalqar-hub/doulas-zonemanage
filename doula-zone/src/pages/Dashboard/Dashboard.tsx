@@ -9,6 +9,7 @@ import RecentActivity from "./components/recentactivity/RecentActivity";
 import RecentTestimonials from "./components/recenttestimonials/RecentTestimonials";
 import PendingMeetingRequests from "./components/pendingmeeting/PendingMeetingRequests";
 import ScheduleOverview from "./components/scheduleoverview/ScheduleOverview";
+import WeeklyActivity from "./components/weeklyactivity/WeeklyActivity";
 
 const Dashboard = () => {
     const [cardsStats, setCardsStats] = useState<CardsStats | null>(null);
@@ -48,11 +49,14 @@ const Dashboard = () => {
                         <div className={styles.child2}>
                             <RecentActivity/>
                         </div>
-                        
-                        
                     </div>
                     <div className={styles.row}>
-                        <RecentTestimonials/>
+                        <div className={styles.child1}>
+                            <WeeklyActivity />
+                        </div>
+                        <div className={styles.child2}>
+                            <RecentTestimonials/>
+                        </div>  
                     </div>
                     <PendingMeetingRequests/>
 

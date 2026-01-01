@@ -4,21 +4,45 @@ import Topbar from "../Dashboard/components/topbar/Topbar";
 import styles from "./CreateBooking.module.css";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../shared/ToastContext";
-import { createBooking } from "../../services/booking.service";
+
 import api from "../../services/api";
+import { calculatePricing } from "../../services/pricing.service";
+import { createZoneBooking } from "../../services/booking.service";
+import { FaArrowLeft } from "react-icons/fa6";
 
 /* ================= TYPES ================= */
 
-type DoulaListItem = {
-  userId: string;
-  profileid: string; // IMPORTANT: used for booking submit
+type ServiceType = "POSTPARTUM" | "BIRTH";
+
+type DoulaItem = {
+  userId: string;     
+  profileId: string;  
   name: string;
 };
 
-type DoulaService = {
+type ServicePricing = {
   servicePricingId: string;
   serviceName: string;
-  price: string;
+  priceLabel: string;
+};
+
+type AvailabilityResponse = {
+  visitDates: string[];
+  availability: {
+    morning: boolean;
+    night: boolean;
+    fullday: boolean;
+  };
+};
+type PricingResponse = {
+  available: boolean;
+  totalAmount: number;
+  currency: string;
+  numberOfVisits: number;
+  pricePerVisit: number;
+  timeShift?: string;
+  visitDates: string[];
+  serviceName: string;
 };
 
 /* ================= COMPONENT ================= */
@@ -27,98 +51,194 @@ const CreateBooking = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
-  const [loading, setLoading] = useState(false);
-  const [loadingDoulas, setLoadingDoulas] = useState(false);
-  const [loadingServices, setLoadingServices] = useState(false);
+  /* ================= STATE ================= */
 
-  const [doulas, setDoulas] = useState<DoulaListItem[]>([]);
-  const [services, setServices] = useState<DoulaService[]>([]);
+  const [serviceType, setServiceType] = useState<ServiceType | "">("");
 
-  const [form, setForm] = useState({
+  const [client, setClient] = useState({
     name: "",
     email: "",
     phone: "",
     address: "",
-    doulaProfileId: "",
-    serviceId: "",
-    seviceStartDate: "",
-    serviceEndDate: "",
-    serviceTimeSlots: "",
-    buffer: 2,
-    visitFrequency: 2,
   });
 
-  /* ================= LOAD DOULAS LIST ================= */
+  const [doulas, setDoulas] = useState<DoulaItem[]>([]);
+  const [selectedDoula, setSelectedDoula] = useState<DoulaItem | null>(null);
+
+  const [services, setServices] = useState<ServicePricing[]>([]);
+  const [servicePricingId, setServicePricingId] = useState("");
+
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const [visitFrequency, setVisitFrequency] = useState(1);
+  const [timeShift, setTimeShift] =
+    useState<"MORNING" | "NIGHT" | "FULLDAY">("MORNING");
+
+  const [availability, setAvailability] =
+    useState<AvailabilityResponse | null>(null);
+
+  const [pricing, setPricing] = useState<PricingResponse | null>(null);
+
+
+  const buffer = 0;
+
 
   useEffect(() => {
-    const loadDoulas = async () => {
-      try {
-        setLoadingDoulas(true);
-        const res = await api.get("/zonemanager/doulas/list");
-        setDoulas(res.data.data);
-      } catch (err) {
-        console.error(err);
-        showToast("Failed to load doulas", "error");
-      } finally {
-        setLoadingDoulas(false);
+      if (serviceType === "BIRTH") {
+        setTimeShift("FULLDAY")
       }
-    };
+  })
+  /* ================= LOAD DOULAS ================= */
 
-    loadDoulas();
-  }, [showToast]);
+    useEffect(() => {
+      (async () => {
+        const res = await api.get("/zonemanager/doulas/list");
 
-  /* ================= LOAD SERVICES FOR SELECTED DOULA ================= */
+        const normalized = res.data.data.map((d: any) => ({
+          userId: d.userId,
+          profileId: d.profileid,
+          name: d.name,
+        }));
 
-  const loadDoulaServices = async (userId: string) => {
+        setDoulas(normalized);
+      })();
+    }, [serviceType]);
+
+
+  /* ================= LOAD SERVICES ================= */
+
+  const loadServices = async (userId: string) => {
     try {
-      setLoadingServices(true);
       setServices([]);
+      setServicePricingId("");
 
       const res = await api.get(`/doula/${userId}`);
-      setServices(res.data.data.serviceNames || []);
-    } catch (err) {
-      console.error(err);
+      const raw = res.data.data.serviceNames || [];
+
+      const normalized: ServicePricing[] = raw.map((s: any) => ({
+        servicePricingId: s.servicePricingId,
+        serviceName: s.serviceName,
+        // priceLabel:
+        //   typeof s.price === "object"
+        //     ? `M ₹${s.price.morning} | N ₹${s.price.night} | F ₹${s.price.fullday}`
+        //     : `₹${s.price}`,
+      }));
+
+      setServices(normalized);
+    } catch {
       showToast("Failed to load services", "error");
-    } finally {
-      setLoadingServices(false);
     }
   };
 
-  /* ================= HANDLE DOULA CHANGE ================= */
+  /* ================= AVAILABILITY ================= */
 
-  const handleDoulaChange = (profileid: string) => {
-    const selected = doulas.find((d) => d.profileid === profileid);
-    if (!selected) return;
+  const checkAvailability = async () => {
+    if (!selectedDoula || !startDate || !endDate) {
+      showToast("Select doula and dates first", "error");
+      return;
+    }
 
-    setForm((prev) => ({
-      ...prev,
-      doulaProfileId: selected.profileid,
-      serviceId: "",
-    }));
+    if (!serviceType) {
+      showToast("Select service type first", "error");
+      return;
+    }
 
-    loadDoulaServices(selected.userId); // ✅ userId here
+    try {
+      const res = await api.get(
+        `/doula/${selectedDoula.profileId}/available-shifts`,
+        {
+          params: {
+            startDate,
+            endDate,
+            visitFrequency:
+              serviceType === "POSTPARTUM" ? visitFrequency || 1 : 1,
+          },
+        }
+      );
+
+      setAvailability(res.data.data);
+    } catch {
+      showToast("Failed to check availability", "error");
+    }
   };
+
+  /* ================= PRICE ================= */
+
+const handleCalculatePrice = async () => {
+  if (!selectedDoula || !servicePricingId || !startDate || !endDate) {
+    showToast("Complete previous steps first", "error");
+    return;
+  }
+
+  const payload = {
+    doulaProfileId: selectedDoula.profileId,
+    servicePricingId,
+    serviceStartDate: startDate,
+    servicEndDate: endDate,
+    buffer,
+    serviceTimeShift:
+      serviceType === "POSTPARTUM" ? timeShift : "FULLDAY",
+    ...(serviceType === "POSTPARTUM" && {
+      visitFrequency: visitFrequency || 1,
+    }),
+  };
+
+  try {
+    const res = await calculatePricing(payload);
+
+    if (!res.available) {
+      showToast("Doula not available for selected dates", "error");
+      setPricing(null);
+      return;
+    }
+
+    setPricing(res);
+    showToast("Price calculated successfully", "success");
+  } catch (err) {
+    console.error(err);
+    showToast("Failed to calculate price", "error");
+  }
+};
+
+
+
+
+
 
   /* ================= SUBMIT ================= */
 
-  const handleSubmit = async () => {
-  try {
-    setLoading(true);
-    const payload = {
-      ...form,
-      seviceStartDate: new Date(form.seviceStartDate).toISOString(),
-      serviceEndDate: new Date(form.serviceEndDate).toISOString(),
-      serviceTimeSlots: form.serviceTimeSlots.replace(/\s+/g, ""),
-    };
+const handleSubmit = async () => {
+  if (!pricing || !selectedDoula) return;
 
-    await createBooking(payload);
-    showToast("Booking created successfully", "success");
+  const payload = {
+    name: client.name,
+    email: client.email,
+    phone: client.phone,
+    address: client.address,
+
+    doulaProfileId: selectedDoula.profileId,
+    serviceId: servicePricingId,
+
+    seviceStartDate: new Date(startDate).toISOString(),
+    serviceEndDate: new Date(endDate).toISOString(),
+    buffer,
+
+    serviceTimeShift:
+      serviceType === "POSTPARTUM" ? timeShift : "FULLDAY",
+
+    ...(serviceType === "POSTPARTUM" && {
+      visitFrequency,
+    }),
+  };
+
+  try {
+    await createZoneBooking(payload);
+    showToast("Booking created & confirmed", "success");
     navigate("/bookings");
   } catch (err) {
     console.error(err);
     showToast("Failed to create booking", "error");
-  } finally {
-    setLoading(false);
   }
 };
 
@@ -128,116 +248,152 @@ const CreateBooking = () => {
   return (
     <div className={styles.root}>
       <Sidebar />
-
       <div className={styles.contentArea}>
         <Topbar />
 
         <div className={styles.pageContent}>
+          <button
+            type="button"
+            className={styles.backLink}
+            onClick={() => window.history.back()}
+          >
+          <FaArrowLeft />   Back to List
+          </button>
           <div className={styles.formCard}>
+            <h3>Create Booking</h3>
 
-            {/* CLIENT DETAILS */}
-            <h4 className={styles.sectionTitle}>Client Details</h4>
-            <div className={styles.formGrid}>
-              <input
-                placeholder="Client Name"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
-              <input
-                placeholder="Email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-              />
-              <input
-                placeholder="Phone"
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              />
-              <input
-                placeholder="Address"
-                value={form.address}
-                onChange={(e) => setForm({ ...form, address: e.target.value })}
-              />
-            </div>
+            {/* SERVICE TYPE */}
+            <select value={serviceType} onChange={(e) =>
+              setServiceType(e.target.value as ServiceType)
+            }>
+              <option value="">Service Type</option>
+              <option value="POSTPARTUM">Postpartum Doula</option>
+              <option value="BIRTH">Birth Doula</option>
+            </select>
 
-            {/* DOULA & SERVICE */}
-            <h4 className={styles.sectionTitle}>Doula & Service</h4>
-            <div className={styles.formGrid}>
-              <select
-                value={form.doulaProfileId}
-                onChange={(e) => handleDoulaChange(e.target.value)}
-              >
-                <option value="">Select Doula</option>
-                {loadingDoulas && <option>Loading...</option>}
-                {!loadingDoulas &&
-                  doulas.map((d) => (
-                    <option key={d.profileid} value={d.profileid}>
-                      {d.name}
-                    </option>
-                  ))}
-              </select>
+            {/* CLIENT */}
+            <input placeholder="Client Name"
+              onChange={(e)=>setClient({...client,name:e.target.value})}/>
+            <input placeholder="Email"
+              onChange={(e)=>setClient({...client,email:e.target.value})}/>
+            <input placeholder="Phone"
+              onChange={(e)=>setClient({...client,phone:e.target.value})}/>
+            <input placeholder="Address"
+              onChange={(e)=>setClient({...client,address:e.target.value})}/>
 
-              <select
-                value={form.serviceId}
-                disabled={!services.length || loadingServices}
-                onChange={(e) =>
-                  setForm({ ...form, serviceId: e.target.value })
-                }
-              >
-                <option value="">
-                  {loadingServices ? "Loading services..." : "Select Service"}
+            {/* DOULA */}
+            <select
+              value={selectedDoula?.userId || ""}
+              onChange={(e) => {
+                const doula = doulas.find(
+                  d => d.userId === e.target.value
+                );
+                if (!doula) return;
+
+                setSelectedDoula(doula);
+                loadServices(doula.userId);
+              }}
+            >
+              <option value="">Select Doula</option>
+              {doulas.map(d => (
+                <option key={d.userId} value={d.userId}>
+                  {d.name}
                 </option>
-                {services.map((s) => (
-                  <option
-                    key={s.servicePricingId}
-                    value={s.servicePricingId}
-                  >
-                    {s.serviceName} — ₹{s.price}
-                  </option>
-                ))}
-              </select>
-            </div>
+              ))}
+            </select>
 
-            {/* SCHEDULE */}
-            <h4 className={styles.sectionTitle}>Schedule</h4>
-            <div className={styles.formGrid}>
-              <input
-                type="date"
-                onChange={(e) =>
-                  setForm({ ...form, seviceStartDate: e.target.value })
-                }
-              />
-              <input
-                type="date"
-                onChange={(e) =>
-                  setForm({ ...form, serviceEndDate: e.target.value })
-                }
-              />
-              <input
-                placeholder="Time Slot (10:00-11:00)"
-                onChange={(e) =>
-                  setForm({ ...form, serviceTimeSlots: e.target.value })
-                }
-              />
-            </div>
+            {/* SERVICE */}
+            <select
+              value={servicePricingId}
+              onChange={(e)=>setServicePricingId(e.target.value)}
+              disabled={!services.length}
+            >
+              <option value="">Select Service</option>
+              {services.map(s => (
+                <option key={s.servicePricingId} value={s.servicePricingId}>
+                  {s.serviceName} 
+                </option>
+              ))}
+            </select>
 
-            {/* ACTIONS */}
-            <div className={styles.actions}>
-              <button
-                className={styles.cancelBtn}
-                onClick={() => navigate(-1)}
-              >
-                Cancel
-              </button>
-              <button
-                className={styles.createBtn}
-                disabled={loading}
-                onClick={handleSubmit}
-              >
-                Create Booking
-              </button>
-            </div>
+            {/* DATES */}
+            <input type="date" onChange={(e)=>setStartDate(e.target.value)} />
+            <input type="date" onChange={(e)=>setEndDate(e.target.value)} />
 
+            {/* POSTPARTUM OPTIONS */}
+            {serviceType === "POSTPARTUM" && (
+              <>
+                <input type="number" min={1}
+                  value={visitFrequency}
+                  onChange={(e)=>setVisitFrequency(+e.target.value)} />
+                <select value={timeShift}
+                  onChange={(e)=>setTimeShift(e.target.value as any)}>
+                  <option value="MORNING">Morning</option>
+                  <option value="NIGHT">Night</option>
+                  <option value="FULLDAY">Full Day</option>
+                </select>
+              </>
+            )}
+
+            <button onClick={checkAvailability}>Check Availability</button>
+            {availability && (
+              <div className={styles.availabilityBox}>
+                <p><strong>Visit Dates</strong></p>
+
+                <div className={styles.dates}>
+                  {availability.visitDates.map(date => (
+                    <span key={date}>{date}</span>
+                  ))}
+                </div>
+
+                <p><strong>Shift Availability</strong></p>
+
+                <div className={styles.shifts}>
+                  <span className={availability.availability.morning ? styles.ok : styles.no}>
+                    Morning
+                  </span>
+                  <span className={availability.availability.night ? styles.ok : styles.no}>
+                    Night
+                  </span>
+                  <span className={availability.availability.fullday ? styles.ok : styles.no}>
+                    Full Day
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <button onClick={handleCalculatePrice}>Calculate Price</button>
+            {pricing && (
+              <div className={styles.priceBox}>
+                <h4>Price Summary</h4>
+
+                <div className={styles.priceRow}>
+                  <span>Service: </span>
+                  <span>{pricing.serviceName}</span>
+                </div>
+
+                <div className={styles.priceRow}>
+                  <span>Visits: </span>
+                  <span>{pricing.numberOfVisits}</span>
+                </div>
+
+                <div className={styles.priceRow}>
+                  <span>Price / Visit: </span>
+                  <span>${pricing.pricePerVisit}</span>
+                </div>
+
+                <div className={styles.totalRow}>
+                  <span>Total Amount: </span>
+                  <span>${pricing.totalAmount}</span>
+                </div>
+              </div>
+            )}
+
+            <button className={styles.primary}
+              disabled={!pricing}
+              onClick={handleSubmit}>
+              Confirm Booking
+            </button>
           </div>
         </div>
       </div>

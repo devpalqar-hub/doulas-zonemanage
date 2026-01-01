@@ -9,7 +9,6 @@ import {
   Legend,
 } from "recharts";
 
-/* TYPE EXPORT */
 export interface WeeklyActivityItem {
   day: string;
   bookings: number;

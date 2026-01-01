@@ -1,0 +1,10 @@
+/* Global box sizing fix */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.root {
+  min-height: 100dvh;
+}

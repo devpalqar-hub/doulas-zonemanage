@@ -57,3 +57,15 @@ export const fetchCardsStats = async (): Promise<CardsStats> => {
   };
 
 }
+
+export interface DailyActivityResponse {
+  date: string;
+  weekday: string;
+  noOfBookings: number;
+  noOfMeetings: number;
+}
+
+export const fetchWeeklyActivity = async (): Promise<DailyActivityResponse[]> => {
+  const res = await api.get("/analytics/daily-activity");
+  return res.data.data;
+};

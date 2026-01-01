@@ -1,10 +1,13 @@
 .topbar {
   padding: 0 30px;
-  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+
+  height: 64px;
+  min-height: 64px;
+  flex-shrink: 0;
 
   background: white;
   border-bottom: 1px solid #e9e9e9;
@@ -12,8 +15,8 @@
 
 /* Search */
 .search {
-  flex: 1;                 /* 🔑 responsive width */
-  max-width: 600px;        /* prevent too wide on desktop */
+  flex: 1;            
+  max-width: 600px;       
   padding: 10px 16px;
   border-radius: 8px;
   border: 1px solid #dcdcdc;

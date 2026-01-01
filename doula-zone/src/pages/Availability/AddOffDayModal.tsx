@@ -2,7 +2,7 @@ import { useState } from "react";
 import Modal from "../../components/Modal/Modal";
 import { createOffDay } from "../../services/availability.service";
 import { useToast } from "../../shared/ToastContext";
-import styles from "./AddSlotModal.module.css"; // reuse styles
+import styles from "./AddSlotModal.module.css"; 
 
 interface Props {
   isOpen: boolean;
@@ -42,13 +42,20 @@ const AddOffDayModal = ({ isOpen, onClose, refresh }: Props) => {
       setEndDate("");
       setStartTime("");
       setEndTime("");
-    } catch (err) {
-      console.error(err);
-      showToast("Failed to mark off day", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
+    } catch (err: any) {
+        const message =
+          err?.response?.data?.message ||
+          "Failed to mark off day";
+
+        showToast(
+          Array.isArray(message) ? message[0] : message,
+          "error"
+        );
+      }
+      finally {
+            setLoading(false);
+          }
+        };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Mark Off Day">
