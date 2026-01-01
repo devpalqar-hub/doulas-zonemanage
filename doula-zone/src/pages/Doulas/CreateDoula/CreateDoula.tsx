@@ -6,7 +6,7 @@ import StepPersonalInfo from "../steps/StepPersonalInfo";
 import ProfessionalInfoStep from "../steps/ProfessionalInfoStep";
 import styles from "./CreateDoula.module.css";
 import { FaArrowLeft } from "react-icons/fa6";
-import PricingServicesStep from "../steps/PricingServicesStep";
+// import PricingServicesStep from "../steps/PricingServicesStep";
 import GalleryStep from "../steps/GalleryStep";
 import ReviewSubmitStep from "../steps/ReviewSubmitStep";
 
@@ -34,7 +34,7 @@ export type DoulaFormData = {
   specialities: string[];
   certificates: Certificate[];
 
-  services?: Array<{ serviceId: string; price: string; serviceName?: string }>;
+  // services?: Array<{ serviceId: string; price: string; serviceName?: string }>;
   availabilitySlots?: any[];
 
   galleryImages: File[];
@@ -60,7 +60,7 @@ const initialFormData: DoulaFormData = {
   specialities: [],
   certificates: [],
 
-  services: [],
+  // services: [],
   availabilitySlots: [],
 
   galleryImages: [],
@@ -71,7 +71,6 @@ const initialFormData: DoulaFormData = {
 const steps = [
   "Personal Information",
   "Professional Information",
-  "Services",
   "Gallery",
   "Review & Submit",
 ];
@@ -157,7 +156,7 @@ const CreateDoula = () => {
 
 
 
-              {currentStep === 3 && (
+              {/* {currentStep === 3 && (
                 <PricingServicesStep
                   data={{ services: formData.services ?? [] }}
                   setFormData={(updater) =>
@@ -169,10 +168,10 @@ const CreateDoula = () => {
                   onNext={goNext}
                   onPrev={goPrev}
                 />
-              )}
+              )} */}
 
 
-              {currentStep === 4 && (
+              {currentStep === 3 && (
                 <div className={styles.placeholderStep}>
                   <GalleryStep
                     data={formData}
@@ -197,7 +196,7 @@ const CreateDoula = () => {
                 </div>
               )}
 
-              {currentStep === 5 && (
+              {currentStep === 4 && (
                 <div className={styles.placeholderStep}>
                   <ReviewSubmitStep 
                   data={formData}

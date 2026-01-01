@@ -19,7 +19,7 @@ const Schedules = () => {
 
   const [search, setSearch] = useState("");
   const [services, setServices] = useState<Service[]>([]);
-  const [serviceId, setServiceId] = useState("");
+  const [serviceName, setServiceName] = useState("");
   const [status, setStatus] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -52,7 +52,7 @@ const Schedules = () => {
           page,
           limit,
           search,
-          serviceId,
+          serviceName,
           status,
           startDate,
           endDate,
@@ -71,11 +71,11 @@ const Schedules = () => {
     };
 
     load();
-  }, [page, search, serviceId, status, startDate, endDate, showToast]);
+  }, [page, search, serviceName, status, startDate, endDate, showToast]);
 
   const resetFilters = () => {
     setSearch("");
-    setServiceId("");
+    setServiceName("");
     setStatus("");
     setStartDate("");
     setEndDate("");
@@ -130,15 +130,15 @@ const Schedules = () => {
               <div className={styles.filterSelect}>
                 <label>Service</label>
                 <select
-                  value={serviceId}
+                  value={serviceName}
                   onChange={(e) => {
-                    setServiceId(e.target.value);
+                    setServiceName(e.target.value);
                     setPage(1);
                   }}
                 >
                   <option value="">All Services</option>
                   {services.map((s) => (
-                    <option key={s.id} value={s.id}>
+                    <option key={s.id} value={s.name}>
                       {s.name}
                     </option>
                   ))}
@@ -156,9 +156,10 @@ const Schedules = () => {
                   }}
                 >
                   <option value="">All</option>
-                  <option value="ACTIVE">Active</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="IN_PROGRESS">In_progress</option>
+                  <option value="CANCELED">Cancelled</option>
                   <option value="COMPLETED">Completed</option>
-                  {/* <option value="CANCELLED">Cancelled</option> */}
                 </select>
               </div>
 

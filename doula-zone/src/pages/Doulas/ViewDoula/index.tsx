@@ -30,21 +30,29 @@ const mapBackendToView = (d: any) => {
 
     description: d.description ?? "—",
     regionNames: d.regionNames?.map((r: any) => r.name) ?? [],
+    qualification: d.qualification ?? "—",
 
-    services: d.serviceNames?.map((s: any) => ({
-      serviceId: s.serviceId,
-      serviceName: s.serviceName,
-      price: s.price,
-    })) ?? [],
+    certificates: (d.certificates ?? []).map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      issuedBy: c.issuedBy,
+      year: c.year,
+    })),
 
     specialities: d.specialities ?? [],
-    testimonials: d.testimonials ?? [],
+
+    testimonials: (d.testimonials ?? []).map((t: any) => ({
+      id: t.id,
+      comment: t.review,          
+      clientName: t.clientName,
+      rating: t.rating,
+      createdAt: t.createdAt,
+    })),
 
     ratings: d.ratings,
     reviewsCount: d.reviewsCount ?? 0,
   };
 };
-
 
 const ViewDoulaPage = () => {
   const { id } = useParams();

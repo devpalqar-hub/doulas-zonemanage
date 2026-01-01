@@ -13,12 +13,12 @@ export interface AvailableSlot {
   isBooked: boolean;
 }
 
-export interface ServicePricing {
-  id: string;
-  serviceId: string;
-  doulaProfileId: string;
-  price: number;
-}
+// export interface ServicePricing {
+//   id: string;
+//   serviceId: string;
+//   doulaProfileId: string;
+//   price: number;
+// }
 
 export interface Region {
   id: string;
@@ -35,11 +35,10 @@ export interface DoulaProfile {
   regionId: string | null;
   profileImage: string | null;
   description: string | null;
-  achievements: string | null;
   qualification: string | null;
   yoe: number;
   Region: Region[];
-  ServicePricing: ServicePricing[];
+  // ServicePricing: ServicePricing[];
   AvailableSlotsForService: AvailableSlot[];
   Languages: Language[];
 }
@@ -76,7 +75,6 @@ export interface Service {
   name: string;
 }
 
-
 export const fetchDoulas = async (params?: {
   search?: string;
   page?: number;
@@ -90,9 +88,23 @@ export const fetchDoulas = async (params?: {
   if (params?.search?.trim()) cleanParams.search = params.search;
   if (params?.page) cleanParams.page = params.page;
   if (params?.limit) cleanParams.limit = params.limit;
-  if (params?.service) cleanParams.service = params.service;
-  if (params?.availability) cleanParams.availability = params.availability;
-  if (params?.status) cleanParams.status = params.status;
+
+  // ✅ SERVICE FILTER
+  if (params?.service) {
+    cleanParams.serviceName = params.service;
+  }
+
+  // ✅ AVAILABILITY FILTER
+  if (params?.availability) {
+    cleanParams.isAvailable =
+      params.availability === "AVAILABLE";
+  }
+
+  // ✅ STATUS FILTER
+  if (params?.status) {
+    cleanParams.isActive =
+      params.status === "ACTIVE";
+  }
 
   const res = await api.get("/doula", { params: cleanParams });
 
@@ -130,6 +142,7 @@ export const fetchDoulas = async (params?: {
     totalPages: res.data.meta?.totalPages ?? 1,
   };
 };
+
 
 /* =====================
    OTHER APIs (UNCHANGED)
@@ -173,6 +186,14 @@ export interface DoulaGalleryImage {
   isPrimary?: boolean;
 }
 
+export interface Certificate {
+  id?: string;              
+  certificateId?: string;   
+  name: string;
+  issuedBy: string;
+  year: string;
+}
+
 export interface DoulaProfileResponse {
   userId: string;
   name: string;
@@ -180,19 +201,19 @@ export interface DoulaProfileResponse {
   yoe: number;
   description: string;
   qualification: string;
-  achievements: string;
   specialities: string[];
   ratings: number | null;
   reviewsCount: number;
   profileImage: string | null;
   isActive: boolean;
-  services: {
-    servicePricingId: string;
-    serviceId: string;
-    serviceName: string;
-    price: number;
-  }[];
+  // services: {
+  //   servicePricingId: string;
+  //   serviceId: string;
+  //   serviceName: string;
+  //   price: number;
+  // }[];
   regions: string[];
+  certificates: Certificate[];
   galleryImages: DoulaGalleryImage[];
 }
 
@@ -215,7 +236,6 @@ export const fetchDoulaProfile = async (
     yoe: d.yoe ?? 0,
     description: d.description ?? "",
     qualification: d.qualification ?? "",
-    achievements: d.achievements ?? "",
     specialities: d.specialities ?? [],
     ratings: d.ratings ?? null,
     reviewsCount: d.reviewsCount ?? 0,
@@ -227,11 +247,17 @@ export const fetchDoulaProfile = async (
         : `${IMAGE_BASE_URL}/${d.profileImage}`
       : null,
 
-    services: (d.serviceNames ?? []).map((s: any) => ({
-      servicePricingId: s.servicePricingId,
-      serviceId: s.serviceId,
-      serviceName: s.serviceName,
-      price: Number(s.price),
+    // services: (d.serviceNames ?? []).map((s: any) => ({
+    //   servicePricingId: s.servicePricingId,
+    //   serviceId: s.serviceId,
+    //   serviceName: s.serviceName,
+    //   price: Number(s.price),
+    // })),
+    certificates: (d.certificates ?? []).map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      issuedBy: c.issuedBy,
+      year: c.year,
     })),
 
     regions: (d.regionNames ?? []).map((r: any) => r.name),
@@ -249,17 +275,28 @@ export const fetchDoulaProfile = async (
    UPDATE DOULA PROFILE
 ===================== */
 
+export interface UpdateDoulaProfilePayload {
+  name: string;
+  is_active: boolean;
+  description: string;
+  qualification: string;
+  yoe: number;
+  specialities: string[];
+
+  certificates?: {
+    certificateId?: string;
+    data: {
+      name: string;
+      issuedBy: string;
+      year: string;
+    };
+  }[];
+}
+
+
 export const updateDoulaProfile = async (
   doulaId: string,
-  payload: {
-    name: string;
-    is_active: boolean;
-    description: string;
-    achievements: string;
-    qualification: string;
-    yoe: number;
-    specialities: string[];
-  }
+  payload: UpdateDoulaProfilePayload
 ) => {
   const res = await api.patch(
     "/zonemanager/doulas/profile",
@@ -269,22 +306,23 @@ export const updateDoulaProfile = async (
   return res.data;
 };
 
+
 /* =====================
    GALLERY
 ===================== */
 
 export const uploadDoulaGalleryImages = async (
-  doulaId: string,
+  userId: string,
   files: File[]
 ) => {
   const formData = new FormData();
-  files.forEach((f) => formData.append("images", f));
+  files.forEach((f) => formData.append("files", f));
 
   const res = await api.post(
     "/zonemanager/doulas/gallery/images",
     formData,
     {
-      params: { doulaId },
+      params: { doulaId: userId },
       headers: { "Content-Type": "multipart/form-data" },
     }
   );
@@ -293,12 +331,19 @@ export const uploadDoulaGalleryImages = async (
 };
 
 export const deleteDoulaGalleryImage = async (
-  doulaId: string,
+  userId: string,
   imageId: string
 ) => {
   const res = await api.delete(
-    "/zonemanager/doulas/gallery/images",
-    { params: { doulaId, imageId } }
+    `/zonemanager/doulas/gallery/images/${imageId}`,
+    { params: { doulaId: userId } }
+  );
+  return res.data;
+};
+
+export const deleteDoulaCertificate = async (certificateId: string) => {
+  const res = await api.delete(
+    `/doula/list/certificates/${certificateId}`
   );
   return res.data;
 };

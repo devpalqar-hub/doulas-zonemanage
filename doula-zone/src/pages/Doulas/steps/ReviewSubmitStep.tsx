@@ -55,13 +55,13 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
 
       form.append("regionIds", JSON.stringify([regionId]));
 
-      /* ================= SERVICES ================= */
+      // /* ================= SERVICES ================= */
 
-      const services: Record<string, number> = {};
-      (data.services || []).forEach((s: any) => {
-        services[s.serviceId] = Number(s.price);
-      });
-      form.append("services", JSON.stringify(services));
+      // const services: Record<string, number> = {};
+      // (data.services || []).forEach((s: any) => {
+      //   services[s.serviceId] = Number(s.price);
+      // });
+      // form.append("services", JSON.stringify(services));
 
       /* ================= DEBUG ================= */
 
@@ -144,7 +144,7 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
         )}
       </div>
 
-      {/* ================= SERVICES ================= */}
+      {/* ================= SERVICES =================
       <div className={styles.reviewCard}>
         <h4>Services & Pricing</h4>
 
@@ -158,7 +158,7 @@ const ReviewSubmitStep = ({ data, onPrev }: Props) => {
         ) : (
           <p>No services added.</p>
         )}
-      </div>
+      </div> */}
 
       {/* ================= GALLERY ================= */}
       <div className={styles.reviewCard}>

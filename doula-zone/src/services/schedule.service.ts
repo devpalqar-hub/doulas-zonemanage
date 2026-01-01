@@ -26,6 +26,7 @@ export const fetchSchedules = async (params: {
   limit: number;
   search?: string;
   serviceId?: string;
+  serviceName: string
   status?: string;
   startDate?: string;
   endDate?: string;
@@ -35,7 +36,7 @@ export const fetchSchedules = async (params: {
   if (params.page) cleanParams.page = params.page;
   if (params.limit) cleanParams.limit = params.limit;
   if (params.search?.trim()) cleanParams.search = params.search;
-  if (params.serviceId) cleanParams.serviceId = params.serviceId;
+  if (params.serviceName) cleanParams.serviceName = params.serviceName;
   if (params.status) cleanParams.status = params.status;
   if (params.startDate) cleanParams.startDate = params.startDate;
   if (params.endDate) cleanParams.endDate = params.endDate;

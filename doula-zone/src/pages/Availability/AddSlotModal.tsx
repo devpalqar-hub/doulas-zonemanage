@@ -68,9 +68,16 @@ const AddSlotModal = ({ isOpen, onClose, refresh }: Props) => {
       setEnd("");
 
     } catch (err: any) {
-      console.error(err);
-      showToast("Failed to create slot", "error");
+      const message =
+        err?.response?.data?.message ||
+        "Failed to add slot";
+
+      showToast(
+        Array.isArray(message) ? message[0] : message,
+        "error"
+      );
     }
+
 
     setLoading(false);
   };

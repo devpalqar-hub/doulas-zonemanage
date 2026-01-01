@@ -13,24 +13,43 @@ export type EnquiryMeeting = {
   serviceId: string;
   clientId: string;
   createdAt: string;
+  // status: string;                                    to be added in backend
 };
 
 export const fetchMeetings = async (params: {
   search?: string;
-  serviceId?: string;
+  serviceName?: string;
   startDate?: string;
   endDate?: string;
   page?: number;
   limit?: number;
   status?: string;
 }) => {
-  const res = await api.get("/enquiry/form", { params });
+  const cleanParams: any = {};
+
+  if (params.search?.trim()) cleanParams.search = params.search;
+  if (params.page) cleanParams.page = params.page;
+  if (params.limit) cleanParams.limit = params.limit;
+
+  if (params.serviceName) {
+    cleanParams.serviceName = params.serviceName;
+  }
+
+  if (params.status) {
+    cleanParams.status = params.status;
+  }
+
+  if (params.startDate) cleanParams.startDate = params.startDate;
+  if (params.endDate) cleanParams.endDate = params.endDate;
+
+  const res = await api.get("/enquiry/form", { params: cleanParams });
 
   return {
     meetings: res.data.data as EnquiryMeeting[],
     meta: res.data.meta,
   };
 };
+
 
 export type MeetingDetails = {
   meetingId: string;

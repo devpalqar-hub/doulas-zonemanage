@@ -100,3 +100,34 @@ export const deleteOffDay = async (id: string) => {
   return res.data;
 };
 
+//==============Doula Availability================//
+
+export type TimeShift = "MORNING" | "NIGHT" | "FULLDAY";
+
+export interface AvailabilityItem {
+  id: string;
+  date: string;
+  availability: Record<TimeShift, boolean>;
+  doulaId: string;
+}
+
+/* =====================
+   GET ALL AVAILABILITY
+===================== */
+export const fetchDoulaAvailability = async (
+  doulaId: string
+): Promise<AvailabilityItem[]> => {
+  const res = await api.get("/service/availability");
+
+  return (res.data.data || []).filter(
+    (a: any) => a.doulaId === doulaId
+  );
+};
+
+/* =====================
+   GET AVAILABILITY BY ID
+===================== */
+export const fetchAvailabilityById = async (id: string) => {
+  const res = await api.get(`/service/availability/${id}`);
+  return res.data.data;
+};

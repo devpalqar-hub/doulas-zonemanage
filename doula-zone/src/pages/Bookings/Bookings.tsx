@@ -19,7 +19,7 @@ const Bookings = () => {
   // filters
   const [search, setSearch] = useState("");
   const [services, setServices] = useState<Service[]>([]);
-  const [serviceId, setServiceId] = useState("");
+  const [serviceName, setServiceName] = useState("");
   const [status, setStatus] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -54,7 +54,7 @@ const Bookings = () => {
 
         const { bookings, meta } = await fetchBookings({
           search: search.trim(),
-          serviceId,
+          serviceName,
           status,
           startDate,
           endDate,
@@ -75,7 +75,7 @@ const Bookings = () => {
     };
 
     load();
-  }, [search, serviceId, status, startDate, endDate, page, showToast]);
+  }, [search, serviceName, status, startDate, endDate, page, showToast]);
 
   const visibleRange = useMemo(() => {
     if (total === 0) return { from: 0, to: 0 };
@@ -94,7 +94,7 @@ const Bookings = () => {
     setStatus("");
     setStartDate("");
     setEndDate("");
-    setServiceId("");
+    setServiceName("");
     setPage(1);
   };
 
@@ -151,15 +151,15 @@ const Bookings = () => {
               <div className={styles.filterSelect}>
                 <label>Service</label>
                 <select
-                  value={serviceId}
+                  value={serviceName}
                   onChange={(e) => {
-                    setServiceId(e.target.value);
+                    setServiceName(e.target.value);
                     setPage(1);
                   }}
                 >
                   <option value="">All Services</option>
                   {services.map((s) => (
-                    <option key={s.id} value={s.id}>
+                    <option key={s.id} value={s.name}>
                       {s.name}
                     </option>
                   ))}

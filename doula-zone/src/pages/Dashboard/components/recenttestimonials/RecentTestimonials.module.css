@@ -104,3 +104,9 @@
   font-size: 12px;
   color: #9ca3af;
 }
+
+.empty {
+  font-size: 13px;
+  color: #6b7280;
+  padding: 12px;
+}

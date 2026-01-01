@@ -5,6 +5,7 @@ import styles from "./MyAvailability.module.css";
 
 import AddSlotModal from "./AddSlotModal";
 import AddOffDayModal from "./AddOffDayModal";
+import { useToast } from "../../shared/ToastContext";
 
 import {
   fetchSlots,
@@ -19,12 +20,9 @@ import { FiTrash } from "react-icons/fi";
 
 /* ================= HELPERS ================= */
 
-const isoToTime = (iso?: string | null) => {
-  if (!iso) return "--";
-  const d = new Date(iso);
-  return `${String(d.getHours()).padStart(2, "0")}:${String(
-    d.getMinutes()
-  ).padStart(2, "0")}`;
+const timeOnly = (time?: string | null) => {
+  if (!time) return "--";
+  return time.slice(11, 16); 
 };
 
 const isoToDate = (iso: string) => iso.slice(0, 10);
@@ -32,6 +30,7 @@ const isoToDate = (iso: string) => iso.slice(0, 10);
 /* ================= COMPONENT ================= */
 
 const MyAvailability = () => {
+  const { showToast } = useToast();
   const [tab, setTab] = useState<"slots" | "offdays">("slots");
 
   // slots
@@ -76,15 +75,21 @@ const MyAvailability = () => {
   /* ================= DELETE ================= */
 
   const handleDeleteSlot = async (id: string) => {
-    if (!confirm("Delete this time slot?")) return;
-    try {
-      setDeletingSlotId(id);
-      await deleteSlot(id);
-      setSlots((prev) => prev.filter((s) => s.id !== id));
-    } finally {
-      setDeletingSlotId(null);
-    }
-  };
+  if (!confirm("Delete this time slot?")) return;
+
+  try {
+    setDeletingSlotId(id);
+    await deleteSlot(id);
+    setSlots(prev => prev.filter(s => s.id !== id));
+    showToast("Slot deleted", "success");
+  } catch (err: any) {
+    const msg = err?.response?.data?.message ?? "Failed to delete slot";
+    showToast(msg, "error");
+  } finally {
+    setDeletingSlotId(null);
+  }
+};
+
 
   const handleDeleteOffDay = async (id: string) => {
     if (!confirm("Delete this off day?")) return;
@@ -161,8 +166,8 @@ const MyAvailability = () => {
                   {slots.map((slot) => (
                     <div key={slot.id} className={styles.row}>
                       <input value={slot.weekday} disabled />
-                      <input value={isoToTime(slot.startTime)} disabled />
-                      <input value={isoToTime(slot.endTime)} disabled />
+                      <input value={timeOnly(slot.startTime)} disabled />
+                      <input value={timeOnly(slot.endTime)} disabled />
 
                       <button
                         onClick={() => handleDeleteSlot(slot.id)}
@@ -198,12 +203,12 @@ const MyAvailability = () => {
                       <input value={isoToDate(d.date)} disabled />
                       <input
                         value={
-                          d.startTime ? isoToTime(d.startTime) : "Full Day"
+                          d.startTime ? timeOnly(d.startTime) : "Full Day"
                         }
                         disabled
                       />
                       <input
-                        value={d.endTime ? isoToTime(d.endTime) : "Off"}
+                        value={d.endTime ? timeOnly(d.endTime) : "Off"}
                         disabled
                       />
 

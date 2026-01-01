@@ -1,7 +1,6 @@
-/* PAGE LAYOUT */
 .root {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   background: #f8fafc;
 }
 
@@ -30,8 +29,6 @@
   margin-top: 4px;
   margin-bottom: 20px;
 }
-
-/* FILTERS CARD */
 
 .filterCard {
   background: #ffffff;
@@ -95,15 +92,11 @@
   color: #0F172B;
 }
 
-/* TESTIMONIAL CARD GRID */
-
 .cardGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
   gap: 18px;
 }
-
-/* CARD */
 
 .card {
   background: #ffffff;
@@ -114,8 +107,6 @@
   flex-direction: column;
   gap: 12px;
 }
-
-/* CARD HEADER */
 
 .cardHeader {
   display: flex;
@@ -152,23 +143,17 @@
   color: #62748E;
 }
 
-/* RATING */
-
 .ratingRow {
   font-size: 18px;
-  color: #facc15; /* star yellow */
+  color: #facc15; 
   margin-top: -4px;
 }
-
-/* REVIEW TEXT */
 
 .reviewText {
   font-size: 14px;
   color: #314158;
   line-height: 20px;
 }
-
-/* FOOTER AREA */
 
 .cardFooter {
   display: flex;
@@ -196,4 +181,115 @@
 .dateText {
   font-size: 12px;
   color: #94a3b8;
+}
+
+/* -------- Tablets (≤ 1024px) -------- */
+@media (max-width: 1024px) {
+  .pageContent {
+    padding: 20px;
+  }
+
+  .statsRow {
+    flex-wrap: wrap;
+  }
+
+  .statBox {
+    width: calc(50% - 9px);
+  }
+
+  .filterCard {
+    gap: 12px;
+  }
+
+  .filterInput {
+    width: 160px;
+  }
+
+  .cardGrid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+/* -------- Small Tablets & Large Phones (≤ 768px) -------- */
+@media (max-width: 768px) {
+  .title {
+    font-size: 20px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .filterCard {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filterInput {
+    width: 100%;
+  }
+
+  .resetBtn {
+    margin-left: 0;
+    justify-content: center;
+  }
+
+  .statsRow {
+    flex-direction: column;
+  }
+
+  .statBox {
+    width: 100%;
+  }
+
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* -------- Mobile (≤ 480px) -------- */
+@media (max-width: 480px) {
+  .pageContent {
+    padding: 16px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .cardHeader {
+    gap: 10px;
+  }
+
+  .avatar {
+    width: 38px;
+    height: 38px;
+    font-size: 14px;
+  }
+
+  .clientInfo strong {
+    font-size: 14px;
+  }
+
+  .clientInfo p {
+    font-size: 12px;
+  }
+
+  .ratingRow {
+    font-size: 16px;
+  }
+
+  .reviewText {
+    font-size: 13px;
+  }
+
+  .cardFooter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .eyeBtn {
+    align-self: flex-end;
+  }
 }

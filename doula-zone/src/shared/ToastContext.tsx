@@ -5,7 +5,7 @@ import styles from "./Toast.module.css";
 type ToastType = "success" | "error" | "info" | "warning";
 
 interface ToastMessage {
-  id: number;
+  id: string;
   type: ToastType;
   text: string;
 }
@@ -24,7 +24,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const showToast = (text: string, type: ToastType = "info") => {
-    const id = Date.now();
+    const id = crypto.randomUUID();
 
     setToasts((prev) => [...prev, { id, type, text }]);
 

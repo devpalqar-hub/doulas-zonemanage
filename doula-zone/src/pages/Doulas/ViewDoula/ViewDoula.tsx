@@ -110,7 +110,7 @@ const ViewDoula = ({ data }: Props) => {
           </div>
 
           {/* SERVICES */}
-          <div className={`${styles.section} ${styles.services}`}>
+          {/* <div className={`${styles.section} ${styles.services}`}>
             <h4>Services Offered</h4>
             <div className={styles.tags}>
               {data.services.map((s: any) => (
@@ -119,7 +119,7 @@ const ViewDoula = ({ data }: Props) => {
                 </span>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -130,9 +130,36 @@ const ViewDoula = ({ data }: Props) => {
           <p>{data.description}</p>
         </div>
 
+        {data.qualification && data.qualification !== "—" && (
+          <div className={styles.section}>
+            <h4>Qualification</h4>
+            <p>{data.qualification}</p>
+          </div>
+        )}
+        {data.certificates?.length > 0 && (
+          <div className={styles.section}>
+            <h4>Certificates</h4>
+
+            <ul className={styles.certificateList}>
+              {data.certificates.map((c: any) => (
+                <li key={c.id} className={styles.certificateItem}>
+                  <FiCheck className={styles.checkIcon} />
+                  <div>
+                    <strong>{c.name}</strong>
+                    <div className={styles.certificateMeta}>
+                      Issued by {c.issuedBy} • {c.year}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+
         {data.specialities?.length > 0 && (
           <div className={styles.section}>
-            <h4>Certifications & Training</h4>
+            <h4>Specialities</h4>
             <ul className={styles.list}>
               {data.specialities.map((s: string, idx: number) => (
                 <li key={idx}>
@@ -146,16 +173,36 @@ const ViewDoula = ({ data }: Props) => {
         {data.testimonials?.length > 0 && (
           <div className={styles.section}>
             <h4>Client Testimonials</h4>
+
             <div className={styles.testimonials}>
               {data.testimonials.map((t: any, idx: number) => (
                 <div key={idx} className={styles.testimonialCard}>
-                  <p>“{t.comment}”</p>
-                  <span>{t.clientName}</span>
+                  
+                  {/* Header */}
+                  <div className={styles.testimonialHeader}>
+                    <span className={styles.clientName}>{t.clientName}</span>
+
+                    <div className={styles.stars}>
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <TiStarFullOutline
+                          key={i}
+                          size={14}
+                          color={i < t.rating ? "#FDC700" : "#E5E7EB"}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Review */}
+                  <p className={styles.testimonialText}>
+                    “{t.comment}”
+                  </p>
                 </div>
               ))}
             </div>
           </div>
         )}
+
       </div>
     </div>
   );

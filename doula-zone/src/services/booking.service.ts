@@ -26,7 +26,7 @@ export type BookingMeta = {
 
 export type BookingFilters = {
   search?: string;
-  serviceId?: string;
+  serviceName?: string;
   status?: string;
   startDate?: string;
   endDate?: string;
@@ -38,7 +38,7 @@ export const fetchBookings = async (filters: BookingFilters) => {
   const res = await api.get("/zonemanager/booked-services/list", {
     params: {
       search: filters.search || undefined,
-      serviceId: filters.serviceId || undefined,
+      serviceName: filters.serviceName || undefined,
       status: filters.status || undefined,
       startDate: filters.startDate || undefined,
       endDate: filters.endDate || undefined,
@@ -68,7 +68,30 @@ export const fetchBookings = async (filters: BookingFilters) => {
   };
 };
 
-export const createBooking = async (payload: any) => {
+/* =====================
+   CREATE BOOKING (ZONE)
+===================== */
+export interface CreateBookingPayload {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+
+  doulaProfileId: string;
+  serviceId: string;
+
+  seviceStartDate: string;
+  serviceEndDate: string;
+
+  visitFrequency?: number;
+  serviceTimeShift?: "MORNING" | "NIGHT" | "FULLDAY";
+  buffer: number;
+}
+
+export const createZoneBooking = async (
+  payload: CreateBookingPayload
+) => {
   const res = await api.post("/intake/forms", payload);
   return res.data;
 };
+
