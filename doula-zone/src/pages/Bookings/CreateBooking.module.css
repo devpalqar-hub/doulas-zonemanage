@@ -31,6 +31,20 @@
 
 /* ================= CARD ================= */
 
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+
 .formCard {
   background: #ffffff;
   border-radius: 14px;
