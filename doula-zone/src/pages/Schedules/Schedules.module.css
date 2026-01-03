@@ -179,6 +179,75 @@
   cursor: pointer;
 }
 
+.checkAvailabilityBtn {
+  padding: 8px 14px;
+  border-radius: 9px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 14px;
+  cursor: pointer;
+
+  align-self: flex-end;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .checkAvailabilityBtn {
+    align-self: stretch;
+  }
+}
+
+
+.availabilityCard .filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 34px;
+}
+
+
+.availabilityCard {
+  margin-top: 2px;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.searchBtn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+
+  align-self: flex-end;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .availabilityCard .filterRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchBtn {
+    align-self: stretch;
+    margin-top: 8px;
+  }
+}
+
+
+.availabilityRow {
+  display: grid;
+  grid-template-columns: 1.4fr 1.6fr 1fr 2fr;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+
 /* Table card */
 .tableCard {
   background: #ffffff;
@@ -197,10 +266,19 @@
 .tableRow {
   display: grid;
   grid-template-columns: 1.6fr 1.4fr 1.4fr 1.4fr 1.5fr 1.4fr 1.2fr 0.6fr;
-  padding: 10px 20px;
+  padding: 12px 20px;
   column-gap: 32px;
+
+  align-items: center;    
+  justify-items: center;     
+}
+
+.tableRow > div,
+.tableHeader > div {
+  display: flex;
   align-items: center;
 }
+
 
 .tableHeader {
   font-size: 12px;
@@ -300,13 +378,106 @@
   justify-content: flex-end;
 }
 
-.iconBtn {
-  border: none;
-  background: transparent;
-  padding: 4px;
-  cursor: pointer;
-  color: #64748b;
+.actionWrapper {
+  position: relative;
 }
+
+.iconBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.iconBtn:hover {
+  background: #f1f5f9;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 36px;
+  min-width: 150px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  padding: 6px;
+  z-index: 50;
+}
+
+.dropdownItem {
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 8px 10px;
+  text-align: left;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dropdownItem:hover {
+  background: #f8fafc;
+}
+
+.pending {
+  color: #92400e;
+}
+
+.in_progress {
+  color: #1d4ed8;
+}
+
+.completed {
+  color: #047857;
+}
+
+.canceled {
+  color: #b91c1c;
+}
+
+.dropdownItem:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Status pill */
+.statusPill {
+  font-size: 11px;
+  border-radius: 999px;
+  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+}
+
+.statusActive {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.statusCompleted {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.statusCancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.statusPending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.statusInProgress {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
 
 /* Footer / pagination */
 .tableFooter {

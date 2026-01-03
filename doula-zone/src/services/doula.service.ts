@@ -89,18 +89,13 @@ export const fetchDoulas = async (params?: {
   if (params?.page) cleanParams.page = params.page;
   if (params?.limit) cleanParams.limit = params.limit;
 
-  // ✅ SERVICE FILTER
   if (params?.service) {
     cleanParams.serviceName = params.service;
   }
-
-  // ✅ AVAILABILITY FILTER
   if (params?.availability) {
     cleanParams.isAvailable =
       params.availability === "AVAILABLE";
   }
-
-  // ✅ STATUS FILTER
   if (params?.status) {
     cleanParams.isActive =
       params.status === "ACTIVE";
@@ -143,11 +138,6 @@ export const fetchDoulas = async (params?: {
   };
 };
 
-
-/* =====================
-   OTHER APIs (UNCHANGED)
-   ===================== */
-
 export const deleteDoula = async (id: string) => {
   const res = await api.delete(`/doula/${id}`);
   return res.data;
@@ -172,13 +162,25 @@ export const createDoula = async (formData: FormData) => {
 
 export const fetchZonemanagerDoulas = async (): Promise<DoulaListItem[]> => {
   const res = await api.get("/zonemanager/doulas/list");
-  return res.data.data;
+
+  return res.data.data.map((d: any) => ({
+    userId: d.userId,
+    profileId: d.profileid, 
+    name: d.name,
+    email: d.email,
+    phone: d.phone,
+    yoe: d.yoe ?? 0,
+    qualification: d.qualification ?? "",
+    serviceNames: d.specialities ?? [],
+    regionNames: [],
+    ratings: null,
+    reviewsCount: 0,
+    nextImmediateAvailabilityDate: null,
+    profileImage: d.profileImage ?? null,
+    isActive: true,
+  }));
 };
 
-
-/* =====================
-   Edit Types
-===================== */
 
 export interface DoulaGalleryImage {
   id: string;

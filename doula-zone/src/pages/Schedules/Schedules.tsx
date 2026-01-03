@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Sidebar from "../Dashboard/components/sidebar/Sidebar";
 import Topbar from "../Dashboard/components/topbar/Topbar";
 import styles from "./Schedules.module.css";
@@ -9,6 +9,9 @@ import { useToast } from "../../shared/ToastContext";
 
 import { FiSearch } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { updateScheduleStatus } from "../../services/schedule.service";
+import { fetchAvailableDoulas, type AvailableDoula } from "../../services/availability.service";
+
 
 const Schedules = () => {
   const { showToast } = useToast();
@@ -28,6 +31,24 @@ const Schedules = () => {
   const limit = 10;
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+
+const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+const [updatingId, setUpdatingId] = useState<string | null>(null);
+const menuRef = useRef<HTMLDivElement | null>(null);
+
+// Check Availability //
+
+const [showAvailability, setShowAvailability] = useState(false);
+
+const [availStartDate, setAvailStartDate] = useState("");
+const [availEndDate, setAvailEndDate] = useState("");
+const [availShift, setAvailShift] = useState("");
+const [availService, setAvailService] = useState("");
+
+const [availableDoulas, setAvailableDoulas] = useState<AvailableDoula[]>([]);
+const [availabilityLoading, setAvailabilityLoading] = useState(false);
+
+
 
   useEffect(() => {
     const loadServices = async () => {
@@ -88,6 +109,107 @@ const Schedules = () => {
     const to = Math.min(total, page * limit);
     return { from, to };
   }, [page, limit, total]);
+
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      menuRef.current &&
+      !menuRef.current.contains(event.target as Node)
+    ) {
+      setOpenMenuId(null);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () =>
+    document.removeEventListener("mousedown", handleClickOutside);
+}, []);
+
+const getNextScheduleStatuses = (current: string) => {
+  switch (current) {
+    case "PENDING":
+      return ["IN_PROGRESS", "CANCELED", "COMPLETED"];
+    case "IN_PROGRESS":
+      return ["COMPLETED", "CANCELED", "PENDING"];
+    case "COMPLETED":
+      return ["PENDING", "CANCELED", "IN_PROGRESS"];
+    case "CANCELED":
+      return ["PENDING", "IN_PROGRESS", "COMPLETED"];
+    default:
+      return [];
+  }
+};
+
+
+const getScheduleStatusClass = (status: string) => {
+  switch (status) {
+    // case "ACTIVE":
+    //   return `${styles.statusPill} ${styles.statusActive}`;
+    case "COMPLETED":
+      return `${styles.statusPill} ${styles.statusCompleted}`;
+    case "CANCELED":
+      return `${styles.statusPill} ${styles.statusCancelled}`;
+    case "PENDING":
+      return `${styles.statusPill} ${styles.statusPending}`;
+    case "IN_PROGRESS":
+      return `${styles.statusPill} ${styles.statusInProgress}`;
+    default:
+      return styles.statusPill;
+  }
+};
+
+const handleScheduleStatusChange = async (
+  scheduleId: string,
+  newStatus: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELED"
+) => {
+  try {
+    setUpdatingId(scheduleId);
+
+    await updateScheduleStatus(scheduleId, newStatus);
+
+    setSchedules((prev) =>
+      prev.map((s) =>
+        s.scheduleId === scheduleId
+          ? { ...s, status: newStatus }
+          : s
+      )
+    );
+
+    showToast("Schedule status updated", "success");
+  } catch (err) {
+    console.error(err);
+    showToast("Failed to update schedule status", "error");
+  } finally {
+    setUpdatingId(null);
+    setOpenMenuId(null);
+  }
+};
+
+
+const handleCheckAvailability = async () => {
+  if (!availStartDate || !availEndDate) {
+    showToast("Please select start and end date", "error");
+    return;
+  }
+
+  try {
+    setAvailabilityLoading(true);
+
+    const data = await fetchAvailableDoulas({
+      startDate: availStartDate,
+      endDate: availEndDate,
+      shift: availShift as any,
+      serviceId: availService || undefined,
+    });
+
+    setAvailableDoulas(data);
+  } catch (err) {
+    console.error(err);
+    showToast("Failed to fetch availability", "error");
+  } finally {
+    setAvailabilityLoading(false);
+  }
+};
 
   return (
     <div className={styles.root}>
@@ -157,7 +279,7 @@ const Schedules = () => {
                 >
                   <option value="">All</option>
                   <option value="PENDING">Pending</option>
-                  <option value="IN_PROGRESS">In_progress</option>
+                  <option value="IN_PROGRESS">In progress</option>
                   <option value="CANCELED">Cancelled</option>
                   <option value="COMPLETED">Completed</option>
                 </select>
@@ -195,6 +317,100 @@ const Schedules = () => {
                   Reset
                 </button>
               </div>
+                <button
+                  className={styles.checkAvailabilityBtn}
+                  onClick={() => setShowAvailability((p) => !p)}
+                >
+                  Check Availability
+                </button>
+                {showAvailability && (
+  <div className={styles.availabilityCard}>
+    <h4>Check Doula Availability</h4>
+
+    <div className={styles.filterRow}>
+      <div className={styles.filterSelect}>
+        <label>Start Date</label>
+        <input
+          type="date"
+          value={availStartDate}
+          onChange={(e) => setAvailStartDate(e.target.value)}
+        />
+      </div>
+
+      <div className={styles.filterSelect}>
+        <label>End Date</label>
+        <input
+          type="date"
+          value={availEndDate}
+          onChange={(e) => setAvailEndDate(e.target.value)}
+        />
+      </div>
+
+      <div className={styles.filterSelect}>
+        <label>Shift</label>
+        <select
+          value={availShift}
+          onChange={(e) => setAvailShift(e.target.value)}
+        >
+          <option value="">All</option>
+          <option value="MORNING">Morning</option>
+          <option value="NIGHT">Night</option>
+          <option value="FULLDAY">Full Day</option>
+        </select>
+      </div>
+
+      <div className={styles.filterSelect}>
+        <label>Service</label>
+        <select
+          value={availService}
+          onChange={(e) => setAvailService(e.target.value)}
+        >
+          <option value="">All</option>
+          {services.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <button
+        className={styles.searchBtn}
+        onClick={handleCheckAvailability}
+      >
+        Search Availability
+      </button>
+    </div>
+  </div>
+)}
+
+{availabilityLoading ? (
+  <p>Loading availability...</p>
+) : availableDoulas.length > 0 ? (
+  <div className={styles.availabilityTable}>
+    {availableDoulas.map((d) => (
+      <div key={d.doulaName} className={styles.availabilityRow}>
+        <strong>{d.doulaName}</strong>
+
+        <span>
+          Shifts: {d.shift.join(", ")}
+        </span>
+
+        <span>
+          Unavailable Days: {d.noOfUnavailableDaysInThatPeriod}
+        </span>
+
+        <span>
+          Services: {d.availableServices.join(", ") || "—"}
+        </span>
+      </div>
+    ))}
+  </div>
+) : showAvailability ? (
+  <p>No doulas available for selected filters</p>
+) : null}
+
+
             </div>
           </div>
 
@@ -205,7 +421,7 @@ const Schedules = () => {
                 <div>Doula</div>
                 <div>Service</div>
                 <div>Start Date</div>
-                <div>Duration</div>
+                <div>Time shift</div>
                 <div>Status</div>
                 <div>Actions</div>
               </div>
@@ -231,21 +447,61 @@ const Schedules = () => {
                     </div>
 
                     <div className={styles.mainText}>
-                      {new Date(s.startDate).toLocaleDateString("en-IN", {
+                      {new Date(s.scheduleDate).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
                       })}
                     </div>
 
-                    <div className={styles.mainText}>{s.duration}</div>
+                    <div className={styles.mainText}>{s.serviceTimeshift}</div>
 
-                    <div className={styles.mainText}>{s.status}</div>
+                    <div>
+                      <span className={getScheduleStatusClass(s.status)}>
+                        {s.status.replace("_", " ")}
+                      </span>
+                    </div>
+
 
                     <div className={styles.actionsCell}>
-                      <button className={styles.iconBtn}>
-                        <BsThreeDotsVertical />
-                      </button>
+                      <div
+                        className={styles.actionWrapper}
+                        ref={openMenuId === s.scheduleId ? menuRef : null}
+                      >
+                        <button
+                          className={styles.iconBtn}
+                          onClick={() =>
+                            setOpenMenuId(
+                              openMenuId === s.scheduleId ? null : s.scheduleId
+                            )
+                          }
+                        >
+                          <BsThreeDotsVertical />
+                        </button>
+
+                        {openMenuId === s.scheduleId && (
+                          <div className={styles.dropdown}>
+                            {getNextScheduleStatuses(s.status).map((st) => (
+                              <button
+                                key={st}
+                                className={`${styles.dropdownItem} ${
+                                  styles[st.toLowerCase()]
+                                }`}
+                                disabled={updatingId === s.scheduleId}
+                                onClick={() =>
+                                  handleScheduleStatusChange(
+                                    s.scheduleId,
+                                    st as any
+                                  )
+                                }
+                              >
+                                {updatingId === s.scheduleId ? "Updating..." : st}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
                     </div>
                   </div>
                 ))

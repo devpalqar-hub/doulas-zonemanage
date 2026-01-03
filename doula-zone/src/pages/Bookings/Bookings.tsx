@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Sidebar from "../Dashboard/components/sidebar/Sidebar";
 import Topbar from "../Dashboard/components/topbar/Topbar";
 import styles from "./Bookings.module.css";
-import { fetchBookings, type Booking } from "../../services/booking.service";
+import { fetchBookings, type Booking, updateBookingStatus } from "../../services/booking.service";
 import { fetchServices, type Service } from "../../services/doula.service";
 import { useToast } from "../../shared/ToastContext";
 import { FiSearch } from "react-icons/fi";
@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 const Bookings = () => {
   const { showToast } = useToast();
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(false);
@@ -30,7 +31,29 @@ const Bookings = () => {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
+  //Tool Tip
+  const[openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const[updatingId, setUpdatingId] = useState<string | null>(null);
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      menuRef.current &&
+      !menuRef.current.contains(event.target as Node)
+    ) {
+      setOpenMenuId(null);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
 
   useEffect(() => {
     const loadServices = async () => {
@@ -45,7 +68,6 @@ const Bookings = () => {
     loadServices();
   }, []);
 
-  // fetch data
   useEffect(() => {
     const load = async () => {
       try {
@@ -101,8 +123,49 @@ const Bookings = () => {
   const getStatusClass = (status: string) => {
     if (status === "ACTIVE") return `${styles.statusPill} ${styles.statusActive}`;
     if (status === "COMPLETED") return `${styles.statusPill} ${styles.statusCompleted}`;
+    if (status === "CANCELED") return `${styles.statusPill} ${styles.statusCancelled}`;
     return styles.statusPill;
   };
+
+  const getNextStatuses = (current: string) => {
+    switch(current) {
+      case "ACTIVE":
+        return ["COMPLETED", "CANCELED"];
+      case "COMPLETED":
+        return ["ACTIVE", "CANCELED"];
+      case "CANCELED":
+        return ["ACTIVE", "COMPLETED"];
+      case "PENDING":
+        return ["ACTIVE", "CANCELED", "COMPLETED"];
+      default:
+        return [];
+    }
+  }
+
+  const handleStatusChange = async(
+    bookingId: string,
+    newStatus: "COMPLETED" | "CANCELED" | "ACTIVE"
+  ) => {
+    try {
+      setUpdatingId(bookingId);
+      await updateBookingStatus(bookingId, newStatus);
+
+      setBookings((prev) => 
+      prev.map((b) => {
+        if (b.id === bookingId) {
+          return { ...b, status: newStatus };
+        }
+        return b;
+      }))
+      showToast("Booking status updated successfully", "success");
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to update booking status", "error");  
+    } finally {
+      setUpdatingId(null);
+      setOpenMenuId(null);
+    }
+  }
 
   return (
     <div className={styles.root}>
@@ -288,9 +351,39 @@ const Bookings = () => {
 
                     {/* ACTION DOTS */}
                     <div className={styles.actionsCell}>
-                      <button className={styles.iconBtn}>
-                        <BsThreeDotsVertical />
-                      </button>
+                      <div 
+                        className={styles.actionWrapper}
+                        ref={openMenuId === b.id ? menuRef : null}
+                      >
+                        <button
+                          className={styles.iconBtn}
+                          onClick={() =>
+                            setOpenMenuId(openMenuId === b.id ? null : b.id)
+                          }
+                        >
+                          <BsThreeDotsVertical />
+                        </button>
+
+                        {openMenuId === b.id && (
+                          <div className={styles.dropdown}>
+                            {getNextStatuses(b.status).map((s) => (
+                              <button
+                                key={s}
+                                className={`${styles.dropdownItem} ${
+                                  styles[s.toLowerCase()]
+                                }`}
+                                disabled={updatingId === b.id}
+                                onClick={() =>
+                                  handleStatusChange(b.id, s as any)
+                                }
+                              >
+                                {updatingId === b.id ? "Updating..." : s}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
                     </div>
                   </div>
                 ))

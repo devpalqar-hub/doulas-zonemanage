@@ -179,6 +179,21 @@
   margin-bottom: 10px;
 }
 
+.scheduleBtn {
+    display: block;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #8335A0;
+  background: #ffff;
+  color: #8335A0;
+  text-align: center;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
 .secondaryBtn {
   width: 100%;
   padding: 9px 14px;

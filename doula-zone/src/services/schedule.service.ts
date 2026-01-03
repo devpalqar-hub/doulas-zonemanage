@@ -11,9 +11,9 @@ export interface Schedule {
   doulaId: string | null;
   doulaName: string | null;
   serviceName: string;
-  startDate: string;
+  scheduleDate: string;
   endDate: string;
-  duration: string;
+  serviceTimeshift: string;
   status: string;
 }
 
@@ -49,4 +49,15 @@ export const fetchSchedules = async (params: {
     schedules: res.data.data as Schedule[],
     meta: res.data.meta,
   };
+};
+
+export const updateScheduleStatus = async (
+  scheduleId: string,
+  status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELED"
+) => {
+  const res = await api.patch(
+    `/service-booked/schedules/${scheduleId}/status`,
+    { status }
+  );
+  return res.data;
 };

@@ -236,7 +236,7 @@ const CreateBooking = () => {
           <div className={styles.formCard}>
             <h3>Create Booking</h3>
 
-            {/* ⬇️ GRID START */}
+            {/* GRID START */}
             <div className={styles.formGrid}>
 
               {/* CLIENT */}
@@ -380,7 +380,7 @@ const CreateBooking = () => {
               )}
 
             </div>
-            {/* ⬆️ GRID END */}
+            {/* GRID END */}
 
             <button onClick={handleCalculatePrice}>Calculate Price</button>
 

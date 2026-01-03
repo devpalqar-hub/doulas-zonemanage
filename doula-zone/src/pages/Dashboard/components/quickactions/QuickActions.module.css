@@ -16,7 +16,7 @@
 
 .actions {
   display: grid;
-  grid-template-columns:  1fr 1fr 1fr 1fr;
+  grid-template-columns:  1fr 1fr 1fr;
   gap: 12px;
   flex-wrap: wrap;
   align-items: start;
