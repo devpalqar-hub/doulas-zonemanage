@@ -12,9 +12,9 @@
 
 .pageContent {
   flex: 1;
+   padding: 24px 28px;
   overflow-y: auto;
 }
-
 
 .headerRow {
   display: flex;
@@ -89,7 +89,7 @@
 }
 
 .searchInput {
-  min-width: 180px;
+  min-width: 220px;
   position: relative;
   width: 100%;
 }
@@ -155,7 +155,7 @@ input {
 }
 
 .resetContainer {
-  padding-left: 60px;
+  padding-left: 16px;
   padding-top: 26px;
 }
 

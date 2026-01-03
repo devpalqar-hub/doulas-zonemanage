@@ -70,6 +70,11 @@ const AvatarCropper = ({ image, onCropComplete }: Props) => {
             transform: "translateX(-50%)",
             opacity: !croppedAreaPixels ? 0.6 : 1,
             cursor: !croppedAreaPixels ? "not-allowed" : "pointer",
+            borderRadius: "8px",
+            padding: "8px 16px",
+            background: "#EF4444",
+            color: "#fff",
+            border: "none",
         }}
         onClick={async () => {
             if (!croppedAreaPixels) return;

@@ -131,3 +131,35 @@ export const fetchAvailabilityById = async (id: string) => {
   const res = await api.get(`/service/availability/${id}`);
   return res.data.data;
 };
+
+//Schedule page doula availability fetch
+
+export type AvailableDoula = {
+  doulaName: string;
+  shift: string[];
+  noOfUnavailableDaysInThatPeriod: number;
+  availableServices: string[];
+};
+
+export const fetchAvailableDoulas = async (params: {
+  startDate: string;
+  endDate: string;
+  shift?: "MORNING" | "NIGHT" | "FULLDAY";
+  serviceId?: string;
+  regionId?: string;
+}) => {
+  const res = await api.get(
+    "/service/availability/doula/available-doulas/list",
+    {
+      params: {
+        startDate: params.startDate,
+        endDate: params.endDate,
+        shift: params.shift,
+        serviceId: params.serviceId,
+        regionId: params.regionId,
+      },
+    }
+  );
+
+  return res.data.data as AvailableDoula[];
+};

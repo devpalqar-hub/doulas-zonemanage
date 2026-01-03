@@ -23,15 +23,15 @@ const StatsCards = ({ data, loading }: Props) => {
 
   const {
     totalDoulas,
-    totalDoulasChange,
+    // totalDoulasChange,
     activeClients,
-    activeClientsChange,
+    // activeClientsChange,
     todaysMeetings,
-    todaysUpcoming,
+    // todaysUpcoming,
     activeBookings,
-    bookingsEndingSoon,
+    // bookingsEndingSoon,
     pendingMeetings,
-    pendingUrgent,
+    // pendingUrgent,
   } = data;
 
   return (
@@ -43,7 +43,7 @@ const StatsCards = ({ data, loading }: Props) => {
         </div>
         <div className={styles.label}>Total Doulas</div>
         <div className={styles.value}>{totalDoulas}</div>
-        <div className={styles.subPositive}>+{totalDoulasChange} this month</div>
+        {/* <div className={styles.subPositive}>+{totalDoulasChange} this month</div> */}
       </div>
 
       {/* Active Clients */}
@@ -53,7 +53,7 @@ const StatsCards = ({ data, loading }: Props) => {
         </div>
         <div className={styles.label}>Active Clients</div>
         <div className={styles.value}>{activeClients}</div>
-        <div className={styles.subPositive}>+{activeClientsChange} this month</div>
+        {/* <div className={styles.subPositive}>+{activeClientsChange} this month</div> */}
       </div>
 
       {/* Today's Meetings */}
@@ -63,7 +63,7 @@ const StatsCards = ({ data, loading }: Props) => {
         </div>
         <div className={styles.label}>Today's Meetings</div>
         <div className={styles.value}>{todaysMeetings}</div>
-        <div className={styles.subMuted}>{todaysUpcoming} upcoming</div>
+        {/* <div className={styles.subMuted}>{todaysUpcoming} upcoming</div> */}
       </div>
 
       {/* Active Bookings */}
@@ -73,7 +73,7 @@ const StatsCards = ({ data, loading }: Props) => {
         </div>
         <div className={styles.label}>Active Bookings</div>
         <div className={styles.value}>{activeBookings}</div>
-        <div className={styles.subMuted}>{bookingsEndingSoon} ending soon</div>
+        {/* <div className={styles.subMuted}>{bookingsEndingSoon} ending soon</div> */}
       </div>
 
       {/* Pending Meeting */}
@@ -83,7 +83,7 @@ const StatsCards = ({ data, loading }: Props) => {
         </div>
         <div className={styles.label}>Pending Meeting</div>
         <div className={styles.value}>{pendingMeetings}</div>
-        <div className={styles.subNegative}>{pendingUrgent} urgent</div>
+        {/* <div className={styles.subNegative}>{pendingUrgent} urgent</div> */}
       </div>
     </div>
   );

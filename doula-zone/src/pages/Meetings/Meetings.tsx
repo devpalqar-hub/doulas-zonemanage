@@ -169,7 +169,7 @@ const Meetings = () => {
                   <option value="">All</option>
                   <option value="SCHEDULED">Scheduled</option>
                   <option value="COMPLETED">Completed</option>
-                  <option value="CANCELLED">Cancelled</option>
+                  <option value="CANCELED">Cancelled</option>
                 </select>
 
               </div>
@@ -231,7 +231,7 @@ const Meetings = () => {
                       <div className={styles.meetingInfo}>
                         <div className={styles.metaRow}>
                           <div className={styles.clientName}>{m.name}</div>
-                            {/* <span
+                            <span
                               className={`${styles.statusPill} ${
                                 m.status === "COMPLETED"
                                   ? styles.completed
@@ -241,7 +241,7 @@ const Meetings = () => {
                               }`}
                             >
                               {m.status}
-                            </span> */}
+                            </span>
 
                           </div>
 
@@ -279,7 +279,7 @@ const Meetings = () => {
                     <div className={styles.meetingRight}>
                       <button
                           className={styles.viewBtn}
-                          onClick={() => navigate(`/meetings/${m.meetingsId}`)}
+                          onClick={() => navigate(`/meetings/${m.meetingId}`)}
                         >
                           View Details
                         </button>

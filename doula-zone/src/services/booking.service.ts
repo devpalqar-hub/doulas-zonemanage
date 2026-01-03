@@ -95,3 +95,13 @@ export const createZoneBooking = async (
   return res.data;
 };
 
+export const updateBookingStatus = async (
+  bookingId: string,
+  status: "COMPLETED" | "CANCELED" | "ACTIVE"
+) => {
+  const res = await api.patch(`/service-booked/bookings/${bookingId}/status`, 
+    { status }
+  );
+  return res.data;
+}
+

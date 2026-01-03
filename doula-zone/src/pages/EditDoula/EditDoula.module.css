@@ -248,6 +248,41 @@ textarea {
   color: #475569;
 }
 
+/* Upload row */
+.uploadRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+/* Custom file button */
+.uploadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 16px;
+  background: #EF4444;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.uploadBtn:hover {
+  background: #d52a2a;
+}
+
+/* Helper text */
+.uploadHint {
+  font-size: 12px;
+  color: #64748b;
+}
+
 /* ===================== RESPONSIVE ===================== */
 
 @media (max-width: 640px) {

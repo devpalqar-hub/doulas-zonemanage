@@ -4,6 +4,7 @@ import styles from "./login.module.css";
 import { sendOtp, verifyOtp } from "../../services/auth.service";
 import { useToast } from "../../shared/ToastContext";
 import { getZoneManagerProfile } from "../../services/zoneManager.service";
+import { LuLock } from "react-icons/lu";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -138,7 +139,7 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
           </button>
           <div className={styles.footerNote}>
             
-                <img src="/lock-icon.png" className={styles.lockIcon}/>
+                <LuLock size={20} style={{marginRight: "5px"}}/>
             Your credentials are encrypted and stored securely. We take your privacy seriously.
            
           </div>

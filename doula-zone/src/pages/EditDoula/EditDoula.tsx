@@ -294,10 +294,23 @@ const EditDoula = () => {
             {/* Gallery */}
             <div className={styles.gallery}>
               <h4>Gallery Images</h4>
-              <input type="file" 
-                key={fileInputKey}
-                multiple 
-                onChange={handleUpload} />
+              <div className={styles.uploadRow}>
+                <label className={styles.uploadBtn}>
+                  Choose Images
+                  <input
+                    type="file"
+                    key={fileInputKey}
+                    multiple
+                    onChange={handleUpload}
+                    hidden
+                  />
+                </label>
+
+                <span className={styles.uploadHint}>
+                  JPG / PNG • Max 2MB per image
+                </span>
+              </div>
+
 
               <div className={styles.galleryGrid}>
                 {gallery.map((g) => (
