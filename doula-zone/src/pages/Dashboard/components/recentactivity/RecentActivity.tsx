@@ -94,7 +94,7 @@ export default function RecentActivity() {
             const { icon, color } = getIconConfig(item);
 
             return (
-              <div key={item.id} className={styles.item}>
+              <div key={`${item.id}-${item.date}`} className={styles.item}>
                 <div className={`${styles.icon} ${color}`}>
                   {icon}
                 </div>

@@ -40,7 +40,7 @@ export const fetchMeetings = async (params: {
     return {
       meetingId: m.meetingId,
       name: m.clientName,
-      meetingsDate: m.startDate,
+      meetingsDate: m.meetingDate,
       meetingsTimeSlots: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}-${
         end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
       }`,

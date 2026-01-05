@@ -222,7 +222,7 @@ const Meetings = () => {
                 const [start, end] = m.meetingsTimeSlots.split("-");
 
                 return (
-                  <div key={m.id} className={styles.meetingRow}>
+                  <div key={m.meetingId} className={styles.meetingRow}>
                     <div className={styles.meetingLeft}>
                       <div className={styles.avatar}>
                         {m.name.slice(0, 2).toUpperCase()}
