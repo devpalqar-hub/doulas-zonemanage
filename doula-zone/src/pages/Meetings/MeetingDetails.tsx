@@ -9,8 +9,6 @@ import {
   type MeetingDetails,
 } from "../../services/meetings.service";
 import { FaArrowLeft } from "react-icons/fa";
-import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
-import { generateZegoToken } from "./zego";
 import { useToast } from "../../shared/ToastContext";
 import Modal from "../../components/Modal/Modal";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +21,6 @@ const MeetingDetailsPage = () => {
 
   const [data, setData] = useState<MeetingDetails | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showOverlay, setShowOverlay] = useState(false);
   const [updating, setUpdating] = useState(false);
   const navigate = useNavigate();
   // modal state
@@ -36,38 +33,6 @@ const MeetingDetailsPage = () => {
       .then(setData)
       .finally(() => setLoading(false));
   }, [id]);
-
-
-  const joinMeeting = () => {
-    if (!data) return;
-
-    setShowOverlay(true);
-
-    setTimeout(() => {
-      const roomID = data.meetingId;
-      const userID = data.client.clientId;
-      const userName = data.client.clientName;
-
-      const kitToken = generateZegoToken(userID, userName, roomID);
-      const zp = ZegoUIKitPrebuilt.create(kitToken);
-
-      zp.joinRoom({
-        container: document.getElementById("zego-overlay-root")!,
-        scenario: {
-          mode: ZegoUIKitPrebuilt.VideoConference,
-        },
-        showPreJoinView: true,
-        turnOnCameraWhenJoining: true,
-        turnOnMicrophoneWhenJoining: true,
-        maxUsers: 2,
-      });
-    }, 0);
-  };
-
-  const closeOverlay = () => {
-    setShowOverlay(false);
-    window.location.reload();
-  };
 
   const confirmUpdate = async () => {
     if (!data || !confirmAction) return;
@@ -173,13 +138,14 @@ const MeetingDetailsPage = () => {
               <div className={styles.sideCard}>
                 <h4>Actions</h4>
 
-                <button
-                  className={styles.joinBtn}
-                  onClick={joinMeeting}
-                  disabled={data.meetingStatus !== "SCHEDULED"}
-                >
-                  Join Meeting
-                </button>
+              <button
+                className={styles.joinBtn}
+                onClick={() => navigate(`/joinmeeting/${data.meetingId}`)}
+                disabled={data.meetingStatus !== "SCHEDULED"}
+              >
+                Join Meeting
+              </button>
+
 
                 <button
                   className={styles.secondaryBtn}
@@ -262,42 +228,6 @@ const MeetingDetailsPage = () => {
           </button>
         </div>
       </Modal>
-
-      {/* ================= ZEGO OVERLAY ================= */}
-      {showOverlay && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "#000",
-            zIndex: 99999,
-          }}
-        >
-          <div
-            id="zego-overlay-root"
-            style={{ width: "100%", height: "100%" }}
-          />
-
-          <button
-            onClick={closeOverlay}
-            style={{
-              position: "absolute",
-              top: 20,
-              right: 20,
-              zIndex: 100000,
-              background: "#fff",
-              border: "none",
-              padding: "8px 14px",
-              borderRadius: "6px",
-              cursor: "pointer",
-            }}
-          >
-            Exit Meeting
-          </button>
-        </div>
-      )}
-
-
     </>
   );
 };

@@ -78,8 +78,6 @@ export interface OffDay {
   endTime: string | null;
 }
 
-/* ================= OFF DAYS ================= */
-
 export const fetchOffDays = async (): Promise<OffDay[]> => {
   const res = await api.get("/slots/mark/offdays");
   return res.data.data;
@@ -100,8 +98,6 @@ export const deleteOffDay = async (id: string) => {
   return res.data;
 };
 
-//==============Doula Availability================//
-
 export type TimeShift = "MORNING" | "NIGHT" | "FULLDAY";
 
 export interface AvailabilityItem {
@@ -111,9 +107,6 @@ export interface AvailabilityItem {
   doulaId: string;
 }
 
-/* =====================
-   GET ALL AVAILABILITY
-===================== */
 export const fetchDoulaAvailability = async (
   doulaId: string
 ): Promise<AvailabilityItem[]> => {
@@ -124,15 +117,10 @@ export const fetchDoulaAvailability = async (
   );
 };
 
-/* =====================
-   GET AVAILABILITY BY ID
-===================== */
 export const fetchAvailabilityById = async (id: string) => {
   const res = await api.get(`/service/availability/${id}`);
   return res.data.data;
 };
-
-//Schedule page doula availability fetch
 
 export type AvailableDoula = {
   doulaName: string;

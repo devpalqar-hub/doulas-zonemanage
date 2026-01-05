@@ -1,3 +1,6 @@
+body {
+  overflow-x: hidden;
+}
 .dashboardRoot {
     display: flex;
     background: #ffff;
@@ -12,7 +15,8 @@
 }
 
 .pageContent {
-    padding: 22px 32px;
+    padding: 22px 16px;
+    overflow-x: hidden;
 }
 
 .title {
@@ -41,10 +45,31 @@
     display: flex;
     gap: 20px;
     width: 100%;
+    min-width: 0;
+}
+.child1,
+.child2 {
+    min-width: 0;
 }
 .child1{
     flex: 2;
 }
 .child2{
     flex: 1;
+}
+@media (max-width: 480px) {
+  .pageContent {
+    padding: 16px;
+  }
+}
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column; 
+    gap: 16px;
+  }
+
+  .child1,
+  .child2 {
+    width: 100%;
+  }
 }

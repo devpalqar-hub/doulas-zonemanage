@@ -65,41 +65,43 @@ export default function ScheduleOverview() {
         </div>
       </div>
 
-      <div className={styles.weekdays}>
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-          <span key={d}>{d}</span>
-        ))}
-      </div>
-
-      <div className={styles.grid}>
-        {Array(startDay)
-          .fill(null)
-          .map((_, i) => (
-            <div key={`empty-${i}`} />
+      <div className={styles.calendarScroll}>
+        <div className={styles.weekdays}>
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+            <span key={d}>{d}</span>
           ))}
+        </div>
 
-        {Array.from({ length: daysInMonth }, (_, i) => {
-          const day = i + 1;
-          const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(
-            day
-          ).padStart(2, "0")}`;
+        <div className={styles.grid}>
+          {Array(startDay)
+            .fill(null)
+            .map((_, i) => (
+              <div key={`empty-${i}`} />
+            ))}
 
-          return (
-            <CalendarDay
-              key={day}
-              day={day}
-              meetingCount={summary[key]?.appointmentCount || 0}
-              scheduleCount={summary[key]?.scheduleCount || 0}
-              isToday={
-                day === today.getDate() &&
-                month === today.getMonth() &&
-                year === today.getFullYear()
-              }
-              isSelected={day === selectedDay}
-              onSelect={() => setSelectedDay(day)}
-            />
-          );
-        })}
+          {Array.from({ length: daysInMonth }, (_, i) => {
+            const day = i + 1;
+            const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(
+              day
+            ).padStart(2, "0")}`;
+
+            return (
+              <CalendarDay
+                key={day}
+                day={day}
+                meetingCount={summary[key]?.appointmentCount || 0}
+                scheduleCount={summary[key]?.scheduleCount || 0}
+                isToday={
+                  day === today.getDate() &&
+                  month === today.getMonth() &&
+                  year === today.getFullYear()
+                }
+                isSelected={day === selectedDay}
+                onSelect={() => setSelectedDay(day)}
+              />
+            );
+          })}
+        </div>
       </div>
 
       {/* Legend */}

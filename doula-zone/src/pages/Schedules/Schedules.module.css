@@ -15,7 +15,19 @@
   padding: 24px 28px;
   overflow: auto;
 }
-
+/* ===================== Back ===================== */
+.backLink {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: #0A0A0A;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 25px;
+  cursor: pointer;
+}
 /* Header */
 .headerRow {
   display: flex;
@@ -182,13 +194,16 @@
 .checkAvailabilityBtn {
   padding: 8px 14px;
   border-radius: 9px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #F7EBED;
   background: #f8fafc;
   font-size: 14px;
   cursor: pointer;
-
-  align-self: flex-end;
+  margin-left: auto;
+  margin-top: 40px;
+  margin-bottom: 10px;
   white-space: nowrap;
+  color: #F7EBED;
+  background: #8335A0;
 }
 
 @media (max-width: 768px) {
@@ -207,7 +222,7 @@
 
 
 .availabilityCard {
-  margin-top: 2px;
+  margin-top: 10px;
   padding: 16px;
   background: #ffffff;
   border-radius: 12px;
@@ -217,8 +232,8 @@
 .searchBtn {
   padding: 8px 14px;
   border-radius: 8px;
-  background: #4f46e5;
-  color: #fff;
+  background: #8335A0;
+  color: #F7EBED;
   border: none;
   cursor: pointer;
 
@@ -521,6 +536,33 @@
   color: #09090b;
 }
 
+/* Vertical availability list */
+.availabilityColumnList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.availabilityCardItem {
+  padding: 16px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.availabilityCardItem h4 {
+  margin-bottom: 6px;
+  color: #0f172b;
+}
+
+.availabilityCardItem p {
+  font-size: 13px;
+  color: #475569;
+  margin: 4px 0;
+}
+
+
 @media (max-width: 1024px) {
   .pageContent {
     padding: 20px;
@@ -588,6 +630,14 @@
     font-size: 10px;
     padding: 4px 10px;
   }
+  @media (max-width: 768px) {
+  .checkAvailabilityBtn {
+    margin-left: 0;      
+    width: 100%;          
+    text-align: center;
+    margin-top: 16px;
+  }
+}
 }
 
 @media (max-width: 480px) {
