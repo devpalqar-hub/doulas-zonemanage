@@ -10,11 +10,11 @@ import { useToast } from "../../shared/ToastContext";
 import { FiSearch } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { updateScheduleStatus } from "../../services/schedule.service";
-import { fetchAvailableDoulas, type AvailableDoula } from "../../services/availability.service";
-
+import { useNavigate } from "react-router-dom";
 
 const Schedules = () => {
   const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,18 +35,6 @@ const Schedules = () => {
 const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 const [updatingId, setUpdatingId] = useState<string | null>(null);
 const menuRef = useRef<HTMLDivElement | null>(null);
-
-// Check Availability //
-
-const [showAvailability, setShowAvailability] = useState(false);
-
-const [availStartDate, setAvailStartDate] = useState("");
-const [availEndDate, setAvailEndDate] = useState("");
-const [availShift, setAvailShift] = useState("");
-const [availService, setAvailService] = useState("");
-
-const [availableDoulas, setAvailableDoulas] = useState<AvailableDoula[]>([]);
-const [availabilityLoading, setAvailabilityLoading] = useState(false);
 
 
 
@@ -186,31 +174,6 @@ const handleScheduleStatusChange = async (
 };
 
 
-const handleCheckAvailability = async () => {
-  if (!availStartDate || !availEndDate) {
-    showToast("Please select start and end date", "error");
-    return;
-  }
-
-  try {
-    setAvailabilityLoading(true);
-
-    const data = await fetchAvailableDoulas({
-      startDate: availStartDate,
-      endDate: availEndDate,
-      shift: availShift as any,
-      serviceId: availService || undefined,
-    });
-
-    setAvailableDoulas(data);
-  } catch (err) {
-    console.error(err);
-    showToast("Failed to fetch availability", "error");
-  } finally {
-    setAvailabilityLoading(false);
-  }
-};
-
   return (
     <div className={styles.root}>
       <Sidebar />
@@ -227,7 +190,14 @@ const handleCheckAvailability = async () => {
                 Manage all client schedules ({total} total)
               </p>
             </div>
+          <button
+            className={styles.checkAvailabilityBtn}
+            onClick={() => navigate("/schedules/check-availability")}
+          >
+            Check Availability
+          </button>
           </div>
+
 
            {/* FILTERS CARD */}
           <div className={styles.filtersCard}>
@@ -317,100 +287,6 @@ const handleCheckAvailability = async () => {
                   Reset
                 </button>
               </div>
-                <button
-                  className={styles.checkAvailabilityBtn}
-                  onClick={() => setShowAvailability((p) => !p)}
-                >
-                  Check Availability
-                </button>
-                {showAvailability && (
-  <div className={styles.availabilityCard}>
-    <h4>Check Doula Availability</h4>
-
-    <div className={styles.filterRow}>
-      <div className={styles.filterSelect}>
-        <label>Start Date</label>
-        <input
-          type="date"
-          value={availStartDate}
-          onChange={(e) => setAvailStartDate(e.target.value)}
-        />
-      </div>
-
-      <div className={styles.filterSelect}>
-        <label>End Date</label>
-        <input
-          type="date"
-          value={availEndDate}
-          onChange={(e) => setAvailEndDate(e.target.value)}
-        />
-      </div>
-
-      <div className={styles.filterSelect}>
-        <label>Shift</label>
-        <select
-          value={availShift}
-          onChange={(e) => setAvailShift(e.target.value)}
-        >
-          <option value="">All</option>
-          <option value="MORNING">Morning</option>
-          <option value="NIGHT">Night</option>
-          <option value="FULLDAY">Full Day</option>
-        </select>
-      </div>
-
-      <div className={styles.filterSelect}>
-        <label>Service</label>
-        <select
-          value={availService}
-          onChange={(e) => setAvailService(e.target.value)}
-        >
-          <option value="">All</option>
-          {services.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <button
-        className={styles.searchBtn}
-        onClick={handleCheckAvailability}
-      >
-        Search Availability
-      </button>
-    </div>
-  </div>
-)}
-
-{availabilityLoading ? (
-  <p>Loading availability...</p>
-) : availableDoulas.length > 0 ? (
-  <div className={styles.availabilityTable}>
-    {availableDoulas.map((d) => (
-      <div key={d.doulaName} className={styles.availabilityRow}>
-        <strong>{d.doulaName}</strong>
-
-        <span>
-          Shifts: {d.shift.join(", ")}
-        </span>
-
-        <span>
-          Unavailable Days: {d.noOfUnavailableDaysInThatPeriod}
-        </span>
-
-        <span>
-          Services: {d.availableServices.join(", ") || "—"}
-        </span>
-      </div>
-    ))}
-  </div>
-) : showAvailability ? (
-  <p>No doulas available for selected filters</p>
-) : null}
-
-
             </div>
           </div>
 

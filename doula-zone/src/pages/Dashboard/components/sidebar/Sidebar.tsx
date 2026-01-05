@@ -59,7 +59,7 @@ const Sidebar = () => {
       <div className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
         {/* TOP PROFILE */}
         <div className={styles.profile}>
-          <img src="/D-icon.png" className={styles.avatar} alt="User" />
+          <img src="/doula-logo.png" className={styles.avatar} alt="User" />
           <div className={styles.profileInfo}>
             <h4>{profile?.name || "Loading..."}</h4>
             <p>{profile?.email || ""}</p>
@@ -117,10 +117,8 @@ const Sidebar = () => {
           onClick={() => setLogoutOpen(true)}
           style={{ cursor: "pointer" }}
         >
-          <img src="/D-icon.png" className={styles.avatar} alt="Logout" />
           <div className={styles.profileInfo}>
-            <h4>{profile?.name}</h4>
-            <p>{profile?.email}</p>
+            <h4>Logout</h4>
           </div>
         </div>
       </div>

@@ -13,33 +13,17 @@
   border-bottom: 1px solid #e9e9e9;
 }
 
-/* Search */
-.search {
-  flex: 1;            
-  max-width: 600px;       
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: 1px solid #dcdcdc;
-  min-width: 0;
+.right {
+  margin-left: auto;  
+  display: flex;
+  align-items: center;
 }
-
-/* Bell */
-.bell {
+.brand {
+  height: 150px;
+  width: 150px;
+  object-fit: contain;
   position: relative;
   flex-shrink: 0;
-  cursor: pointer;
-}
-
-/* Badge */
-.badge {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: #8335A0;
-  color: white;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 12px;
 }
 @media (max-width: 768px) {
   .topbar {

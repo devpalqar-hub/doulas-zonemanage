@@ -63,12 +63,13 @@
   border-radius: 8px;
   padding: 6px 14px;
   border: 1px solid #e2e8f0;
-  background: #F94355;
+  background: #8335A0;
+  color: #F7EBED;
   cursor: pointer;
 }
 
 .body button:hover {
-  background: #d72638;
+  background: #5d1677;
 }
 
 /* Animation */

@@ -72,8 +72,8 @@ const AvatarCropper = ({ image, onCropComplete }: Props) => {
             cursor: !croppedAreaPixels ? "not-allowed" : "pointer",
             borderRadius: "8px",
             padding: "8px 16px",
-            background: "#EF4444",
-            color: "#fff",
+            background: "#8335A0",
+            color: "#F7EBED",
             border: "none",
         }}
         onClick={async () => {

@@ -283,7 +283,9 @@ const Meetings = () => {
                         >
                           View Details
                         </button>
-                      <button className={styles.joinBtn} disabled>
+                      <button className={styles.joinBtn}  
+                      onClick={() => navigate(`/joinmeeting/${m.meetingId}`)}
+                      disabled={m.status !== "SCHEDULED"}>
                         Join Meeting
                       </button>
                     </div>

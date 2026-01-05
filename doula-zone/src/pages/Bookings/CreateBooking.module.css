@@ -92,7 +92,7 @@
 
 .formGrid input:focus,
 .formGrid select:focus {
-  border-color: #f94355;
+  border-color: #8335A0;
   box-shadow: 0 0 0 3px rgba(249, 67, 85, 0.12);
 }
 
@@ -125,8 +125,8 @@
   padding: 10px 22px;
   border-radius: 10px;
   border: none;
-  background: #f94355;
-  color: #ffffff;
+  background: #8335A0;
+  color: #F7EBED;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -134,7 +134,7 @@
 }
 
 .createBtn:hover {
-  background: #e63946;
+  background: #5a1473;
   box-shadow: 0 6px 14px rgba(249, 67, 85, 0.25);
 }
 
@@ -180,9 +180,6 @@
   font-weight: 600;
 }
 
-/* ===================================================== */
-/* MODERN BUTTONS (NO JSX CHANGES REQUIRED)              */
-/* ===================================================== */
 
 .formCard button {
   appearance: none;
@@ -209,15 +206,12 @@
 
 /* Primary action (Confirm Booking) */
 .formCard button:last-of-type {
-  background: linear-gradient(135deg, #f94355, #ef4444);
+  background: linear-gradient(135deg, #8335A0, #8335A0);
   color: #ffffff;
-
-  box-shadow: 0 8px 18px rgba(249, 67, 85, 0.25);
 }
 
 .formCard button:last-of-type:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(249, 67, 85, 0.32);
 }
 
 /* Secondary buttons */
@@ -264,7 +258,7 @@
 .formCard select:focus,
 .formCard input:focus {
   background-color: #ffffff;
-  border-color: #f94355;
+  border-color: #8335A0;
   box-shadow: 0 0 0 4px rgba(249, 67, 85, 0.12);
 }
 

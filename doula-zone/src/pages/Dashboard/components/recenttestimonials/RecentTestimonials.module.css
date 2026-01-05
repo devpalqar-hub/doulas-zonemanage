@@ -4,12 +4,14 @@
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-  font-family: Inter, sans-serif;
-  max-width: 360px;
+  font-family: Inter, sans-serif; 
 }
-.container p{
+
+.container p {
   margin: 0;
 }
+
+/* Header */
 .header {
   display: flex;
   justify-content: space-between;
@@ -30,22 +32,27 @@
   font-weight: 500;
 }
 
+/* List */
 .list {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
+/* Review card */
 .card {
   border: 1px solid #e5e7eb;
   border-radius: 14px;
   padding: 14px;
+  min-width: 0;
 }
 
+/* Top row */
 .top {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 
 .avatar {
@@ -58,20 +65,15 @@
   align-items: center;
   justify-content: center;
   color: #ffffff;
+  flex-shrink: 0;
 }
 
-.green {
-  background: #10b981;
-}
+/* Colors */
+.green { background: #10b981; }
+.teal { background: #14b8a6; }
+.blue { background: #3b82f6; }
 
-.teal {
-  background: #14b8a6;
-}
-
-.blue {
-  background: #3b82f6;
-}
-
+/* Text */
 .name {
   font-size: 14px;
   font-weight: 600;
@@ -82,6 +84,12 @@
   font-size: 12px;
   color: #6b7280;
 }
+.name,
+.for {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .stars {
   margin-left: auto;
@@ -89,6 +97,7 @@
   gap: 2px;
   color: #fbbf24;
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 .message {
@@ -96,6 +105,7 @@
   color: #4b5563;
   margin: 10px 0;
   line-height: 1.4;
+  word-break: break-word;
 }
 
 .footer {
@@ -109,4 +119,28 @@
   font-size: 13px;
   color: #6b7280;
   padding: 12px;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 16px;
+    max-width: 100%;
+  }
+
+  .message {
+    font-size: 12.5px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 480px;
+  }
+}
+
+@media (max-width: 360px) {
+  .footer {
+    flex-direction: column;
+    gap: 4px;
+  }
 }
