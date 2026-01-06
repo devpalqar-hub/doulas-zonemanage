@@ -4,7 +4,7 @@ import styles from "./login.module.css";
 import { sendOtp, verifyOtp } from "../../services/auth.service";
 import { useToast } from "../../shared/ToastContext";
 import { getZoneManagerProfile } from "../../services/zoneManager.service";
-import { LuLock } from "react-icons/lu";
+import {  LuCircleCheckBig, LuLock } from "react-icons/lu";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -87,7 +87,7 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
     <div className={styles.container}>
       {/* Left Section */}
       <div className={styles.leftSection}>
-        <img className={styles.logoCircle} src="/D-icon.png"></img>
+        <img className={styles.avatar} src="/doula-branding.png"></img>
         <h2>Doula Service Management</h2>
         <p>
           Comprehensive platform for managing doula services, appointments, and
@@ -95,12 +95,12 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
         </p>
 
         <div className={styles.checkItem}>
-          <img src="/green-tick-icon.png"/> Streamlined Operations
+          <LuCircleCheckBig color="green" size={20} /> Streamlined Operations
         </div>
         <p className={styles.subtext}>Manage all aspects of your zone in one place</p>
 
         <div className={styles.checkItem}>
-          <img src="/green-tick-icon.png"/> Real-time Insights
+          <LuCircleCheckBig color="green" size={20} /> Real-time Insights
         </div>
         <p className={styles.subtext}>Track performance and availability instantly</p>
       </div>
