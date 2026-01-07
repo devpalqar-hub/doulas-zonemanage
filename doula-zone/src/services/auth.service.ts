@@ -10,7 +10,7 @@ export const sendOtp = async (email: string) => {
 };
 
 export const verifyOtp = async (email:string, otp:string) => {
-  const res = await axios.post(`${API_URL}/auth/verify/otp`, {
+  const res = await axios.post(`${API_URL}/auth/verify/otp/zonemanager`, {
     email: email,
     otp: otp
   });
