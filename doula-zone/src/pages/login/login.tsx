@@ -35,24 +35,20 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
 
 
   // Verify OTP
-  const handleVerifyOtp = async (e: FormEvent<HTMLFormElement>) => {
+const handleVerifyOtp = async (e: FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   setLoading(true);
 
   try {
     const res = await verifyOtp(email, otp);
-    console.log("VERIFY OTP RESPONSE:", res);
 
-    // Store token and user
+    // Store auth data
     localStorage.setItem("userId", res.data.user.id);
     localStorage.setItem("token", res.data.accessToken);
     localStorage.setItem("user", JSON.stringify(res.data.user));
 
-    // Fetch Zone Manager Profile
+    // Fetch profile
     const profileRes = await getZoneManagerProfile(res.data.user.id);
-
-    console.log("ZONE MANAGER PROFILE:", profileRes);
-
     const zm = profileRes;
 
     if (!zm) {
@@ -61,18 +57,13 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
       return;
     }
 
-    if (!zm.regions || zm.regions.length === 0) {
-      showToast("No region assigned to this Zone Manager", "error");
-      setLoading(false);
-      return;
-    }
-
-    // Store values
     localStorage.setItem("zoneManagerProfileId", zm.profileId);
-    localStorage.setItem("regionId", zm.regions[0].id);
+
+    if (zm.regions && zm.regions.length > 0) {
+      localStorage.setItem("regionId", zm.regions[0].id);
+    } 
 
     window.location.href = "/dashboard";
-
 
   } catch (err) {
     console.error("LOGIN ERROR:", err);
@@ -81,6 +72,7 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
 
   setLoading(false);
 };
+
 
 
   return (
