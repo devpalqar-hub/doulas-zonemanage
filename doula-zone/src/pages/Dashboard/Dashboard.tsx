@@ -7,8 +7,9 @@ import { fetchCardsStats, type CardsStats } from "../../services/analytics.servi
 import QuickActions from "./components/quickactions/QuickActions";
 import RecentActivity from "./components/recentactivity/RecentActivity";
 import RecentTestimonials from "./components/recenttestimonials/RecentTestimonials";
-import PendingMeetingRequests from "./components/pendingmeeting/PendingMeetingRequests";
+// import PendingMeetingRequests from "./components/pendingmeeting/PendingMeetingRequests";
 import ScheduleOverview from "./components/scheduleoverview/ScheduleOverview";
+import WeeklyActivity from "./components/weeklyactivity/WeeklyActivity";
 
 const Dashboard = () => {
     const [cardsStats, setCardsStats] = useState<CardsStats | null>(null);
@@ -38,7 +39,7 @@ const Dashboard = () => {
 
                 <div className={styles.pageContent}>
                     <h2 className={styles.title}>Dashboard</h2>
-                    <p className={styles.zoneStatus}>Zone: North Region <span className={styles.activeTag}>Active</span></p>
+                    {/* <p className={styles.zoneStatus}>Zone: North Region <span className={styles.activeTag}>Active</span></p> */}
                     <StatsCards data={cardsStats} loading={loadingCards}></StatsCards>
                     <QuickActions/>
                     <div className={styles.row}>
@@ -48,13 +49,16 @@ const Dashboard = () => {
                         <div className={styles.child2}>
                             <RecentActivity/>
                         </div>
-                        
-                        
                     </div>
                     <div className={styles.row}>
-                        <RecentTestimonials/>
+                        <div className={styles.child1}>
+                            <WeeklyActivity />
+                        </div>
+                        <div className={styles.child2}>
+                            <RecentTestimonials/>
+                        </div>  
                     </div>
-                    <PendingMeetingRequests/>
+                    {/* <PendingMeetingRequests/> */}
 
                 </div>
             </div>

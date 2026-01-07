@@ -1,0 +1,305 @@
+/* ===================== LAYOUT ===================== */
+
+.root {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pageContent {
+  padding: 24px 28px;
+  overflow: auto;
+}
+
+.backLink {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: #0A0A0A;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 25px;
+  cursor: pointer;
+}
+/* ===================== CARD ===================== */
+
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #0000001a;
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.card h2 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f172b;
+}
+
+/* ===================== FORM GRID ===================== */
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+/* ===================== LABELS & INPUTS ===================== */
+
+label {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 6px;
+  display: block;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #94a3b8;
+}
+
+textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+/* ===================== SECTION HEADERS ===================== */
+
+.section {
+  grid-column: 1 / -1;
+  margin-top: 12px;
+}
+
+.section h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172b;
+  margin-bottom: 12px;
+}
+
+/* ===================== CERTIFICATES ===================== */
+
+.certificateRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 90px auto;
+  gap: 10px;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.certificateRow input {
+  padding: 8px 10px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.certificateRow button {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.certificateRow button:hover {
+  background: #fecaca;
+}
+
+/* Add Certificate Button */
+
+.addCertificateBtn {
+  margin-top: 6px;
+  background: #ffffff;
+  border: 1px dashed #cbd5f5;
+  color: #1e40af;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.addCertificateBtn:hover {
+  background: #f1f5ff;
+}
+
+/* ===================== GALLERY ===================== */
+
+.gallery {
+  margin-top: 24px;
+}
+
+.gallery h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172b;
+  margin-bottom: 8px;
+}
+
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.galleryItem {
+  position: relative;
+}
+
+.galleryItem img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.galleryItem button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  padding: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.galleryItem button:hover {
+  background: #fee2e2;
+}
+
+/* ===================== ACTION BUTTONS ===================== */
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.primary {
+  background: #0f172b;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary:hover {
+  opacity: 0.9;
+}
+
+.secondary {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.secondary:hover {
+  background: #f8fafc;
+}
+
+/* ===================== STATES ===================== */
+
+.state {
+  padding: 40px;
+  text-align: center;
+  font-size: 15px;
+  color: #475569;
+}
+
+/* Upload row */
+.uploadRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+/* Custom file button */
+.uploadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 16px;
+  background: #EF4444;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.uploadBtn:hover {
+  background: #d52a2a;
+}
+
+/* Helper text */
+.uploadHint {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* ===================== RESPONSIVE ===================== */
+
+@media (max-width: 640px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .certificateRow {
+    grid-template-columns: 1fr;
+  }
+
+  .certificateRow button {
+    justify-self: flex-start;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

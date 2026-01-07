@@ -18,18 +18,18 @@ export interface CardsStats {
 }
 
 export const fetchUserCounts = async () => {
-    const res = await api.get("/analytics/counts/active")
-    return res.data.data;
+    const res = await api.get("/analytics/counts/user")
+    return res.data?.data?.counts ?? {};
 }
 
 export const fetchMeetingCounts = async () => {
     const res = await api.get("/analytics/counts/meeting");
-    return res.data.data;
+    return res.data?.data?.counts ?? {};
 }
 
 export const fetchBookingCounts = async () => {
     const res = await api.get("/analytics/counts/booking");
-    return res.data.data.FormattedCounts;
+    return res.data?.data?.counts ?? {};
 }
 
 export const fetchCardsStats = async (): Promise<CardsStats> => {
@@ -57,3 +57,15 @@ export const fetchCardsStats = async (): Promise<CardsStats> => {
   };
 
 }
+
+export interface DailyActivityResponse {
+  date: string;
+  weekday: string;
+  noOfBookings: number;
+  noOfMeetings: number;
+}
+
+export const fetchWeeklyActivity = async (): Promise<DailyActivityResponse[]> => {
+  const res = await api.get("/analytics/daily-activity");
+  return res.data.data;
+};

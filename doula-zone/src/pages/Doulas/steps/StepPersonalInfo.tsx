@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import type { DoulaFormData } from "../CreateDoula/CreateDoula";
 import styles from "../CreateDoula/CreateDoula.module.css";
 import { FiUpload } from "react-icons/fi";
+import AvatarCropper from "../../../components/AvatarCropper";
 
 interface Props {
   data: DoulaFormData;
@@ -12,6 +13,10 @@ interface Props {
 
 const StepPersonalInfo = ({ data, onChange, onNext }: Props) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const [showCropper, setShowCropper] = useState(false);
+  const [rawImage, setRawImage] = useState<string | null>(null);
+
 
   const handleInputChange = (
     field: keyof DoulaFormData,
@@ -27,6 +32,8 @@ const StepPersonalInfo = ({ data, onChange, onNext }: Props) => {
     if (!file) return;
 
     const preview = URL.createObjectURL(file);
+    setRawImage(preview);
+    setShowCropper(true);
 
     onChange({
       ...data,
@@ -41,7 +48,7 @@ const StepPersonalInfo = ({ data, onChange, onNext }: Props) => {
     if (!data.fullName.trim()) newErrors.fullName = "Full name is required";
     if (!data.email.trim()) newErrors.email = "Email is required";
     if (!data.phone.trim()) newErrors.phone = "Phone number is required";
-    if (!data.password.trim()) newErrors.password = "Password is required";
+
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -106,21 +113,6 @@ const StepPersonalInfo = ({ data, onChange, onNext }: Props) => {
           )}
         </div>
 
-        <div className={styles.fieldGroup}>
-          <label>
-            Password <span className={styles.required}>*</span>
-          </label>
-          <input
-            type="password"
-            placeholder="Enter password"
-            value={data.password}
-            onChange={(e) => handleInputChange("password", e.target.value)}
-            className={errors.password ? styles.inputError : undefined}
-          />
-          {errors.password && (
-            <p className={styles.errorText}>{errors.password}</p>
-          )}
-        </div>
       </div>
 
       {/* Profile picture upload */}
@@ -162,6 +154,29 @@ const StepPersonalInfo = ({ data, onChange, onNext }: Props) => {
             handleFileChange(file);
           }}
         />
+        {showCropper && rawImage && (
+        <AvatarCropper
+          image={rawImage}
+          onCropComplete={(croppedBlob) => {
+            const croppedFile = new File(
+              [croppedBlob],
+              "profile.jpg",
+              { type: "image/jpeg" }
+            );
+
+            const preview = URL.createObjectURL(croppedBlob);
+
+            onChange({
+              ...data,
+              profileImageFile: croppedFile,
+              profileImagePreview: preview,
+            });
+
+            setShowCropper(false);
+          }}
+        />
+      )}
+
       </div>
 
       {/* Actions */}

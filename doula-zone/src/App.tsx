@@ -6,8 +6,18 @@ import type React from 'react';
 import MyAvailability from './pages/Availability/MyAvailability';
 import ManageDoulas from './pages/Doulas/ManageDoula/ManageDoulas';
 import CreateDoula from './pages/Doulas/CreateDoula/CreateDoula';
+import Bookings from './pages/Bookings/Bookings';
 import Testimonials from './pages/Testimonials/Testimonials';
 import TestimonialView from './pages/Testimonials/TestimonialView';
+import Meetings from './pages/Meetings/Meetings';
+import Schedules from './pages/Schedules/Schedules';
+import ViewDoulaPage from './pages/Doulas/ViewDoula';
+import MeetingDetailsPage from './pages/Meetings/MeetingDetails';
+import CreateBooking from './pages/Bookings/CreateBooking';
+import EditDoula from './pages/EditDoula/EditDoula';
+import ScheduleMeetingPage from './pages/Meetings/scheduleMeetings/ScheduleMeetingPage';
+import CheckAvailability from './pages/Schedules/CheckAvailability';
+import JoinMeeting from './pages/Meetings/JoinMeeting';
 
 function PrivaterRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem("token");
@@ -38,9 +48,69 @@ function App() {
           </PrivaterRoute>
         } />
 
+        <Route path='/doulas/:id' element={
+          <PrivaterRoute>
+            <ViewDoulaPage />
+          </PrivaterRoute>
+        } />
+
         <Route path='/doulas/create' element={
           <PrivaterRoute>
             <CreateDoula />
+          </PrivaterRoute>
+        } />
+
+        <Route path='/doulas/:doulaId/edit' element={
+          <PrivaterRoute>
+            <EditDoula />
+          </PrivaterRoute>
+        } />
+
+        <Route path="/meetings" element={
+          <PrivaterRoute>
+            <Meetings />
+          </PrivaterRoute>
+        } />
+
+        <Route path="meetings/:id" element={
+          <PrivaterRoute>
+            <MeetingDetailsPage />
+          </PrivaterRoute>
+        } />
+
+        <Route path="/joinmeeting/:meetingId" element={
+          <PrivaterRoute>
+            <JoinMeeting />
+          </PrivaterRoute>
+        } />
+
+        <Route path="meetings/:enquiryId/schedule" element={
+          <PrivaterRoute>
+            <ScheduleMeetingPage />
+          </PrivaterRoute>
+        } />
+
+        <Route path="/bookings" element={
+          <PrivaterRoute>
+            <Bookings />
+          </PrivaterRoute>
+        } />
+
+        <Route path="/bookings/create" element={
+          <PrivaterRoute>
+            <CreateBooking />
+          </PrivaterRoute>
+        } />
+
+        <Route path="/schedules" element={
+          <PrivaterRoute>
+            <Schedules />
+          </PrivaterRoute>
+        } />
+
+        <Route path="/schedules/check-availability" element={
+          <PrivaterRoute>
+            <CheckAvailability />
           </PrivaterRoute>
         } />
 
@@ -54,9 +124,7 @@ function App() {
           <PrivaterRoute>
             <TestimonialView />
           </PrivaterRoute>
-        } />
-
-        
+        } />     
 
       </Routes>
     </BrowserRouter>

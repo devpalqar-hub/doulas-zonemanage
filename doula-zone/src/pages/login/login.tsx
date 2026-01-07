@@ -1,9 +1,10 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import styles from "./Login.module.css";
+import styles from "./login.module.css";
 import { sendOtp, verifyOtp } from "../../services/auth.service";
 import { useToast } from "../../shared/ToastContext";
 import { getZoneManagerProfile } from "../../services/zoneManager.service";
+import {  LuCircleCheckBig, LuLock } from "react-icons/lu";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -34,23 +35,20 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
 
 
   // Verify OTP
-  const handleVerifyOtp = async (e: FormEvent<HTMLFormElement>) => {
+const handleVerifyOtp = async (e: FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   setLoading(true);
 
   try {
     const res = await verifyOtp(email, otp);
-    console.log("VERIFY OTP RESPONSE:", res);
 
-    // Store token and user
+    // Store auth data
+    localStorage.setItem("userId", res.data.user.id);
     localStorage.setItem("token", res.data.accessToken);
     localStorage.setItem("user", JSON.stringify(res.data.user));
 
-    // Fetch Zone Manager Profile
+    // Fetch profile
     const profileRes = await getZoneManagerProfile(res.data.user.id);
-
-    console.log("ZONE MANAGER PROFILE:", profileRes);
-
     const zm = profileRes;
 
     if (!zm) {
@@ -59,18 +57,13 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
       return;
     }
 
-    if (!zm.regions || zm.regions.length === 0) {
-      showToast("No region assigned to this Zone Manager", "error");
-      setLoading(false);
-      return;
-    }
-
-    // Store values
     localStorage.setItem("zoneManagerProfileId", zm.profileId);
-    localStorage.setItem("regionId", zm.regions[0].id);
+
+    if (zm.regions && zm.regions.length > 0) {
+      localStorage.setItem("regionId", zm.regions[0].id);
+    } 
 
     window.location.href = "/dashboard";
-
 
   } catch (err) {
     console.error("LOGIN ERROR:", err);
@@ -81,11 +74,12 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
 };
 
 
+
   return (
     <div className={styles.container}>
       {/* Left Section */}
       <div className={styles.leftSection}>
-        <img className={styles.logoCircle} src="/D-icon.png"></img>
+        <img className={styles.avatar} src="/doula-branding.png"></img>
         <h2>Doula Service Management</h2>
         <p>
           Comprehensive platform for managing doula services, appointments, and
@@ -93,12 +87,12 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
         </p>
 
         <div className={styles.checkItem}>
-          <img src="/green-tick-icon.png"/> Streamlined Operations
+          <LuCircleCheckBig color="green" size={20} /> Streamlined Operations
         </div>
         <p className={styles.subtext}>Manage all aspects of your zone in one place</p>
 
         <div className={styles.checkItem}>
-          <img src="/green-tick-icon.png"/> Real-time Insights
+          <LuCircleCheckBig color="green" size={20} /> Real-time Insights
         </div>
         <p className={styles.subtext}>Track performance and availability instantly</p>
       </div>
@@ -137,7 +131,7 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
           </button>
           <div className={styles.footerNote}>
             
-                <img src="/lock-icon.png" className={styles.lockIcon}/>
+                <LuLock size={20} style={{marginRight: "5px"}}/>
             Your credentials are encrypted and stored securely. We take your privacy seriously.
            
           </div>

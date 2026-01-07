@@ -1,0 +1,375 @@
+/* ===================== Layout ===================== */
+.root {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.contentArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pageContent {
+  padding: 24px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ===================== Back ===================== */
+.backLink {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: #0A0A0A;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 25px;
+  cursor: pointer;
+}
+
+/* ===================== Header ===================== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #0F172B;
+}
+
+.status {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: lowercase;
+}
+
+.scheduled {
+  background: #F7EBED;
+  color: #F94355;
+}
+
+.completed {
+  background: #ECEEF2;
+  color: #8335A0;
+}
+
+.cancelled {
+  background: #FDEDEB;
+  color: #3A2639;
+}
+
+/* ===================== Grid ===================== */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+/* ===================== Cards ===================== */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid #0000001A;
+}
+
+.sideCard {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid #0000001A;
+  height: fit-content;
+}
+
+.card h4,
+.sideCard h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0F172B;
+  margin-bottom: 14px;
+}
+
+/* ===================== Info ===================== */
+.infoRow {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 16px;
+}
+
+.infoRow label,
+.block label {
+  font-size: 13px;
+  color: #62748E;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.infoRow p,
+.block p {
+  font-size: 14px;
+  font-weight: 500;
+  color: #3A2639;
+}
+
+/* ===================== Blocks ===================== */
+.block {
+  margin-bottom: 16px;
+}
+
+.pill {
+  display: inline-block;
+  background: #ECEEF2;
+  color: #314158;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ===================== Meeting Link ===================== */
+.linkRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.linkRow input {
+  flex: 1;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  padding: 8px 10px;
+  font-size: 13px;
+  background: #F8FAFC;
+  color: #314158;
+}
+
+.linkRow button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #0F172B;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* ===================== Actions ===================== */
+.joinBtn {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #8335A0;
+  color: #fff;
+  text-align: center;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 10px;
+}
+
+.scheduleBtn {
+    display: block;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #8335A0;
+  background: #ffff;
+  color: #8335A0;
+  text-align: center;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.secondaryBtn {
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid #E2E8F0;
+  background: #fff;
+  font-weight: 500;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.dangerBtn {
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid #F94355;
+  background: #fff;
+  color: #F94355;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* ===================== Client ===================== */
+.clientRow {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #8335A0;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.clientRow strong {
+  font-size: 14px;
+  color: #3A2639;
+}
+
+.clientRow p {
+  font-size: 13px;
+  color: #62748E;
+  margin-top: 2px;
+}
+
+/* ===================== States ===================== */
+.state {
+  padding: 40px;
+  text-align: center;
+  color: #64748b;
+}
+
+/* ===================== Tablets (≤ 1024px) ===================== */
+@media (max-width: 1024px) {
+  .pageContent {
+    padding: 20px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr 280px;
+    gap: 16px;
+  }
+
+  .infoRow {
+    gap: 24px;
+  }
+}
+
+/* ===================== Small Tablets & Large Phones (≤ 768px) ===================== */
+@media (max-width: 768px) {
+  /* Layout */
+  .pageContent {
+    padding: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* Grid becomes single column */
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sideCard {
+    order: 2; /* Actions come after details */
+  }
+
+  /* Info rows stack */
+  .infoRow {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Pills & status safety */
+  .status,
+  .pill {
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  /* Buttons */
+  .joinBtn,
+  .secondaryBtn,
+  .dangerBtn {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  /* Link row wraps nicely */
+  .linkRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .linkRow button {
+    width: 100%;
+  }
+}
+
+/* ===================== Mobile (≤ 480px) ===================== */
+@media (max-width: 480px) {
+  .pageContent {
+    padding: 12px;
+  }
+
+  .backLink {
+    font-size: 13px;
+    gap: 10px;
+  }
+
+  .header h2 {
+    font-size: 18px;
+  }
+
+  .status {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  .card,
+  .sideCard {
+    padding: 14px;
+  }
+
+  .card h4,
+  .sideCard h4 {
+    font-size: 15px;
+  }
+
+  /* Client section */
+  .clientRow {
+    align-items: flex-start;
+  }
+
+  .avatar {
+    width: 42px;
+    height: 42px;
+    font-size: 14px;
+  }
+
+  .clientRow strong {
+    font-size: 13px;
+  }
+
+  .clientRow p {
+    font-size: 12px;
+  }
+}
+

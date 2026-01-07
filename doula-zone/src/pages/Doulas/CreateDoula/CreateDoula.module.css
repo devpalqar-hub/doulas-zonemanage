@@ -8,13 +8,12 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
   overflow-x: hidden;
 }
 
 .pageContent {
   padding: 24px 28px;
-  overflow: auto;
+  overflow-y: auto;
 }
 
 .backLink {
@@ -99,9 +98,9 @@
 }
 
 .stepCircleCompleted {
-  border-color: #F94355;
-  background: #F94355;
-  color: #ffff;
+  border-color: #8335A0;
+  background: #8335A0;
+  color: #F7EBED;
 }
 
 .stepConnector {
@@ -114,7 +113,7 @@
 }
 
 .stepConnectorActive {
-  background: #F94355;
+  background: #8335A0;
 }
 
 .stepLabel {
@@ -122,7 +121,7 @@
   font-size: 12px;
   color: #64748b;
   text-align: center;
-  padding-right: 60px;
+  padding-right: 100px;
 }
 
 /* Step body */
@@ -173,14 +172,14 @@
 }
 
 .required {
-  color: #ef4444;
+  color: #8335A0;
   margin-left: 2px;
 }
 
 .errorText {
   margin-top: 4px;
   font-size: 11px;
-  color: #ef4444;
+  color: #8335A0;
 }
 
 /* Upload */
@@ -271,8 +270,8 @@
   padding: 10px 18px;
   border-radius: 10px;
   border: none;
-  background: #F94355;
-  color: #ffffff;
+  background: #8335A0;
+  color: #F7EBED;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -621,14 +620,14 @@
 }
 
 .req {
-  color: #ef4444;
+  color: #8335A0;
   margin-left: 2px;
 }
 
 .errorText {
   margin-top: 4px;
   font-size: 12px;
-  color: #ef4444;
+  color: #8335A0;
 }
 
 .langChips {
@@ -650,8 +649,8 @@
 
 .langChipActive {
   background: #EEF2FF;
-  border-color: #4f46e5;
-  color: #4f46e5;
+  border-color: #8335A0;
+  color: #8335A0;
 }
 
 .stepFooter {
@@ -664,9 +663,9 @@
 .primaryBtn {
   padding: 9px 22px;
   border-radius: 10px;
-  background: #4f46e5;
+  background: #8335A0;
   border: none;
-  color: #ffffff;
+  color: #F7EBED;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -695,7 +694,7 @@
 }
 
 
-/* ---------- Services & Pricing (Step 3) ---------- */
+/* ---------- Services & Pricing ---------- */
 
 .servicesGrid {
   display: grid;
@@ -718,14 +717,13 @@
 }
 
 .serviceCard:hover {
-  border-color: #6366F1;
+  border-color: #741e93;
 }
 
 .serviceCardActive {
-  background: #EEF2FF;
-  border: 2px solid #6366F1;
-  color: #4F46E5;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  background: #F7EBED;
+  border: 2px solid #8335A0;
+  color: #F7EBED;
 }
 
 /* Pricing section */
@@ -780,18 +778,17 @@
 }
 
 .pricingInput:focus {
-  border-color: #6366F1;
+  border-color: #6e2489;
   outline: none;
 }
 
 /* Error */
 .errorText {
   margin-top: 8px;
-  color: #EF4444;
+  color: #8335A0;
   font-size: 13px;
 }
 
-/* ///// REVIEW AND SUBMIT ///// */
 
 .reviewCard {
   background: #f8fafc;
@@ -820,4 +817,88 @@
   font-weight: 600;
   color: #0f172b;
 }
+
+.uploadBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.galleryItem {
+  position: relative;
+}
+
+.galleryItem img {
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.removeBtn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+}
+
+.reviewGalleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.reviewGalleryItem {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.reviewGalleryItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.certificatesList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px; 
+  margin-top: 8px;
+}
+
+.certificateRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.addCertificateBtn {
+  margin-top: 18px; 
+}
+
+
 

@@ -10,7 +10,8 @@ type Service = {
 
 type Props = {
   data: {
-    services: Array<{ serviceId: string; price: string }>;
+    services: Array<{ serviceId: string; 
+      price: string }>;
   };
   setFormData: (fn: (prev: any) => any) => void;
   onNext: () => void;
@@ -33,13 +34,15 @@ const PricingServicesStep = ({ data, setFormData, onNext, onPrev }: Props) => {
     load();
   }, []);
 
-  const toggleService = (serviceId: string) => {
+  const toggleService = (service: Service) => {
     const selected = data.services || [];
-    const exists = selected.find((s) => s.serviceId === serviceId);
+    const exists = selected.find((s) => s.serviceId === service.id);
 
     const updated = exists
-      ? selected.filter((s) => s.serviceId !== serviceId)
-      : [...selected, { serviceId, price: "" }];
+      ? selected.filter((s) => s.serviceId !== service.id)
+      : [...selected, { serviceId: service.id,
+        serviceName: service.name,
+        price: "" }];
 
     setFormData((prev) => ({
       ...prev,
@@ -98,7 +101,7 @@ const PricingServicesStep = ({ data, setFormData, onNext, onPrev }: Props) => {
                   ? `${styles.serviceCard} ${styles.serviceCardActive}`
                   : styles.serviceCard
               }
-              onClick={() => toggleService(service.id)}
+              onClick={() => toggleService(service)}
             >
               {service.name}
             </button>

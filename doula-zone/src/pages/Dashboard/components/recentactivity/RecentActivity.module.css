@@ -5,6 +5,7 @@
   font-family: Inter, sans-serif;
   border: 1px solid #0000001A;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  min-height: 650px;
 }
 
 .header {
@@ -22,7 +23,7 @@
 .live {
   font-size: 12px;
   padding: 2px 8px;
-  background: #ECEEF2;
+  background: #aefcb8;
   border-radius: 8px;
   border: 1px solid #00000000;
   color: #030213;

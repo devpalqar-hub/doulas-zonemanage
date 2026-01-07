@@ -6,6 +6,7 @@ import Topbar from "../Dashboard/components/topbar/Topbar";
 import styles from "./TestimonialView.module.css";
 import { fetchTestimonialById, type Testimonial } from "../../services/testimonial.service";
 import { FaStar } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa6";
 
 const TestimonialView = () => {
   const { id } = useParams();
@@ -33,6 +34,13 @@ const TestimonialView = () => {
         <Topbar />
 
         <div className={styles.pageContent}>
+          <button
+            type="button"
+            className={styles.backLink}
+            onClick={() => window.history.back()}
+          >
+          <FaArrowLeft />   Back 
+          </button>
           <h2>Testimonial Details</h2>
 
           <div className={styles.viewCard}>

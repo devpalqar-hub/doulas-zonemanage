@@ -43,6 +43,10 @@ const Testimonials = () => {
 
     setFiltered(list);
   };
+    useEffect(() => {
+    applyFilters();
+  }, [service, rating, fromDate, toDate, testimonials]);
+
 
   const resetFilters = () => {
     setService("");
