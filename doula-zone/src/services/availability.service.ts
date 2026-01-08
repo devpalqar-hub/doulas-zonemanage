@@ -67,7 +67,7 @@ export const createSlot = async (payload: {
 
 
 export const deleteSlot = async (timeSlotId: string) => {
-  const res = await api.delete(`/slots/${timeSlotId}`);
+  const res = await api.delete(`/slots/delete/${timeSlotId}`);
   return res.data;
 };
 

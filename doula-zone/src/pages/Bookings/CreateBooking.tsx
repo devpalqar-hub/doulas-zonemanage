@@ -46,6 +46,8 @@ type PricingResponse = {
 const CreateBooking = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const today = new Date().toISOString().split("T")[0];
+
 
   /* ================= STATE ================= */
 
@@ -336,12 +338,12 @@ const CreateBooking = () => {
               {/* DATES */}
               <div className={styles.fieldGroup}>
                 <label className={styles.label}>Start Date</label>
-                <input type="date" onChange={(e) => setStartDate(e.target.value)} />
+                <input type="date" min={today} onChange={(e) => setStartDate(e.target.value)} />
               </div>
 
               <div className={styles.fieldGroup}>
                 <label className={styles.label}>End Date</label>
-                <input type="date" onChange={(e) => setEndDate(e.target.value)} />
+                <input type="date" min={startDate || today} onChange={(e) => setEndDate(e.target.value)} />
               </div>
 
               {/* POSTPARTUM ONLY */}
@@ -352,6 +354,14 @@ const CreateBooking = () => {
                     <input
                       type="number"
                       min={1}
+                       max={
+                        startDate && endDate
+                          ? Math.floor(
+                              (new Date(endDate).getTime() - new Date(startDate).getTime()) /
+                                (1000 * 60 * 60 * 24)
+                            ) + 1
+                          : 1
+                      }
                       value={visitFrequency}
                       onChange={(e) => setVisitFrequency(+e.target.value)}
                     />
