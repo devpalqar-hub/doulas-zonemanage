@@ -268,6 +268,7 @@ const ManageDoulas = () => {
                           <img
                             src={d.profileImage}
                             className={styles.avatarImg}
+                            alt=""
                           />
                         ) : (
                           initials

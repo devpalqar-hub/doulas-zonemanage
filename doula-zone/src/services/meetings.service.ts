@@ -34,16 +34,12 @@ export const fetchMeetings = async (params: {
   const res = await api.get("/zonemanager/meetings/list", { params: cleanParams });
 
   const normalized = res.data.data.map((m: any) => {
-    const start = new Date(m.startDate);
-    const end = new Date(m.endDate);
 
     return {
       meetingId: m.meetingId,
       name: m.clientName,
       meetingsDate: m.meetingDate,
-      meetingsTimeSlots: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}-${
-        end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-      }`,
+      meetingsTimeSlots: `${m.startDate}-${m.endDate}`,
       serviceName: m.serviceName,
       status: m.status === "CANCELED" ? "CANCELLED" : m.status,
       additionalNotes: null,

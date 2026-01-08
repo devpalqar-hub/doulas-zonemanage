@@ -315,7 +315,7 @@ const EditDoula = () => {
               <div className={styles.galleryGrid}>
                 {gallery.map((g) => (
                   <div key={g.id} className={styles.galleryItem}>
-                    <img src={g.url} />
+                    <img src={g.url} alt="" />
                     <button onClick={() => handleDeleteImage(g.id)}>
                       <FiTrash />
                     </button>
