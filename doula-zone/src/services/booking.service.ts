@@ -11,7 +11,7 @@ export type Booking = {
   serviceName: string;
   startDate: string;
   endDate: string;
-
+  timeshift: string;
   status: string;
 };
 
@@ -58,7 +58,7 @@ export const fetchBookings = async (filters: BookingFilters) => {
     serviceName: b.serviceName,
     startDate: b.startDate,
     endDate: b.endDate,
-
+    timeshift: b.timeshift,
     status: b.status,
   }));
 
