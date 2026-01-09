@@ -9,7 +9,7 @@ interface Props {
   onClose: () => void;
   refresh: () => void;
 }
-
+const today = new Date().toISOString().split("T")[0];
 const AddOffDayModal = ({ isOpen, onClose, refresh }: Props) => {
   const { showToast } = useToast();
 
@@ -27,6 +27,12 @@ const AddOffDayModal = ({ isOpen, onClose, refresh }: Props) => {
 
     try {
       setLoading(true);
+
+      if(startDate > endDate) {
+        showToast("Start date cannot be after end date", "warning");
+        setLoading(false);
+        return;
+      }
 
       await createOffDay({
         startDate,
@@ -63,11 +69,11 @@ const AddOffDayModal = ({ isOpen, onClose, refresh }: Props) => {
         <div className={styles.fieldRow}>
           <div className={styles.field}>
             <label>Start Date</label>
-            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+            <input type="date" min={today} value={startDate} onChange={e => setStartDate(e.target.value)} />
           </div>
           <div className={styles.field}>
             <label>End Date</label>
-            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+            <input type="date" value={endDate} min={today} onChange={e => setEndDate(e.target.value)} />
           </div>
         </div>
 

@@ -5,8 +5,8 @@ import styles from "./CreateBooking.module.css";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../shared/ToastContext";
 import api from "../../services/api";
-import { calculatePricing } from "../../services/pricing.service";
-import { createZoneBooking } from "../../services/booking.service";
+import { calculatePricing, type PricingPayload } from "../../services/pricing.service";
+import { createZoneBooking, type CreateBookingPayload } from "../../services/booking.service";
 import { FaArrowLeft } from "react-icons/fa6";
 
 /* ================= TYPES ================= */
@@ -25,9 +25,9 @@ type ServicePricing = {
 type AvailabilityResponse = {
   visitDates: string[];
   availability: {
-    morning: boolean;
-    night: boolean;
-    fullday: boolean;
+    MORNING: boolean;
+    NIGHT: boolean;
+    FULLDAY: boolean;
   };
 };
 
@@ -77,8 +77,13 @@ const CreateBooking = () => {
     useState<AvailabilityResponse | null>(null);
 
   const [pricing, setPricing] = useState<PricingResponse | null>(null);
+  const [buffer, setBuffer] = useState(0);
 
-  const buffer = 0;
+
+  const isInvalidDateRange = (start: string, end: string) => {
+    if (!start || !end) return false;
+    return new Date(start) >= new Date(end);
+  };
 
   /* ================= LOAD DOULAS ================= */
 
@@ -88,7 +93,7 @@ const CreateBooking = () => {
 
       const normalized = res.data.data.map((d: any) => ({
         userId: d.userId,
-        profileId: d.profileid,
+        profileId: d.profileId,
         name: d.name,
       }));
 
@@ -131,7 +136,11 @@ const CreateBooking = () => {
       !visitFrequency
     )
       return;
-
+    if (derivedServiceType === "POSTPARTUM" && isInvalidDateRange(startDate, endDate)) {
+      showToast("Start date must be before end date", "error");
+      setAvailability(null);
+      return;
+    }
     (async () => {
       try {
         const res = await api.get(
@@ -154,23 +163,47 @@ const CreateBooking = () => {
   /* ================= PRICE ================= */
 
   const handleCalculatePrice = async () => {
-    if (!selectedDoula || !servicePricingId || !startDate || !endDate) {
+    if (!selectedDoula || !servicePricingId) {
       showToast("Complete previous steps first", "error");
       return;
     }
 
-    const payload = {
-      doulaProfileId: selectedDoula.profileId,
-      servicePricingId,
-      serviceStartDate: startDate,
-      servicEndDate: endDate,
-      buffer,
-      serviceTimeShift:
-        derivedServiceType === "POSTPARTUM" ? timeShift : "FULLDAY",
-      ...(derivedServiceType === "POSTPARTUM" && {
-        visitFrequency,
-      }),
-    };
+    if (
+      derivedServiceType === "POSTPARTUM" &&
+      (!startDate || !endDate)
+    ) {
+      showToast("Please select start and end dates", "error");
+      return;
+    }
+
+    if (
+      derivedServiceType === "BIRTH" &&
+      !endDate
+    ) {
+      showToast("Please select birth date", "error");
+      return;
+    }
+
+
+    const payload: PricingPayload =
+    derivedServiceType === "POSTPARTUM"
+      ? {
+          doulaProfileId: selectedDoula.profileId,
+          servicePricingId,
+          serviceStartDate: startDate,
+          servicEndDate: endDate,
+          buffer,
+          serviceTimeShift: timeShift,
+          visitFrequency,
+        }
+      : {
+          doulaProfileId: selectedDoula.profileId,
+          servicePricingId,
+          serviceStartDate: endDate,
+          servicEndDate: endDate, 
+          buffer,
+          serviceTimeShift: "FULLDAY",
+        };
 
     try {
       const res = await calculatePricing(payload);
@@ -183,42 +216,85 @@ const CreateBooking = () => {
 
       setPricing(res);
       showToast("Price calculated successfully", "success");
-    } catch(err: any){
+    } catch (err: any) {
       console.error(err);
-      const msg = err?.response?.data?.message || "Failed to calculate price";
-      showToast(msg, "error");
+
+      const backendMessage =
+        err?.response?.data?.message;
+
+      if (Array.isArray(backendMessage)) {
+        showToast(backendMessage.join(", "), "error");
+      } else if (typeof backendMessage === "string") {
+        showToast(backendMessage, "error");
+      } else {
+        showToast("Failed to calculate price", "error");
+      }
     }
+
   };
 
   /* ================= SUBMIT ================= */
 
   const handleSubmit = async () => {
+    if (
+      derivedServiceType === "POSTPARTUM" &&
+      isInvalidDateRange(startDate, endDate)
+    ) {
+      showToast("Start date must be before end date", "error");
+      return;
+    }
+
     if (!pricing || !selectedDoula) return;
 
-    const payload = {
-      ...client,
-      doulaProfileId: selectedDoula.profileId,
-      serviceId: servicePricingId,
-      seviceStartDate: new Date(startDate).toISOString(),
-      serviceEndDate: new Date(endDate).toISOString(),
-      buffer,
-      serviceTimeShift:
-        derivedServiceType === "POSTPARTUM" ? timeShift : "FULLDAY",
-      ...(derivedServiceType === "POSTPARTUM" && {
-        visitFrequency,
-      }),
-    };
+    const payload: CreateBookingPayload =
+      derivedServiceType === "POSTPARTUM"
+        ? {
+            ...client,
+            doulaProfileId: selectedDoula.profileId,
+            serviceId: servicePricingId,
+            seviceStartDate: new Date(startDate).toISOString(),
+            serviceEndDate: new Date(endDate).toISOString(),
+            buffer,
+            serviceTimeShift: timeShift,
+            visitFrequency,
+          }
+        : {
+            ...client,
+            doulaProfileId: selectedDoula.profileId,
+            serviceId: servicePricingId,
+            seviceStartDate: new Date(endDate).toISOString(),
+            serviceEndDate: new Date(endDate).toISOString(),
+            buffer,
+            serviceTimeShift: "FULLDAY",
+          };
+
 
     try {
       await createZoneBooking(payload);
       showToast("Booking created & confirmed", "success");
       navigate("/bookings");
-    } catch {
-      showToast("Failed to create booking", "error");
+    } catch (err: any) {
+      console.error(err);
+
+      const backendMessage =
+        err?.response?.data?.message;
+
+      if (Array.isArray(backendMessage)) {
+        showToast(backendMessage.join(", "), "error");
+      } else if (typeof backendMessage === "string") {
+        showToast(backendMessage, "error");
+      } else {
+        showToast("Failed to create booking", "error");
+      }
     }
+
   };
 
   /* ================= UI ================= */
+const hasAnyShift =
+  availability?.availability.MORNING ||
+  availability?.availability.NIGHT ||
+  availability?.availability.FULLDAY;
 
   return (
     <div className={styles.root}>
@@ -322,6 +398,7 @@ const CreateBooking = () => {
                     }
 
                     setVisitFrequency(1);
+                    setBuffer(0);
                     setAvailability(null);
                     setPricing(null);
                   }}
@@ -336,15 +413,50 @@ const CreateBooking = () => {
               </div>
 
               {/* DATES */}
-              <div className={styles.fieldGroup}>
-                <label className={styles.label}>Start Date</label>
-                <input type="date" min={today} onChange={(e) => setStartDate(e.target.value)} />
-              </div>
+                            
+              {derivedServiceType === "POSTPARTUM" ? (
+                <>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Start Date</label>
+                    <input
+                      type="date"
+                      min={today}
+                      onChange={(e) => setStartDate(e.target.value)}
+                    />
+                  </div>
 
-              <div className={styles.fieldGroup}>
-                <label className={styles.label}>End Date</label>
-                <input type="date" min={startDate || today} onChange={(e) => setEndDate(e.target.value)} />
-              </div>
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.label}>End Date</label>
+                    <input
+                      type="date"
+                      min={startDate || today}
+                      onChange={(e) => setEndDate(e.target.value)}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className={styles.fieldGroup}>
+                  <label className={styles.label}>Birth Date</label>
+                  <input
+                    type="date"
+                    min={today}
+                    onChange={(e) => {
+                      setEndDate(e.target.value);   
+                      setStartDate("");             
+                    }}
+                  />
+                </div>
+              )}
+                <div className={styles.fieldGroup}>
+                  <label className={styles.label}>Buffer (days)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={buffer}
+                    onChange={(e) => setBuffer(Number(e.target.value))}
+                    placeholder="Enter buffer days"
+                  />
+                </div>
 
               {/* POSTPARTUM ONLY */}
               {derivedServiceType === "POSTPARTUM" && (
@@ -353,7 +465,7 @@ const CreateBooking = () => {
                     <label className={styles.label}>Frequency</label>
                     <input
                       type="number"
-                      min={1}
+                      min={0}
                        max={
                         startDate && endDate
                           ? Math.floor(
@@ -372,15 +484,21 @@ const CreateBooking = () => {
                       <label className={styles.label}>Time Shift</label>
                       <select
                         value={timeShift}
+                        disabled={!hasAnyShift}
                         onChange={(e) => setTimeShift(e.target.value as any)}
                       >
-                        {availability.availability.morning && (
+                        {!hasAnyShift && (
+                          <option value="">
+                            No shifts available for selected dates
+                          </option>
+                        )}
+                        {availability.availability.MORNING && (
                           <option value="MORNING">Morning</option>
                         )}
-                        {availability.availability.night && (
+                        {availability.availability.NIGHT && (
                           <option value="NIGHT">Night</option>
                         )}
-                        {availability.availability.fullday && (
+                        {availability.availability.FULLDAY && (
                           <option value="FULLDAY">Full Day</option>
                         )}
                       </select>

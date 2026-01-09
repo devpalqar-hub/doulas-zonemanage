@@ -33,7 +33,7 @@ const EditDoula = () => {
 
   const [name, setName] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
-  const [yoe, setYoe] = useState(0);
+  const [yoe, setYoe] = useState<string>("0");
   const [description, setDescription] = useState("");
   const [qualification, setQualification] = useState("");
   const [certificates, setCertificates] = useState<CertificateForm[]>([]);
@@ -56,8 +56,8 @@ const EditDoula = () => {
 
         setName(data.name);
         setUserId(data.userId);
-        setYoe(data.yoe);
-        setDescription(data.description);
+        setYoe(String(data.experience ?? 0));
+        setDescription(data.about);
         setQualification(data.qualification);
         setCertificates(
           (data.certificates ?? []).map((c: any) => ({
@@ -82,13 +82,18 @@ const EditDoula = () => {
   }, [doulaId, navigate, showToast]);
 
   const handleSave = async () => {
+    const experienceValue = Number(yoe);
+      if (Number.isNaN(experienceValue)) {
+          showToast("Years of experience is invalid", "error");
+          return;
+        }
     try {
       await updateDoulaProfile(doulaId!, {
         name,
         is_active: isActive,
-        description,
+        about: description,
         qualification,
-        yoe,
+        experience: experienceValue,
         specialities,
         certificates: certificates.map((c) => ({
         certificateId: c.certificateId, 
@@ -190,9 +195,28 @@ const EditDoula = () => {
                 <label>Years of Experience</label>
                 <input
                   type="number"
+                  min={0}
+                  step={1}
                   value={yoe}
-                  onChange={(e) => setYoe(Number(e.target.value))}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    if (value === "") {
+                      setYoe("");
+                      return;
+                    }
+
+                    if (/^\d+$/.test(value)) {
+                      setYoe(value);
+                    }
+                  }}
+                  onBlur={() => {
+                    if (yoe === "") {
+                      setYoe("0");
+                    }
+                  }}
                 />
+
               </div>
 
               <div className={styles.full}>

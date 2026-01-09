@@ -278,6 +278,7 @@
   background: #8335A0;
   color: #fff;
   text-decoration: none;
+  transition: opacity 0.2s ease, background 0.2s ease;
 }
 
 .joinBtn:hover {
@@ -355,7 +356,12 @@
   border-radius: 999px;
   max-width: 100px;
 }
-
+.disabledBtn {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  pointer-events: none;
+}
 /* ===================== Responsive ===================== */
 
 /* -------- Large tablets & below -------- */

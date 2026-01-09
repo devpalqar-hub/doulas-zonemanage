@@ -20,9 +20,9 @@ const Meetings = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [serviceName, setServiceName] = useState("");
   const [status, setStatus] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-
+  const [date1, setStartDate] = useState("");
+  const [date2, setEndDate] = useState("");
+  
   // pagination
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -52,8 +52,8 @@ const Meetings = () => {
           search: search.trim(),
           serviceName,
           status,
-          startDate,
-          endDate,
+          date1,
+          date2,
           page,
           limit,
         });
@@ -71,7 +71,7 @@ const Meetings = () => {
     };
 
     load();
-  }, [search, serviceName, status, startDate, endDate, page]);
+  }, [search, serviceName, status, date1, date2, page]);
 
   const visibleRange = useMemo(() => {
     if (total === 0) return { from: 0, to: 0 };
@@ -179,7 +179,7 @@ const Meetings = () => {
                 <label>Date Range</label>
                 <input
                   type="date"
-                  value={startDate}
+                  value={date1}
                   onChange={(e) => {
                     setStartDate(e.target.value);
                     setPage(1);
@@ -192,7 +192,7 @@ const Meetings = () => {
                 <label style={{ opacity: 0 }}>hidden</label>
                 <input
                   type="date"
-                  value={endDate}
+                  value={date2}
                   onChange={(e) => {
                     setEndDate(e.target.value);
                     setPage(1);
@@ -220,7 +220,7 @@ const Meetings = () => {
             ) : (
               meetings.map((m) => {
                 const [start, end] = m.meetingsTimeSlots.split("-");
-
+                const canJoin = m.status === "SCHEDULED";
                 return (
                   <div key={m.meetingId} className={styles.meetingRow}>
                     <div className={styles.meetingLeft}>
@@ -283,11 +283,20 @@ const Meetings = () => {
                         >
                           View Details
                         </button>
-                      <button className={styles.joinBtn}  
-                      onClick={() => navigate(`/joinmeeting/${m.meetingId}`)}
-                      disabled={m.status !== "SCHEDULED"}>
-                        Join Meeting
+                      <button
+                        className={`${styles.joinBtn} ${
+                          !canJoin ? styles.disabledBtn : ""
+                        }`}
+                        onClick={() => navigate(`/joinmeeting/${m.meetingId}`)}
+                        disabled={!canJoin}
+                      >
+                        {m.status === "COMPLETED"
+                          ? "Meeting Completed"
+                          : m.status === "CANCELED" || m.status === "CANCELLED"
+                          ? "Meeting Cancelled"
+                          : "Join Meeting"}
                       </button>
+
                     </div>
                   </div>
                 );

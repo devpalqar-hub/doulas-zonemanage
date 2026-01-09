@@ -3,7 +3,7 @@ import api from "./api";
 export interface PricingPayload {
   doulaProfileId: string;
   servicePricingId: string;
-  serviceStartDate: string; 
+  serviceStartDate?: string; 
   servicEndDate: string;    
   visitFrequency?: number;
   serviceTimeShift?: "MORNING" | "NIGHT" | "FULLDAY";

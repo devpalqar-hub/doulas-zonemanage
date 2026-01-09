@@ -4,7 +4,7 @@ import Topbar from "../../Dashboard/components/topbar/Topbar";
 import styles from "./ManageDoulas.module.css";
 
 import {
-  fetchDoulas,
+  fetchZoneManagerDoulas,
   deleteDoula,
   type DoulaListItem,
 } from "../../../services/doula.service";
@@ -16,7 +16,7 @@ import { FiFilter, FiSearch, FiEdit, FiTrash } from "react-icons/fi";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
-type AvailabilityFilter = "ALL" | "AVAILABLE" | "UNAVAILABLE";
+// type AvailabilityFilter = "ALL" | "AVAILABLE" | "UNAVAILABLE";
 type StatusFilter = "ALL" | "ACTIVE" | "INACTIVE";
 
 const formatDate = (iso: string) => {
@@ -41,8 +41,8 @@ const ManageDoulas = () => {
   // Filters
   const [search, setSearch] = useState("");
   const [serviceFilter, setServiceFilter] = useState("ALL");
-  const [availabilityFilter, setAvailabilityFilter] =
-    useState<AvailabilityFilter>("ALL");
+  // const [availabilityFilter, setAvailabilityFilter] =
+  //   useState<AvailabilityFilter>("ALL");
   const [statusFilter, setStatusFilter] =
     useState<StatusFilter>("ALL");
 
@@ -63,14 +63,23 @@ const ManageDoulas = () => {
         setLoading(true);
         setError(null);
 
-        const res = await fetchDoulas({
+        const res = await fetchZoneManagerDoulas({
           search,
           page,
           limit,
-          service: serviceFilter !== "ALL" ? serviceFilter : undefined,
-          availability:
-            availabilityFilter !== "ALL" ? availabilityFilter : undefined,
-          status: statusFilter !== "ALL" ? statusFilter : undefined,
+
+          serviceName:
+            serviceFilter !== "ALL" ? serviceFilter : undefined,
+
+          // isAvailable:
+          //   availabilityFilter === "ALL"
+          //     ? undefined
+          //     : availabilityFilter === "AVAILABLE",
+
+          isActive:
+            statusFilter === "ALL"
+              ? undefined
+              : statusFilter === "ACTIVE",
         });
 
         setDoulas(res.doulas);
@@ -89,8 +98,9 @@ const ManageDoulas = () => {
   }, [
     search,
     page,
+    limit,
     serviceFilter,
-    availabilityFilter,
+    // availabilityFilter,
     statusFilter,
     showToast,
   ]);
@@ -98,7 +108,7 @@ const ManageDoulas = () => {
   const resetFilters = () => {
     setSearch("");
     setServiceFilter("ALL");
-    setAvailabilityFilter("ALL");
+    // setAvailabilityFilter("ALL");
     setStatusFilter("ALL");
     setPage(1);
   };
@@ -191,7 +201,7 @@ const ManageDoulas = () => {
                 </select>
               </div>
 
-              <div className={styles.filterSelect}>
+              {/* <div className={styles.filterSelect}>
                 <label>Availability</label>
                 <select
                   value={availabilityFilter}
@@ -206,7 +216,7 @@ const ManageDoulas = () => {
                   <option value="AVAILABLE">Available</option>
                   <option value="UNAVAILABLE">Unavailable</option>
                 </select>
-              </div>
+              </div> */}
 
               <div className={styles.filterSelect}>
                 <label>Status</label>
