@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import styles from "./RecentTestimonials.module.css";
 import { LuStar } from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
+
 
 import {
   fetchRecentTestimonials,
@@ -26,6 +28,8 @@ const formatDate = (date: string) =>
 export default function RecentTestimonials() {
   const [testimonials, setTestimonials] = useState<RecentTestimonial[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const load = async () => {
@@ -47,7 +51,12 @@ export default function RecentTestimonials() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h4>Recent Testimonials</h4>
-        <span className={styles.viewAll}>View All</span>
+        <span
+          className={styles.viewAll}
+          onClick={() => navigate("/testimonials")}
+        >
+          View All
+        </span>
       </div>
 
       <div className={styles.list}>

@@ -11,7 +11,11 @@ const JoinMeeting = () => {
     if (!meetingId) return;
 
     const userID = `user_${Date.now()}`;
-    const userName = "Participant";
+    const storedUser = localStorage.getItem("user");
+    const userName = storedUser
+      ? JSON.parse(storedUser).name || "Participant"
+      : "Participant";
+
 
     const kitToken = generateZegoToken(userID, userName, meetingId);
     const zp = ZegoUIKitPrebuilt.create(kitToken);

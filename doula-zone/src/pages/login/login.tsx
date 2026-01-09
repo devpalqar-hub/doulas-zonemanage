@@ -79,7 +79,7 @@ const handleVerifyOtp = async (e: FormEvent<HTMLFormElement>) => {
     <div className={styles.container}>
       {/* Left Section */}
       <div className={styles.leftSection}>
-        <img className={styles.avatar} src="/doula-branding.png"></img>
+        <img className={styles.avatar} src="/doula-branding.png" alt="" ></img>
         <h2>Doula Service Management</h2>
         <p>
           Comprehensive platform for managing doula services, appointments, and
