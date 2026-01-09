@@ -92,7 +92,7 @@ const Testimonials = () => {
               value={service}
               onChange={(e) => setService(e.target.value)}
             >
-              <option value="">Service</option>
+              <option value="">All Services</option>
               {[...new Set(testimonials.map(t => t.serviceName))].map(s => (
                 <option key={s} value={s}>{s}</option>
               ))}
@@ -103,7 +103,7 @@ const Testimonials = () => {
               value={rating}
               onChange={(e) => setRating(e.target.value)}
             >
-              <option value="">Rating</option>
+              <option value="">All Ratings</option>
               {[5, 4, 3, 2, 1].map(r => (
                 <option key={r} value={r}>{r} Stars</option>
               ))}

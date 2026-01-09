@@ -107,10 +107,6 @@ const Bookings = () => {
     return { from, to };
   }, [page, limit, total]);
 
-  const getDerivedTimeSlot = () => {
-    return "09:00 AM - 06:00 PM";
-  };
-
 
   const resetFilters = () => {
     setSearch("");
@@ -296,7 +292,7 @@ const Bookings = () => {
                 <div>Service</div>
                 <div>Start Date</div>
                 <div>End Date</div>
-                <div>Time Slot</div>
+                <div>Shift</div>
                 <div>Status</div>
                 <div>Actions</div>
               </div>
@@ -338,16 +334,16 @@ const Bookings = () => {
 
                     {/* END DATE */}
                     <div className={styles.mainText}>
-                      {new Date(b.endDate).toLocaleDateString("en-IN", {
+                      {b.serviceName === "BIRTH" || !b.endDate ? "-" : new Date(b.endDate).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
                       })}
                     </div>
 
-                    {/* TIME SLOT */}
+                    {/* TIME SHIFT */}
                     <div className={styles.mainText}>
-                      {getDerivedTimeSlot()}
+                      {b.timeshift}
                     </div>
 
                     {/* STATUS */}

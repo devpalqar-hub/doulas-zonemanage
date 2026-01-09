@@ -197,7 +197,7 @@ export const fetchZoneManagerDoulas = async (params?: {
 
     serviceNames: (d.services ?? []).map((s: any) => s.name),
     specialities: d.specialities ?? [],
-    regionNames: d.regionNames ?? [],
+    regionNames: (d.regions ?? []).map((r: any) => r.regionName),
 
     ratings: d.ratings ?? null,
     reviewsCount: d.reviewsCount ?? 0,
