@@ -17,6 +17,7 @@ import {
 } from "../../services/availability.service";
 
 import { FiTrash } from "react-icons/fi";
+import Modal from "../../components/Modal/Modal";
 
 /* ================= HELPERS ================= */
 
@@ -45,6 +46,11 @@ const MyAvailability = () => {
   const [openOffDay, setOpenOffDay] = useState(false);
   const [deletingOffDayId, setDeletingOffDayId] = useState<string | null>(null);
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmType, setConfirmType] = useState<"slot" | "offday" | null>(null);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+
+
   /* ================= FETCH ================= */
 
   const loadSlots = async () => {
@@ -71,37 +77,6 @@ const MyAvailability = () => {
     loadSlots();
     loadOffDays();
   }, []);
-
-  /* ================= DELETE ================= */
-
-  const handleDeleteSlot = async (id: string) => {
-  if (!confirm("Delete this time slot?")) return;
-
-  try {
-    setDeletingSlotId(id);
-    await deleteSlot(id);
-    setSlots(prev => prev.filter(s => s.id !== id));
-    showToast("Slot deleted", "success");
-  } catch (err: any) {
-    const msg = err?.response?.data?.message ?? "Failed to delete slot";
-    showToast(msg, "error");
-  } finally {
-    setDeletingSlotId(null);
-  }
-};
-
-
-  const handleDeleteOffDay = async (id: string) => {
-    if (!confirm("Delete this off day?")) return;
-    try {
-      setDeletingOffDayId(id);
-      await deleteOffDay(id);
-      setOffDays((prev) => prev.filter((d) => d.id !== id));
-    } finally {
-      setDeletingOffDayId(null);
-    }
-  };
-
   /* ================= RENDER ================= */
 
   return (
@@ -170,7 +145,11 @@ const MyAvailability = () => {
                       <input value={timeOnly(slot.endTime)} disabled />
 
                       <button
-                        onClick={() => handleDeleteSlot(slot.id)}
+                        onClick={() => {
+                          setConfirmType("slot");
+                          setConfirmId(slot.id);
+                          setConfirmOpen(true);
+                        }}
                         disabled={deletingSlotId === slot.id}
                         className={styles.deleteBtn}
                       >
@@ -211,20 +190,85 @@ const MyAvailability = () => {
                         value={d.endTime ? timeOnly(d.endTime) : "Off"}
                         disabled
                       />
-
-                      <button
-                        onClick={() => handleDeleteOffDay(d.id)}
-                        disabled={deletingOffDayId === d.id}
-                        className={styles.deleteBtn}
-                      >
-                        <FiTrash />
-                      </button>
+                     <button
+                      onClick={() => {
+                        setConfirmType("offday");
+                        setConfirmId(d.id);
+                        setConfirmOpen(true);
+                      }}
+                      disabled={deletingOffDayId === d.id}
+                      className={styles.deleteBtn}
+                    >
+                      <FiTrash />
+                    </button>
                     </div>
                   ))}
                 </div>
               )}
             </>
           )}
+          <Modal
+            isOpen={confirmOpen}
+            onClose={() => {
+              setConfirmOpen(false);
+              setConfirmId(null);
+              setConfirmType(null);
+            }}
+            title="Confirm Deletion"
+          >
+            <p>
+              {confirmType === "slot"
+                ? "Are you sure you want to delete this time slot?"
+                : "Are you sure you want to delete this off day?"}
+            </p>
+
+            <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
+              <button
+                className={styles.secondaryBtn}
+                onClick={() => {
+                  setConfirmOpen(false);
+                  setConfirmId(null);
+                  setConfirmType(null);
+                }}
+              >
+                Cancel
+              </button>
+
+              <button
+                className={styles.dangerBtn}
+                onClick={async () => {
+                  if (!confirmId || !confirmType) return;
+
+                  try {
+                    if (confirmType === "slot") {
+                      setDeletingSlotId(confirmId);
+                      await deleteSlot(confirmId);
+                      setSlots(prev => prev.filter(s => s.id !== confirmId));
+                      showToast("Slot deleted", "success");
+                    } else {
+                      setDeletingOffDayId(confirmId);
+                      await deleteOffDay(confirmId);
+                      setOffDays(prev => prev.filter(d => d.id !== confirmId));
+                      showToast("Off day deleted", "success");
+                    }
+                  } catch (err: any) {
+                    const msg =
+                      err?.response?.data?.message || "Failed to delete";
+                    showToast(msg, "error");
+                  } finally {
+                    setDeletingSlotId(null);
+                    setDeletingOffDayId(null);
+                    setConfirmOpen(false);
+                    setConfirmId(null);
+                    setConfirmType(null);
+                  }
+                }}
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </Modal>
+
         </div>
       </div>
     </div>

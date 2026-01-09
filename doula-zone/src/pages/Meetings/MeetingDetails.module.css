@@ -177,8 +177,14 @@
   font-weight: 600;
   text-decoration: none;
   margin-bottom: 10px;
+  transition: opacity 0.2s ease, background 0.2s ease;
 }
-
+.disabledBtn {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  pointer-events: none;
+}
 .scheduleBtn {
     display: block;
   width: 100%;

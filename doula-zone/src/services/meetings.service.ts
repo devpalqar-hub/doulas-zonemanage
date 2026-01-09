@@ -15,8 +15,8 @@ export type EnquiryMeeting = {
 export const fetchMeetings = async (params: {
   search?: string;
   serviceName?: string;
-  startDate?: string;
-  endDate?: string;
+  date1?: string;
+  date2?: string;
   page?: number;
   limit?: number;
   status?: string;
@@ -28,8 +28,8 @@ export const fetchMeetings = async (params: {
   if (params.limit) cleanParams.limit = params.limit;
   if (params.serviceName) cleanParams.serviceName = params.serviceName;
   if (params.status) cleanParams.status = params.status;
-  if (params.startDate) cleanParams.startDate = params.startDate;
-  if (params.endDate) cleanParams.endDate = params.endDate;
+  if (params.date1) cleanParams.date1 = params.date1;
+  if (params.date2) cleanParams.date2 = params.date2;
 
   const res = await api.get("/zonemanager/meetings/list", { params: cleanParams });
 

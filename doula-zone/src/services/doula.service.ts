@@ -160,26 +160,66 @@ export const createDoula = async (formData: FormData) => {
   return res.data;
 };
 
-export const fetchZonemanagerDoulas = async (): Promise<DoulaListItem[]> => {
-  const res = await api.get("/zonemanager/doulas/list");
+export const fetchZoneManagerDoulas = async (params?: {
+  search?: string;
+  page?: number;
+  limit?: number;
+  serviceName?: string;
+  isAvailable?: boolean;
+  isActive?: boolean;
+}) => {
+  const cleanParams: any = {};
 
-  return res.data.data.map((d: any) => ({
+  if (params?.search?.trim()) cleanParams.search = params.search;
+  if (params?.page) cleanParams.page = params.page;
+  if (params?.limit) cleanParams.limit = params.limit;
+
+  if (params?.serviceName) cleanParams.serviceName = params.serviceName;
+  if (params?.isAvailable !== undefined)
+    cleanParams.isAvailable = params.isAvailable;
+
+  if (params?.isActive !== undefined)
+    cleanParams.isActive = params.isActive;
+
+  const res = await api.get("/zonemanager/doulas/list", {
+    params: cleanParams,
+  });
+
+  const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
+
+  const doulas: DoulaListItem[] = res.data.data.map((d: any) => ({
     userId: d.userId,
-    profileId: d.profileid, 
+    profileId: d.profileId,
+
     name: d.name,
     email: d.email,
-    phone: d.phone,
     yoe: d.yoe ?? 0,
-    qualification: d.qualification ?? "",
-    serviceNames: d.specialities ?? [],
-    regionNames: [],
-    ratings: null,
-    reviewsCount: 0,
-    nextImmediateAvailabilityDate: null,
-    profileImage: d.profileImage ?? null,
-    isActive: true,
+
+    serviceNames: (d.services ?? []).map((s: any) => s.name),
+    specialities: d.specialities ?? [],
+    regionNames: d.regionNames ?? [],
+
+    ratings: d.ratings ?? null,
+    reviewsCount: d.reviewsCount ?? 0,
+    nextImmediateAvailabilityDate:
+      d.nextImmediateAvailabilityDate ?? null,
+
+    profileImage: d.profileImage
+      ? d.profileImage.startsWith("http")
+        ? d.profileImage
+        : `${IMAGE_BASE_URL}/${d.profileImage}`
+      : null,
+
+    isActive: d.isActive ?? true,
   }));
+
+  return {
+    doulas,
+    total: res.data.meta?.total ?? doulas.length,
+    totalPages: res.data.meta?.totalPages ?? 1,
+  };
 };
+
 
 
 export interface DoulaGalleryImage {
@@ -200,8 +240,8 @@ export interface DoulaProfileResponse {
   userId: string;
   name: string;
   email: string;
-  yoe: number;
-  description: string;
+  experience: number;
+  about: string;
   qualification: string;
   specialities: string[];
   ratings: number | null;
@@ -235,8 +275,8 @@ export const fetchDoulaProfile = async (
     userId: d.userId,
     name: d.name,
     email: d.email,
-    yoe: d.yoe ?? 0,
-    description: d.description ?? "",
+    experience: d.yoe ?? 0,
+    about: d.description ?? "",
     qualification: d.qualification ?? "",
     specialities: d.specialities ?? [],
     ratings: d.ratings ?? null,
@@ -280,9 +320,9 @@ export const fetchDoulaProfile = async (
 export interface UpdateDoulaProfilePayload {
   name: string;
   is_active: boolean;
-  description: string;
+  about: string;
   qualification: string;
-  yoe: number;
+  experience: number;
   specialities: string[];
 
   certificates?: {

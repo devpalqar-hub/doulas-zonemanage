@@ -214,8 +214,8 @@ textarea {
 }
 
 .primary {
-  background: #0f172b;
-  color: #ffffff;
+  background: #8335A0;
+  color: #F7EBED;
   border: none;
   padding: 10px 18px;
   border-radius: 10px;
@@ -263,8 +263,8 @@ textarea {
   gap: 8px;
 
   padding: 8px 16px;
-  background: #EF4444;
-  color: #fff;
+  background: #8335A0;
+  color: #F7EBED;
   border-radius: 8px;
   cursor: pointer;
 
@@ -274,7 +274,7 @@ textarea {
 }
 
 .uploadBtn:hover {
-  background: #d52a2a;
+  background: #761798;
 }
 
 /* Helper text */

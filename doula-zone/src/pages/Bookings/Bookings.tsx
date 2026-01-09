@@ -8,6 +8,7 @@ import { useToast } from "../../shared/ToastContext";
 import { FiSearch } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import Modal from "../../components/Modal/Modal";
 
 const Bookings = () => {
   const { showToast } = useToast();
@@ -36,6 +37,7 @@ const Bookings = () => {
   const[updatingId, setUpdatingId] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
 
   useEffect(() => {
   const handleClickOutside = (event: MouseEvent) => {
@@ -48,12 +50,11 @@ const Bookings = () => {
   };
 
   document.addEventListener("mousedown", handleClickOutside);
-
+  
   return () => {
     document.removeEventListener("mousedown", handleClickOutside);
   };
 }, []);
-
 
   useEffect(() => {
     const loadServices = async () => {
@@ -146,6 +147,12 @@ const Bookings = () => {
     bookingId: string,
     newStatus: "COMPLETED" | "CANCELED" | "ACTIVE"
   ) => {
+    const booking = bookings.find(b => b.id === bookingId);
+    if (booking?.status === "CANCELED") {
+      showToast("Cancelled bookings cannot be updated", "warning");
+      return;
+    }
+
     try {
       setUpdatingId(bookingId);
       await updateBookingStatus(bookingId, newStatus);
@@ -166,7 +173,6 @@ const Bookings = () => {
       setOpenMenuId(null);
     }
   }
-
   return (
     <div className={styles.root}>
       <Sidebar />
@@ -303,7 +309,10 @@ const Bookings = () => {
               ) : bookings.length === 0 ? (
                 <div className={styles.stateRow}>No bookings found</div>
               ) : (
-                bookings.map((b) => (
+                bookings.map((b) => {
+                const isCancelled = b.status === "CANCELED";
+
+                return (
                   <div key={b.id} className={styles.tableRow}>
                     {/* NAME */}
                     <div className={styles.mainText}>{b.clientName}</div>
@@ -341,7 +350,6 @@ const Bookings = () => {
                       {getDerivedTimeSlot()}
                     </div>
 
-
                     {/* STATUS */}
                     <div>
                       <span className={getStatusClass(b.status)}>
@@ -349,17 +357,26 @@ const Bookings = () => {
                       </span>
                     </div>
 
-                    {/* ACTION DOTS */}
+                    {/* ACTIONS */}
                     <div className={styles.actionsCell}>
-                      <div 
+                      <div
                         className={styles.actionWrapper}
                         ref={openMenuId === b.id ? menuRef : null}
                       >
                         <button
-                          className={styles.iconBtn}
-                          onClick={() =>
-                            setOpenMenuId(openMenuId === b.id ? null : b.id)
+                          className={`${styles.iconBtn} ${
+                            isCancelled ? styles.disabledAction : ""
+                          }`}
+                          disabled={isCancelled}
+                          title={
+                            isCancelled
+                              ? "This booking is cancelled and cannot be changed"
+                              : ""
                           }
+                          onClick={() => {
+                            if (isCancelled) return;
+                            setOpenMenuId(openMenuId === b.id ? null : b.id);
+                          }}
                         >
                           <BsThreeDotsVertical />
                         </button>
@@ -369,13 +386,16 @@ const Bookings = () => {
                             {getNextStatuses(b.status).map((s) => (
                               <button
                                 key={s}
-                                className={`${styles.dropdownItem} ${
-                                  styles[s.toLowerCase()]
-                                }`}
+                                className={`${styles.dropdownItem} ${styles[s.toLowerCase()]}`}
                                 disabled={updatingId === b.id}
-                                onClick={() =>
-                                  handleStatusChange(b.id, s as any)
-                                }
+                                onClick={() => {
+                                  if (s === "CANCELED") {
+                                    setConfirmCancelId(b.id);
+                                    setOpenMenuId(null);
+                                  } else {
+                                    handleStatusChange(b.id, s as any);
+                                  }
+                                }}
                               >
                                 {updatingId === b.id ? "Updating..." : s}
                               </button>
@@ -383,13 +403,44 @@ const Bookings = () => {
                           </div>
                         )}
                       </div>
-
                     </div>
                   </div>
-                ))
-              )}
-            </div>
+                );
+              })
 
+              )}
+              <Modal
+                isOpen={!!confirmCancelId}
+                onClose={() => setConfirmCancelId(null)}
+                title="Confirm Cancellation"
+              >
+                <p>
+                  Are you sure you want to cancel this booking?
+                  <br />
+                  <strong>This action cannot be undone.</strong>
+                </p>
+
+                <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
+                  <button
+                    className={styles.secondaryBtn}
+                    onClick={() => setConfirmCancelId(null)}
+                  >
+                    No, Keep Booking
+                  </button>
+
+                  <button
+                    className={styles.dangerBtn}
+                    onClick={() => {
+                      if (!confirmCancelId) return;
+                      handleStatusChange(confirmCancelId, "CANCELED");
+                      setConfirmCancelId(null);
+                    }}
+                  >
+                    Yes, Cancel Booking
+                  </button>
+                </div>
+              </Modal>
+            </div>
             {/* FOOTER */}
             <div className={styles.tableFooter}>
               <div className={styles.rowsInfo}>

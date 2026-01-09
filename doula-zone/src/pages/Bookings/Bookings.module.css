@@ -415,6 +415,19 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+.disabledAction {
+  opacity: 0.4;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.disabledAction:hover::after {
+  content: "🚫";
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  font-size: 14px;
+}
 
 @media (max-width: 1024px) {
   .pageContent {

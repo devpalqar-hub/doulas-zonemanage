@@ -135,7 +135,7 @@ const Sidebar = () => {
           <button onClick={() => setLogoutOpen(false)}>Cancel</button>
           <button
             onClick={handleLogout}
-            style={{ background: "#F94355", color: "#fff", padding: "6px 14px", borderRadius: "6px" }}
+            style={{ background: "#8335A0", color: "#F7EBED", padding: "6px 14px", borderRadius: "6px" }}
           >
             Logout
           </button>

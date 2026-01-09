@@ -5,7 +5,7 @@ import Topbar from "../../Dashboard/components/topbar/Topbar";
 import styles from "./ScheduleMeetingPage.module.css";
 
 import {
-  fetchZonemanagerDoulas,
+  fetchZoneManagerDoulas,
   type DoulaListItem,
 } from "../../../services/doula.service";
 import { scheduleMeeting } from "../../../services/meetings.service";
@@ -25,8 +25,10 @@ export default function ScheduleMeetingPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchZonemanagerDoulas()
-      .then(setDoulas)
+    fetchZoneManagerDoulas()
+    .then((res) => {
+      setDoulas(res.doulas); 
+    })
       .catch(() => showToast("Failed to load doulas", "error"));
   }, []);
 

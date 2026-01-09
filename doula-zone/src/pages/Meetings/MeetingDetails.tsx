@@ -63,6 +63,21 @@ const MeetingDetailsPage = () => {
   if (loading) return <div className={styles.state}>Loading...</div>;
   if (!data) return <div className={styles.state}>Meeting not found</div>;
 
+const canJoinMeeting = data.meetingStatus === "SCHEDULED";
+const formatTime = (iso: string) => {
+  const time = iso.split("T")[1].slice(0, 5); // "10:30"
+  const [h, m] = time.split(":").map(Number);
+
+  const date = new Date();
+  date.setHours(h, m, 0, 0);
+
+  return date.toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
   return (
     <>
       <div className={styles.root}>
@@ -109,16 +124,11 @@ const MeetingDetailsPage = () => {
 
                   <div>
                     <label>Time</label>
+                    
                     <p>
-                      {new Date(data.meetingStartTime).toLocaleTimeString("en-IN", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {formatTime(data.meetingStartTime)}
                       {" - "}
-                      {new Date(data.meetingEndTime).toLocaleTimeString("en-IN", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {formatTime(data.meetingEndTime)}
                     </p>
                   </div>
                 </div>
@@ -139,13 +149,14 @@ const MeetingDetailsPage = () => {
                 <h4>Actions</h4>
 
               <button
-                className={styles.joinBtn}
+                className={`${styles.joinBtn} ${
+                  !canJoinMeeting ? styles.disabledBtn : ""
+                }`}
                 onClick={() => navigate(`/joinmeeting/${data.meetingId}`)}
-                disabled={data.meetingStatus !== "SCHEDULED"}
+                disabled={!canJoinMeeting}
               >
                 Join Meeting
               </button>
-
 
                 <button
                   className={styles.secondaryBtn}
