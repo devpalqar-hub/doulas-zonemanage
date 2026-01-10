@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://api.bambinidoulas.com/backend/v1";
+const API_URL = "https://staging.bambinidoulas.com/backend/v1";
 
 export const sendOtp = async (email: string) => {
   return await axios.post(`${API_URL}/auth/send/otp`, 

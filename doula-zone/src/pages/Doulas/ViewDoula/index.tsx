@@ -10,21 +10,18 @@ import { useToast } from "../../../shared/ToastContext";
 import api from "../../../services/api";
 
 const mapBackendToView = (d: any) => {
-  const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL;
 
   return {
     userId: d.userId,
     name: d.name,
     yoe: d.yoe ?? 0,
 
-    profileImage: d.profileImage
-      ? `${baseUrl}/${d.profileImage}`
-      : null,
+    profileImage: d.profileImage ?? null,
 
     galleryImages: d.galleryImages?.length
       ? d.galleryImages.map((img: any) => ({
           id: img.id,
-          url: `${baseUrl}/${img.url}`,
+          url: img.url,
         }))
       : [],
 
