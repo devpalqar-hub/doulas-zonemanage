@@ -5,6 +5,7 @@ import { sendOtp, verifyOtp } from "../../services/auth.service";
 import { useToast } from "../../shared/ToastContext";
 import { getZoneManagerProfile } from "../../services/zoneManager.service";
 import {  LuCircleCheckBig, LuLock } from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ const Login = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
-
+  const navigate = useNavigate();
   // Send OTP
 const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
   e.preventDefault();
@@ -63,7 +64,7 @@ const handleVerifyOtp = async (e: FormEvent<HTMLFormElement>) => {
       localStorage.setItem("regionId", zm.regions[0].id);
     } 
 
-    window.location.href = "/dashboard";
+    navigate("/dashboard", { replace: true });
 
   } catch (err) {
     console.error("LOGIN ERROR:", err);
