@@ -64,6 +64,8 @@ const MeetingDetailsPage = () => {
   if (!data) return <div className={styles.state}>Meeting not found</div>;
 
 const canJoinMeeting = data.meetingStatus === "SCHEDULED";
+const isCreatedByDoula = data.createdby === "DOULA";
+
 const formatTime = (iso: string) => {
   const time = iso.split("T")[1].slice(0, 5); // "10:30"
   const [h, m] = time.split(":").map(Number);
@@ -173,11 +175,24 @@ const formatTime = (iso: string) => {
                 >
                   Cancel Meeting
                 </button>
-                <button 
-                  className={styles.scheduleBtn}
-                  onClick={() => navigate(`/meetings/${data.enquiryId}/schedule`)}>
+                <button
+                  className={`${styles.scheduleBtn} ${
+                    isCreatedByDoula ? styles.disabledBtn : ""
+                  }`}
+                  onClick={() => {
+                    if (!isCreatedByDoula)
+                      navigate(`/meetings/${data.enquiryId}/schedule`);
+                  }}
+                  disabled={isCreatedByDoula}
+                >
                   Schedule Meeting
                 </button>
+                {isCreatedByDoula && (
+                  <p className={styles.disabledInfo}>
+                    This meeting was scheduled by the doula. Admin cannot reschedule it.
+                  </p>
+                )}
+
               </div>
             </div>
 

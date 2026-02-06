@@ -2,101 +2,175 @@ import { FiUpload, FiX } from "react-icons/fi";
 import type { DoulaFormData } from "../CreateDoula/CreateDoula";
 import styles from "../CreateDoula/CreateDoula.module.css";
 import { useToast } from "../../../shared/ToastContext";
+import { useState } from "react";
+import AvatarCropper from "../../../components/AvatarCropper";
 
 type Props = {
-    data: DoulaFormData;
-    onChange: (data: DoulaFormData) => void;
+  data: DoulaFormData;
+  onChange: (data: DoulaFormData) => void;
 };
 
+const MAX_IMAGES = 6;
+const MAX_SIZE_MB = 2;
+
 const GalleryStep = ({ data, onChange }: Props) => {
-    const { showToast } = useToast();
-    const handleFiles = (files: FileList | null) => {
-        if (!files) return;
+  const { showToast } = useToast();
 
-        const incomingFiles = Array.from(files);
-  
-        if (data.galleryImages.length + incomingFiles.length > 6) {
-            showToast("Maximum 6 gallery images allowed","error");
-            return;
-        }
+  const [cropQueue, setCropQueue] = useState<File[]>([]);
+  const [currentCrop, setCurrentCrop] = useState<string | null>(null);
 
-        const MAX_SIZE_MB = 2;
+  const revoke = (url: string | null) => {
+    if (url) URL.revokeObjectURL(url);
+  };
 
-        const validFiles = incomingFiles.filter(
-            (file) => file.size <= MAX_SIZE_MB * 1024 * 1024
-        );
+  /* ---------------- FILE SELECT ---------------- */
+  const handleFiles = (files: FileList | null) => {
+    if (!files) return;
 
-        if (validFiles.length !== incomingFiles.length) {
-            showToast("Some images exceeded 2MB and were skipped");
-        }
+    const incoming = Array.from(files);
 
-        const previews = validFiles.map((f) => URL.createObjectURL(f));
+    const remainingSlots =
+      MAX_IMAGES - (data.galleryImages.length + cropQueue.length);
 
-        onChange({
-            ...data,
-            galleryImages: [...data.galleryImages, ...validFiles],
-            galleryPreviews: [...data.galleryPreviews, ...previews],
-        });
-        };
+    if (remainingSlots <= 0) {
+      showToast("Maximum 6 images allowed", "error");
+      return;
+    }
 
+    const validFiles = incoming
+      .slice(0, remainingSlots)
+      .filter((f) => f.size <= MAX_SIZE_MB * 1024 * 1024);
 
-    const removeImage = (index: number) => {
-        const imgs = [...data.galleryImages];
-        const previews = [...data.galleryPreviews];
+    if (incoming.length > remainingSlots) {
+      showToast("Only 6 images allowed", "error");
+    }
 
-        imgs.splice(index, 1);
-        previews.splice(index, 1);
+    if (validFiles.length !== incoming.length) {
+      showToast("Some images exceeded 2MB and were skipped");
+    }
 
-        onChange({
-            ...data,
-            galleryImages: imgs,
-            galleryPreviews: previews,
-        });
-    };
+    setCropQueue((prev) => {
+      const updated = [...prev, ...validFiles];
 
-return (
+      if (!currentCrop && updated.length > 0) {
+        setCurrentCrop(URL.createObjectURL(updated[0]));
+      }
+
+      return updated;
+    });
+  };
+
+  /* ---------------- CROP COMPLETE ---------------- */
+  const handleCropComplete = (blob: Blob) => {
+    const file = new File([blob], `gallery_${Date.now()}.jpg`, {
+      type: "image/jpeg",
+    });
+
+    const preview = URL.createObjectURL(file);
+
+    onChange({
+      ...data,
+      galleryImages: [...data.galleryImages, file],
+      galleryPreviews: [...data.galleryPreviews, preview],
+    });
+
+    revoke(currentCrop);
+
+    const remaining = cropQueue.slice(1);
+    setCropQueue(remaining);
+
+    if (remaining.length > 0) {
+      setCurrentCrop(URL.createObjectURL(remaining[0]));
+    } else {
+      setCurrentCrop(null);
+    }
+  };
+
+  /* ---------------- REMOVE IMAGE ---------------- */
+  const removeImage = (index: number) => {
+    const imgs = [...data.galleryImages];
+    const previews = [...data.galleryPreviews];
+
+    URL.revokeObjectURL(previews[index]);
+
+    imgs.splice(index, 1);
+    previews.splice(index, 1);
+
+    onChange({
+      ...data,
+      galleryImages: imgs,
+      galleryPreviews: previews,
+    });
+  };
+
+  /* ---------------- UI ---------------- */
+  return (
     <div className={styles.stepCard}>
-        <h3 className={styles.sectionTitle}>Gallery</h3>
+      <h3 className={styles.sectionTitle}>Gallery</h3>
 
-        {/* UPLOAD BOX */}
-        <div className={styles.uploadBox}
-            onClick={() => 
-                document.getElementById("gallery-upload")?.click()
-            }
-        >
-            <FiUpload size={40} />
-            <p>Upload gallery images</p>
-            <span>JPG / PNG • Multiple allowed</span>
-        </div>
+      <div
+        className={styles.uploadBox}
+        onClick={() => document.getElementById("gallery-upload")?.click()}
+      >
+        <FiUpload size={40} />
+        <p>Upload gallery images</p>
+        <span>JPG / PNG • Max 6 • Max 2MB</span>
+      </div>
 
-        <input
-            id="gallery-upload"
-            type="file"
-            accept="image/*"
-            multiple
-            hidden
-            onChange={(e) => handleFiles(e.target.files)}
-        />
+      <input
+        id="gallery-upload"
+        type="file"
+        accept="image/*"
+        multiple
+        hidden
+        onChange={(e) => handleFiles(e.target.files)}
+      />
 
-        {/* PREVIEW GRID */}
-        {data.galleryPreviews.length > 0 && (
-            <div className={styles.galleryGrid}>
-                {data.galleryPreviews.map((src, idx) => (
-                    <div key={idx} className={styles.galleryItem}>
-                        <img src={src} alt={`Gallery ${idx}`}/>
-                        <button
-                            type="button"
-                            className={styles.removeBtn}
-                            onClick={() => removeImage(idx)}    
-                        >
-                            <FiX size={40}/>
-                        </button>
-                    </div>
-                ))}
+      {data.galleryPreviews.length > 0 && (
+        <div className={styles.galleryGrid}>
+          {data.galleryPreviews.map((src, idx) => (
+            <div key={idx} className={styles.galleryItem}>
+              <img src={src} alt={`Gallery ${idx}`} />
+              <button
+                type="button"
+                className={styles.removeBtn}
+                onClick={() => removeImage(idx)}
+              >
+                <FiX size={22} />
+              </button>
             </div>
-        )}
-    </div>
-)
-}
+          ))}
+        </div>
+      )}
 
-export default GalleryStep
+      {/* -------- CROP MODAL -------- */}
+      {currentCrop && (
+        <div className={styles.cropOverlay}>
+          <div className={styles.cropModal}>
+            <h3>Crop Image</h3>
+
+            <AvatarCropper
+              image={currentCrop}
+              aspect={4 / 3}
+              shape="rect"
+              onCropComplete={handleCropComplete}
+            />
+
+            <button
+              className={styles.cancelCrop}
+              onClick={() => {
+                revoke(currentCrop);
+                setCropQueue([]);
+                setCurrentCrop(null);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GalleryStep;
