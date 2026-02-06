@@ -249,6 +249,15 @@
   display: flex;
   align-items: center;
 }
+.createdByDoula {
+  background: #f3e8ff;
+  color: #7c3aed;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-left: 8px;
+}
 
 /* ===================== Actions ===================== */
 .meetingRight {

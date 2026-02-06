@@ -7,6 +7,7 @@ export type Region = {
   district: string;
   state: string;
   country: string;
+  is_active: boolean;
 };
 
 export const fetchAllRegions = async (): Promise<Region[]> => {

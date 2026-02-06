@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Dashboard/components/sidebar/Sidebar";
 import Topbar from "../Dashboard/components/topbar/Topbar";
 import styles from "./EditDoula.module.css";
+import AvatarCropper from "../../components/AvatarCropper";
 
 type CertificateForm = {
   certificateId?: string;
@@ -28,6 +29,10 @@ const EditDoula = () => {
   const { doulaId } = useParams<{ doulaId: string }>();
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const [cropQueue, setCropQueue] = useState<File[]>([]);
+  const [currentCrop, setCurrentCrop] = useState<string | null>(null);
+  const [croppedFiles, setCroppedFiles] = useState<File[]>([]);
+
 
   const [loading, setLoading] = useState(true);
 
@@ -112,27 +117,58 @@ const EditDoula = () => {
     }
   };
 
-  const handleUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
-    if (!input.files || !userId || !doulaId) return;
-    const files = Array.from(input.files)
+    if (!input.files) return;
 
-    try {
-      await uploadDoulaGalleryImages( userId, files,);
-      showToast("Images uploaded", "success");
-    } catch {
-      showToast("Failed to upload images", "error");
-      return;
+    const files = Array.from(input.files);
+
+    const validFiles = files.filter(
+      (f) => f.size <= 2 * 1024 * 1024
+    );
+
+    if (validFiles.length !== files.length) {
+      showToast("Some images exceeded 2MB and were skipped", "error");
     }
-    try {
-      const refreshed = await fetchDoulaProfile(doulaId);
-      setGallery(refreshed.galleryImages);
-    } catch {
-        console.log("Gallery refresh failed!")
-    } finally {
-        setFileInputKey((k) => k + 1);
+
+    setCropQueue(validFiles);
+
+    if (validFiles.length > 0) {
+      setCurrentCrop(URL.createObjectURL(validFiles[0]));
+    }
+  };
+
+  const handleCropComplete = async (blob: Blob) => {
+    const file = new File([blob], `gallery_${Date.now()}.jpg`, {
+      type: "image/jpeg",
+    });
+
+    setCroppedFiles(prev => [...prev, file]);
+
+    URL.revokeObjectURL(currentCrop!);
+
+    const remaining = cropQueue.slice(1);
+    setCropQueue(remaining);
+
+    if (remaining.length > 0) {
+      setCurrentCrop(URL.createObjectURL(remaining[0]));
+    } else {
+      setCurrentCrop(null);
+
+      if (!userId || !doulaId) return;
+
+      try {
+        await uploadDoulaGalleryImages(userId, [...croppedFiles, file]);
+        showToast("Images uploaded", "success");
+
+        const refreshed = await fetchDoulaProfile(doulaId);
+        setGallery(refreshed.galleryImages);
+      } catch {
+        showToast("Failed to upload images", "error");
+      } finally {
+        setCroppedFiles([]);
+        setFileInputKey(k => k + 1);
+      }
     }
   };
 
@@ -347,6 +383,32 @@ const EditDoula = () => {
                 ))}
               </div>
             </div>
+            {currentCrop && (
+              <div className={styles.cropOverlay}>
+                <div className={styles.cropModal}>
+                  <h3>Crop Image</h3>
+
+                  <AvatarCropper
+                    image={currentCrop}
+                    aspect={4 / 3}
+                    shape="rect"
+                    onCropComplete={handleCropComplete}
+                  />
+
+                  <button
+                    className={styles.cancelCrop}
+                    onClick={() => {
+                      URL.revokeObjectURL(currentCrop);
+                      setCropQueue([]);
+                      setCurrentCrop(null);
+                      setCroppedFiles([]);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className={styles.actions}>
               <button className={styles.secondary} onClick={() => navigate(-1)}>

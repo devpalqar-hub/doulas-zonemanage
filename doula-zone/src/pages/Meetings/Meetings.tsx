@@ -101,6 +101,10 @@ const Meetings = () => {
   //       return styles.statusPill;
   //   }
   // };
+const isDoulaCreated = (val: any) =>
+  String(val ?? "")
+    .trim()
+    .toUpperCase() === "DOULA";
 
   return (
     <div className={styles.root}>
@@ -219,6 +223,7 @@ const Meetings = () => {
               <div className={styles.stateRow}>No meetings found.</div>
             ) : (
               meetings.map((m) => {
+
                 const [start, end] = m.meetingsTimeSlots.split("-");
                 const canJoin = m.status === "SCHEDULED";
                 return (
@@ -242,7 +247,11 @@ const Meetings = () => {
                             >
                               {m.status}
                             </span>
-
+                                {isDoulaCreated(m.createdby) && (
+                                  <span className={styles.createdByDoula}>
+                                    Created by Doula
+                                  </span>
+                                )}
                           </div>
 
                           {/* <span className={styles.meetingId}>
@@ -296,7 +305,7 @@ const Meetings = () => {
                           ? "Meeting Cancelled"
                           : "Join Meeting"}
                       </button>
-
+                          
                     </div>
                   </div>
                 );

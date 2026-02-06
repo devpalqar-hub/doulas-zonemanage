@@ -1,12 +1,25 @@
+import { useState } from "react";
 import styles from "./Topbar.module.css";
-// import { HiOutlineBell } from "react-icons/hi2";
 
 const Topbar = () => {
+  const [error, setError] = useState(false);
+
   return (
     <div className={styles.topbar}>
       <div className={styles.right}>
-          <img className={styles.brand} src="/doula-branding.png" alt="Notifications" />
-        </div>
+        {!error ? (
+          <img
+            className={styles.brand}
+            src="/doula-branding.png"
+            alt="Bambini Doulas"
+            onError={() => setError(true)}
+          />
+        ) : (
+          <div className={styles.brandFallback}>
+            Bambini Doulas
+          </div>
+        )}
+      </div>
     </div>
   );
 };

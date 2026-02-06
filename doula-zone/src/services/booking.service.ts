@@ -83,7 +83,7 @@ export interface CreateBookingPayload {
   seviceStartDate: string;
   serviceEndDate: string;
 
-  visitFrequency?: number;
+  visitDays?: string[];
   serviceTimeShift?: "MORNING" | "NIGHT" | "FULLDAY";
   buffer: number;
 }

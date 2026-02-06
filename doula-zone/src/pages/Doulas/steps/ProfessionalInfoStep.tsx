@@ -213,7 +213,9 @@ const ProfessionalInfoStep = ({ data, setFormData, onNext, onPrev }: Props) => {
               <option value="" disabled>
                 {loadingRegions ? "Loading regions..." : "Select a region"}
               </option>
-              {regions.map(r => (
+              {regions
+              .filter(r => r.is_active) //ONLY ACTIVE REGIONS WILL APPEAR
+              .map(r => (
                 <option key={r.id} value={r.id}>
                   {r.regionName}
                 </option>

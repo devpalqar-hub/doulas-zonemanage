@@ -5,7 +5,7 @@ export interface PricingPayload {
   servicePricingId: string;
   serviceStartDate?: string; 
   servicEndDate: string;    
-  visitFrequency?: number;
+  visitDays?: string[];
   serviceTimeShift?: "MORNING" | "NIGHT" | "FULLDAY";
   buffer: number;
 }

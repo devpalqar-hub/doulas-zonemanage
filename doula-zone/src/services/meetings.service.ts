@@ -9,6 +9,7 @@ export type EnquiryMeeting = {
   serviceName: string;
   status: string;
   additionalNotes?: string | null;
+  createdby: "DOULA" | "ZONE_MANAGER" | null;
 };
 
 
@@ -43,6 +44,7 @@ export const fetchMeetings = async (params: {
       serviceName: m.serviceName,
       status: m.status === "CANCELED" ? "CANCELLED" : m.status,
       additionalNotes: null,
+      createdby: m.createdby ?? null,
     };
   });
 
@@ -55,6 +57,7 @@ export const fetchMeetings = async (params: {
 
 
 export type MeetingDetails = {
+  createdby: "DOULA" | "ZONE_MANAGER" | null;
   meetingId: string;
   enquiryId: string;
   meetingLink: string | null;
