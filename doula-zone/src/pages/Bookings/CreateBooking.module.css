@@ -56,6 +56,31 @@
   flex-direction: column;
   gap: 28px;
 }
+.chipsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 1px solid #ccc;
+  background: #f7f7f7;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.chipActive {
+  background: #8335A0;
+  color: #fff;
+  border-color: #8335A0;
+}
 
 /* ================= SECTION TITLE ================= */
 
@@ -181,7 +206,7 @@
 }
 
 
-.formCard button {
+.formCard > button {
   appearance: none;
   border: none;
   outline: none;
@@ -205,17 +230,17 @@
 }
 
 /* Primary action (Confirm Booking) */
-.formCard button:last-of-type {
+.formCard > button:last-of-type {
   background: linear-gradient(135deg, #8335A0, #8335A0);
   color: #ffffff;
 }
 
-.formCard button:last-of-type:hover {
+.formCard > button:last-of-type:hover {
   transform: translateY(-1px);
 }
 
 /* Secondary buttons */
-.formCard button:not(:last-of-type):hover {
+.formCard > button:not(:last-of-type):hover {
   background: #e2e8f0;
 }
 

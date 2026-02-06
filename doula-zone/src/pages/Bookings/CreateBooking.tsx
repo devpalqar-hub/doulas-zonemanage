@@ -68,8 +68,6 @@ const CreateBooking = () => {
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
-  const [visitFrequency, setVisitFrequency] = useState(1);
   const [timeShift, setTimeShift] =
     useState<"MORNING" | "NIGHT" | "FULLDAY">("MORNING");
 
@@ -78,11 +76,11 @@ const CreateBooking = () => {
 
   const [pricing, setPricing] = useState<PricingResponse | null>(null);
   const [buffer, setBuffer] = useState(0);
-
+  const [visitDays, setVisitDays] = useState<string[]>([]);
 
   const isInvalidDateRange = (start: string, end: string) => {
     if (!start || !end) return false;
-    return new Date(start) >= new Date(end);
+    return new Date(start) > new Date(end);
   };
 
   /* ================= LOAD DOULAS ================= */
@@ -132,8 +130,7 @@ const CreateBooking = () => {
       derivedServiceType !== "POSTPARTUM" ||
       !selectedDoula ||
       !startDate ||
-      !endDate ||
-      !visitFrequency
+      !endDate 
     )
       return;
     if (derivedServiceType === "POSTPARTUM" && isInvalidDateRange(startDate, endDate)) {
@@ -149,7 +146,7 @@ const CreateBooking = () => {
             params: {
               startDate,
               endDate,
-              visitFrequency,
+              visitDays,
             },
           }
         );
@@ -158,7 +155,39 @@ const CreateBooking = () => {
         showToast("Failed to fetch availability", "error");
       }
     })();
-  }, [derivedServiceType, selectedDoula, startDate, endDate, visitFrequency]);
+  }, [derivedServiceType, selectedDoula, startDate, endDate]);
+
+  useEffect(() => {
+    setVisitDays([]);
+  },[startDate, endDate]);
+//======Visit Days Calculation for Postpartum Booking======//
+
+    const WEEK_DAYS = [
+    "SUNDAY",
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+    "SATURDAY",
+  ];
+
+  const getAvailableWeekDays = (start: string, end: string): string[] => {
+    if (!start || !end) return [];
+
+    const startDateObj = new Date(start);
+    const endDateObj = new Date(end);
+
+    const daysSet = new Set<string>();
+    const current = new Date(startDateObj);
+
+    while (current <= endDateObj) {
+      daysSet.add(WEEK_DAYS[current.getDay()]);
+      current.setDate(current.getDate() + 1);
+    }
+
+    return Array.from(daysSet);
+  };
 
   /* ================= PRICE ================= */
 
@@ -183,6 +212,14 @@ const CreateBooking = () => {
       showToast("Please select birth date", "error");
       return;
     }
+    if (
+      derivedServiceType === "POSTPARTUM" &&
+      startDate !== endDate &&
+      visitDays.length === 0
+    ) {
+      showToast("Please select at least one visit day", "error");
+      return;
+    }
 
 
     const payload: PricingPayload =
@@ -194,7 +231,7 @@ const CreateBooking = () => {
           servicEndDate: endDate,
           buffer,
           serviceTimeShift: timeShift,
-          visitFrequency,
+          visitDays,
         }
       : {
           doulaProfileId: selectedDoula.profileId,
@@ -256,7 +293,7 @@ const CreateBooking = () => {
             serviceEndDate: new Date(endDate).toISOString(),
             buffer,
             serviceTimeShift: timeShift,
-            visitFrequency,
+            visitDays,
           }
         : {
             ...client,
@@ -396,8 +433,6 @@ const hasAnyShift =
                     } else {
                       setDerivedServiceType("BIRTH");
                     }
-
-                    setVisitFrequency(1);
                     setBuffer(0);
                     setAvailability(null);
                     setPricing(null);
@@ -461,23 +496,44 @@ const hasAnyShift =
               {/* POSTPARTUM ONLY */}
               {derivedServiceType === "POSTPARTUM" && (
                 <>
-                  <div className={styles.fieldGroup}>
-                    <label className={styles.label}>Frequency</label>
-                    <input
-                      type="number"
-                      min={0}
-                       max={
-                        startDate && endDate
-                          ? Math.floor(
-                              (new Date(endDate).getTime() - new Date(startDate).getTime()) /
-                                (1000 * 60 * 60 * 24)
-                            ) + 1
-                          : 1
-                      }
-                      value={visitFrequency}
-                      onChange={(e) => setVisitFrequency(+e.target.value)}
-                    />
-                  </div>
+                  {derivedServiceType === "POSTPARTUM" &&
+                    startDate &&
+                    endDate &&
+                    startDate !== endDate && (
+                      <div className={styles.fieldGroup}>
+                        <label className={styles.label}>Visit Days</label>
+
+                        <div className={styles.chipsContainer}>
+                          {WEEK_DAYS.map((day) => {
+                            const allowedDays = getAvailableWeekDays(startDate, endDate);
+                            const isEnabled = allowedDays.includes(day);
+                            const isSelected = visitDays.includes(day);
+
+                            return (
+                              <button
+                                key={day}
+                                type="button"
+                                disabled={!isEnabled}
+                                className={`${styles.chip} ${
+                                  isSelected ? styles.chipActive : ""
+                                }`}
+                                onClick={() => {
+                                  if (!isEnabled) return;
+
+                                  setVisitDays((prev) =>
+                                    prev.includes(day)
+                                      ? prev.filter((d) => d !== day)
+                                      : [...prev, day]
+                                  );
+                                }}
+                              >
+                                {day.slice(0, 3)}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
 
                   {availability && (
                     <div className={styles.fieldGroup}>

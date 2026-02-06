@@ -16,9 +16,6 @@ export default function ScheduleMeetingPage() {
   const { enquiryId } = useParams<{ enquiryId: string }>();
   const navigate = useNavigate();
   const { showToast } = useToast();
-
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
   const [notes, setNotes] = useState("");
   const [doulas, setDoulas] = useState<DoulaListItem[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
@@ -42,8 +39,18 @@ export default function ScheduleMeetingPage() {
     );
   };
 
+  const getCurrentDateTime = () => {
+    const now = new Date();
+
+    const date = now.toISOString().split("T")[0]; // YYYY-MM-DD
+
+    const time = now.toTimeString().slice(0, 8); // HH:mm:ss
+
+    return { date, time };
+  };
+
   const handleSubmit = async () => {
-    if (!enquiryId || !date || !time || selected.length === 0) {
+    if (!enquiryId || selected.length === 0) {
       showToast("All required fields must be filled", "error");
       return;
     }
@@ -51,12 +58,12 @@ export default function ScheduleMeetingPage() {
     try {
       setLoading(true);
 
-      const formattedTime = time.length === 5 ? `${time}:00` : time;
+      const { date, time } = getCurrentDateTime();
 
       await scheduleMeeting({
         enquiryId,
         date,
-        time: formattedTime,
+        time,
         notes,
         doulaIds: selected,
       });
@@ -70,6 +77,7 @@ export default function ScheduleMeetingPage() {
       setLoading(false);
     }
   };
+
 
 
   return (
@@ -93,7 +101,7 @@ export default function ScheduleMeetingPage() {
 
           {/* Form */}
           <div className={styles.formCard}>
-            <div className={styles.formGrid}>
+            {/* <div className={styles.formGrid}>
               <div>
                 <label>Date *</label>
                 <input
@@ -111,7 +119,7 @@ export default function ScheduleMeetingPage() {
                   onChange={(e) => setTime(e.target.value)}
                 />
               </div>
-            </div>
+            </div> */}
 
             <label>Meeting Notes (Optional)</label>
             <textarea
