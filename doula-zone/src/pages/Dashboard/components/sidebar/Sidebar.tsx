@@ -1,7 +1,6 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import styles from "./Sidebar.module.css";
-import Modal from "../../../../components/Modal/Modal";
 import { getZoneManagerProfile } from "../../../../services/zoneManager.service";
 
 import { GrSchedules } from "react-icons/gr";
@@ -13,10 +12,9 @@ import { FiBookOpen, FiMessageSquare } from "react-icons/fi";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [logoutOpen, setLogoutOpen] = useState(false);
   const [profile, setProfile] = useState<{ name: string; email: string } | null>(null);
+  const [isError, setIsError] = useState(false);
 
-  const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
@@ -31,11 +29,6 @@ const Sidebar = () => {
       })
       .catch(console.error);
   }, [userId]);
-
-  const handleLogout = () => {
-    localStorage.clear(); 
-    navigate("/");
-  };
 
   return (
     <>
@@ -114,33 +107,21 @@ const Sidebar = () => {
         {/* BOTTOM LOGOUT PROFILE */}
         <div
           className={styles.profileLogout}
-          onClick={() => setLogoutOpen(true)}
-          style={{ cursor: "pointer" }}
-        >
-          <div className={styles.profileInfo}>
-            <h4>Logout</h4>
+        > 
+        {!isError ? (
+          <img
+            className={styles.brand}
+            src="/doula-branding.png"
+            alt="Bambini Doulas"
+            onError={() => setIsError(true)}
+          />
+        ) : (
+          <div className={styles.brandFallback}>
+            Bambini Doulas
           </div>
+        )}
         </div>
       </div>
-
-      {/* LOGOUT CONFIRMATION MODAL */}
-      <Modal
-        isOpen={logoutOpen}
-        onClose={() => setLogoutOpen(false)}
-        title="Confirm Logout"
-      >
-        <p>Are you sure you want to logout?</p>
-
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "20px" }}>
-          <button onClick={() => setLogoutOpen(false)}>Cancel</button>
-          <button
-            onClick={handleLogout}
-            style={{ background: "#8335A0", color: "#F7EBED", padding: "6px 14px", borderRadius: "6px" }}
-          >
-            Logout
-          </button>
-        </div>
-      </Modal>
     </>
   );
 };
