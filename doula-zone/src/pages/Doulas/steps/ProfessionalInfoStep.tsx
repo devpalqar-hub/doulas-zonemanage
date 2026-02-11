@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "../CreateDoula/CreateDoula.module.css";
 import { type Region, fetchAllRegions } from "../../../services/region.service";
+import LanguageSelector from "../../../components/LanguageSelector";
 
 export type Certificate = {
   name: string;
@@ -25,7 +26,7 @@ type Props = {
   onPrev: () => void;
 };
 
-const AVAILABLE_LANGUAGES = ["English", "Hindi", "Malayalam"];
+// const AVAILABLE_LANGUAGES = ["English", "Hindi", "Malayalam"];
 
 const ProfessionalInfoStep = ({ data, setFormData, onNext, onPrev }: Props) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -72,14 +73,14 @@ const ProfessionalInfoStep = ({ data, setFormData, onNext, onPrev }: Props) => {
 
   /* ===== LANGUAGES ===== */
 
-  const toggleLanguage = (lang: string) => {
-    const current = data.languages || [];
-    const updated = current.includes(lang)
-      ? current.filter(l => l !== lang)
-      : [...current, lang];
+  // const toggleLanguage = (lang: string) => {
+  //   const current = data.languages || [];
+  //   const updated = current.includes(lang)
+  //     ? current.filter(l => l !== lang)
+  //     : [...current, lang];
 
-    updateField("languages", updated);
-  };
+  //   updateField("languages", updated);
+  // };
 
   /* ===== SPECIALITIES (DYNAMIC) ===== */
 
@@ -317,22 +318,10 @@ const ProfessionalInfoStep = ({ data, setFormData, onNext, onPrev }: Props) => {
         {/* Languages */}
         <div className={styles.fieldGroupFull}>
           <label>Languages Spoken</label>
-          <div className={styles.langChips}>
-            {AVAILABLE_LANGUAGES.map(lang => (
-              <button
-                key={lang}
-                type="button"
-                className={
-                  data.languages.includes(lang)
-                    ? `${styles.langChip} ${styles.langChipActive}`
-                    : styles.langChip
-                }
-                onClick={() => toggleLanguage(lang)}
-              >
-                {lang}
-              </button>
-            ))}
-          </div>
+          <LanguageSelector
+            value={data.languages}
+            onChange={(langs) => updateField("languages", langs)}
+          />
         </div>
       </div>
 
