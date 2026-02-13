@@ -51,32 +51,41 @@ export const getDayState = (
   start: string | null,
   end: string | null,
   visitDays: string[],
-  currentMonth: string
+  currentMonth: string,
+  singleMode: boolean,
 ) => {
-  const isAvailable = availability[date];
-  const weekday = dayjs(date).format("dddd").toUpperCase();
-  const isVisitDay = visitDays.includes(weekday);
-  
-  // OUTSIDE MONTH (Airbnb behavior)
-  if (!date.startsWith(currentMonth)) return "outside";
+  const states: string[] = [];
 
-  // RANGE SELECTION
-  if (start && !end && date === start) return "start";
+const isAvailable = availability[date];
+const weekday = dayjs(date).format("dddd").toUpperCase();
+const isVisitDay = visitDays.includes(weekday);
 
-    if (start && end) {
-    if (date === start) return "start";
-    if (date === end) return "end";
+// Outside month
+if (!date.startsWith(currentMonth)) return ["outside"];
 
-    if (dayjs(date).isAfter(start) && dayjs(date).isBefore(end)) {
-      if (isAvailable === false) return "blocked-range"; // red inside range
+if (isAvailable === true) states.push("available");
+else if (isAvailable === false) states.push("blocked");
+else states.push("disabled"); // missing data
 
-      if (isVisitDay) return "visit";
+// Visit marker independent
+if (isVisitDay) states.push("visit");
 
-      return "range";
-    }
+/* ---------------- SINGLE MODE (Birth Doula) ---------------- */
+if (singleMode) {
+  if (start && date === start) {
+    states.push("selected");
   }
-  if (isAvailable === false) return "blocked";
+  return states;
+}
 
-  // NORMAL AVAILABLE DAY
-  return "available";
+/* ---------------- RANGE MODE (Postpartum) ---------------- */
+if (start && date === start) states.push("start");
+if (end && date === end) states.push("end");
+
+if (start && end && dayjs(date).isAfter(start) && dayjs(date).isBefore(end)) {
+  states.push("range");
+}
+
+return states;
+
 };
