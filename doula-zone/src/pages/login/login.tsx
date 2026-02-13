@@ -43,27 +43,33 @@ const handleVerifyOtp = async (e: FormEvent<HTMLFormElement>) => {
   try {
     const res = await verifyOtp(email, otp);
 
-    // Store auth data
-    localStorage.setItem("userId", res.data.user.id);
-    localStorage.setItem("token", res.data.accessToken);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-
-    // Fetch profile
     const profileRes = await getZoneManagerProfile(res.data.user.id);
     const zm = profileRes;
-
+    const token = res.data.accessToken;
+    // Store auth data
     if (!zm) {
       showToast("Zone Manager profile not found", "error");
       setLoading(false);
       return;
     }
-
+    
+    if (!zm.is_active) {
+      showToast("Your account has been disabled. Please contact administrator.", "error");
+      setOtp("");
+      setOtpSent(false);
+      setLoading(false);
+      return;
+    }
+    localStorage.setItem("userId", res.data.user.id);
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
     localStorage.setItem("zoneManagerProfileId", zm.profileId);
 
     if (zm.regions && zm.regions.length > 0) {
       localStorage.setItem("regionId", zm.regions[0].id);
     } 
 
+    showToast("Login successfull!", "success");
     navigate("/dashboard", { replace: true });
 
   } catch (err) {
@@ -73,8 +79,6 @@ const handleVerifyOtp = async (e: FormEvent<HTMLFormElement>) => {
 
   setLoading(false);
 };
-
-
 
   return (
     <div className={styles.container}>

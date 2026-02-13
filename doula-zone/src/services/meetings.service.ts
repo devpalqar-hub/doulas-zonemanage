@@ -35,10 +35,11 @@ export const fetchMeetings = async (params: {
   const res = await api.get("/zonemanager/meetings/list", { params: cleanParams });
 
   const normalized = res.data.data.map((m: any) => {
+    const isEnquiry = m.enquiry !== null;
 
     return {
       meetingId: m.meetingId,
-      name: m.clientName,
+      name: isEnquiry ? m.enquiry.name : m.clientName,
       meetingsDate: m.meetingDate,
       meetingsTimeSlots: `${m.startDate}-${m.endDate}`,
       serviceName: m.serviceName,
@@ -80,7 +81,6 @@ export const fetchMeetingById = async (id: string) => {
   const res = await api.get(`/meetings/${id}`);
   return res.data.data as MeetingDetails;
 };
-
 
 export const updateMeetingStatus = async (
   meetingId: string, status: "SCHEDULED" | "COMPLETED" | "CANCELED"

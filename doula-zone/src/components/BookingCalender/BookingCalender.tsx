@@ -24,6 +24,7 @@ export default function BookingCalendar({
   const [availability, setAvailability] = useState<Record<string, boolean>>({});
   const [start, setStart] = useState<string | null>(null);
   const [end, setEnd] = useState<string | null>(null);
+  const isSingleMode = serviceType === "Birth Doula";
 
   /* FETCH AVAILABILITY */
   const monthKey = month.format("YYYY-MM");
@@ -36,44 +37,39 @@ export default function BookingCalendar({
 
     Promise.all([
         api.get(`/doula/${profileId}/booked-dates`, {
-        params: { startDate, endDate, filter: "UNBOOKED", serviceType },
+        params: { startDate, endDate, filter: "UNBOOKED", serviceName: serviceType },
         }),
         api.get(`/doula/${profileId}/booked-dates`, {
-        params: { startDate, endDate, filter: "BOOKED", serviceType },
+        params: { startDate, endDate, filter: "BOOKED", serviceName: serviceType },
         }),
     ]).then(([unbookedRes, bookedRes]) => {
 
         const map: Record<string, boolean> = {};
 
-        // Step 1 — mark everything false first (blocked)
-        let cursor = dayjs(startDate);
-        const last = dayjs(endDate);
+          // Only UNBOOKED dates are truly available
+          unbookedRes.data.data.unbookedDates?.forEach((d: string) => {
+            map[d] = true;
+          });
 
-        while (cursor.isBefore(last) || cursor.isSame(last)) {
-        map[cursor.format("YYYY-MM-DD")] = false;
-        cursor = cursor.add(1, "day");
-        }
-
-        // Step 2 — mark allowed days
-        unbookedRes.data.data.unbookedDates?.forEach((d: string) => {
-        map[d] = true;
-        });
-
-        // Step 3 — booked always blocked
-        bookedRes.data.data.bookedDates?.forEach((d: string) => {
-        map[d] = false;
-        });
+          // BOOKED explicitly unavailable
+          bookedRes.data.data.bookedDates?.forEach((d: string) => {
+            map[d] = false;
+          });
 
         setAvailability(map);
     });
 
   }, [profileId, monthKey, serviceType]);
 
+  useEffect(() => {
+    setStart(null);
+    setEnd(null);
+  }, [serviceType]);
 
   /* CLICK HANDLER */
   const handleClick = (date: string) => {
     // BIRTH DOULA → single date mode
-    if (serviceType === "BIRTH") {
+    if (serviceType === "Birth Doula") {
       if (availability[date] !== true) return;
       setStart(date);
       setEnd(date);
@@ -157,7 +153,7 @@ export default function BookingCalendar({
       {/* Selection Info Banner */}
       {(start || end) && (
         <div className={styles.selectionInfo}>
-          {serviceType === "BIRTH" ? (
+          {serviceType === "Birth Doula" ? (
             <div className={styles.infoContent}>
               <span className={styles.infoIcon}>📅</span>
               <span>Selected: <strong>{dayjs(start).format("MMM D, YYYY")}</strong></span>
@@ -189,7 +185,7 @@ export default function BookingCalendar({
 
       <div className={styles.grid}>
         {days.map((d) => {
-          const state = getDayState(d, availability, start, end, visitDays, month.format("YYYY-MM"));
+         const state = getDayState(d, availability, start, end, visitDays, month.format("YYYY-MM"), isSingleMode);
 
           return (
             <DayCell
@@ -203,20 +199,37 @@ export default function BookingCalendar({
         })}
       </div>
 
-      {/* Legend */}
+      {/* Legend - Simplified and clear */}
       <div className={styles.legend}>
         <div className={styles.legendItem}>
           <div className={`${styles.legendDot} ${styles.legendAvailable}`}></div>
           <span>Available</span>
         </div>
-        {/* <div className={styles.legendItem}>
-          <div className={`${styles.legendDot} ${styles.legendSelected}`}></div>
-          <span>Selected</span>
-        </div> */}
+        
+        {/* Show "Selected" for Birth Doula, "Range" for Postpartum */}
+        {serviceType === "Birth Doula" ? (
+          <div className={styles.legendItem}>
+            <div className={`${styles.legendDot} ${styles.legendSelected}`}></div>
+            <span>Selected</span>
+          </div>
+        ) : (
+          <>
+            <div className={styles.legendItem}>
+              <div className={`${styles.legendDot} ${styles.legendSelected}`}></div>
+              <span>Start/End</span>
+            </div>
+            <div className={styles.legendItem}>
+              <div className={`${styles.legendDot} ${styles.legendRange}`}></div>
+              <span>In Range</span>
+            </div>
+          </>
+        )}
+        
         <div className={styles.legendItem}>
           <div className={`${styles.legendDot} ${styles.legendBlocked}`}></div>
           <span>Unavailable</span>
         </div>
+        
         {visitDays.length > 0 && (
           <div className={styles.legendItem}>
             <div className={`${styles.legendDot} ${styles.legendVisit}`}></div>

@@ -65,7 +65,7 @@ const CreateBooking = () => {
   const [services, setServices] = useState<ServicePricing[]>([]);
   const [servicePricingId, setServicePricingId] = useState("");
   const [derivedServiceType, setDerivedServiceType] =
-    useState<"POSTPARTUM" | "BIRTH" | "">("");
+    useState<"Post Partum Doula" | "Birth Doula" | "">("");
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -128,13 +128,13 @@ const CreateBooking = () => {
 
   useEffect(() => {
     if (
-      derivedServiceType !== "POSTPARTUM" ||
+      derivedServiceType !== "Post Partum Doula" ||
       !selectedDoula ||
       !startDate ||
       !endDate 
     )
       return;
-    if (derivedServiceType === "POSTPARTUM" && isInvalidDateRange(startDate, endDate)) {
+    if (derivedServiceType === "Post Partum Doula" && isInvalidDateRange(startDate, endDate)) {
       showToast("Start date must be before end date", "error");
       setAvailability(null);
       return;
@@ -196,18 +196,18 @@ const CreateBooking = () => {
     }
 
     if (
-      derivedServiceType === "POSTPARTUM" &&
+      derivedServiceType === "Post Partum Doula" &&
       (!startDate || !endDate)
     ) {
       showToast("Please select start and end dates", "error");
       return;
     }
-    if (derivedServiceType === "BIRTH" && !startDate) {
+    if (derivedServiceType === "Birth Doula" && !startDate) {
       showToast("Select a date", "error");
       return;
     }
 
-   if (derivedServiceType === "POSTPARTUM" && visitDays.length === 0) {
+   if (derivedServiceType === "Post Partum Doula" && visitDays.length === 0) {
       showToast("Select visit days first", "error");
       return;
     }
@@ -215,7 +215,7 @@ const CreateBooking = () => {
 
 
     const payload: PricingPayload =
-    derivedServiceType === "POSTPARTUM"
+    derivedServiceType === "Post Partum Doula"
       ? {
           doulaProfileId: selectedDoula.profileId,
           servicePricingId,
@@ -265,8 +265,12 @@ const CreateBooking = () => {
   /* ================= SUBMIT ================= */
 
   const handleSubmit = async () => {
+    if (!client.name || !client.email || !client.phone) {
+      showToast("Please fill in all client details", "error");
+      return;
+    }
     if (
-      derivedServiceType === "POSTPARTUM" &&
+      derivedServiceType === "Post Partum Doula" &&
       isInvalidDateRange(startDate, endDate)
     ) {
       showToast("Start date must be before end date", "error");
@@ -276,7 +280,7 @@ const CreateBooking = () => {
     if (!pricing || !selectedDoula) return;
 
     const payload: CreateBookingPayload =
-      derivedServiceType === "POSTPARTUM"
+      derivedServiceType === "Post Partum Doula"
         ? {
             ...client,
             doulaProfileId: selectedDoula.profileId,
@@ -326,8 +330,8 @@ const hasAnyShift =
   availability?.availability.FULLDAY;
 
 const canShowCalendar =
-  derivedServiceType === "BIRTH" ||
-  (derivedServiceType === "POSTPARTUM" && visitDays.length > 0);
+  derivedServiceType === "Birth Doula" ||
+  (derivedServiceType === "Post Partum Doula" && visitDays.length > 0);
 
 
   return (
@@ -426,9 +430,9 @@ const canShowCalendar =
 
                     const name = selected?.serviceName.toLowerCase() || "";
                     if (name.includes("post partum") || name.includes("postnatal")) {
-                      setDerivedServiceType("POSTPARTUM");
+                      setDerivedServiceType("Post Partum Doula");
                     } else {
-                      setDerivedServiceType("BIRTH");
+                      setDerivedServiceType("Birth Doula");
                     }
                     setBuffer(0);
                     setAvailability(null);
@@ -447,7 +451,7 @@ const canShowCalendar =
               {/* DATES */}
                             
               {/* POSTPARTUM VISIT DAYS FIRST */}
-                {derivedServiceType === "POSTPARTUM" && (
+                {derivedServiceType === "Post Partum Doula" && (
                   <div className={styles.fieldGroup}>
                     <label className={styles.label}>Visit Days</label>
 
@@ -479,7 +483,7 @@ const canShowCalendar =
                   {canShowCalendar && selectedDoula && (
                     <div className={styles.fieldGroup}>
                       <label className={styles.label}>
-                        {derivedServiceType === "BIRTH"
+                        {derivedServiceType === "Birth Doula"
                           ? "Select Birth Date"
                           : "Select Date Range"}
                       </label>
@@ -509,7 +513,7 @@ const canShowCalendar =
                 </div> */}
 
               {/* POSTPARTUM ONLY */}
-              {derivedServiceType === "POSTPARTUM" && (
+              {derivedServiceType === "Post Partum Doula" && (
                 <>
 
                   {availability && (
