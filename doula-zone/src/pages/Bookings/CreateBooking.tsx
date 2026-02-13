@@ -266,7 +266,7 @@ const CreateBooking = () => {
 
   const handleSubmit = async () => {
     if (!client.name || !client.email || !client.phone) {
-      showToast("Please fill in all client details", "error");
+      showToast("Please fill in all the client details", "error");
       return;
     }
     if (
