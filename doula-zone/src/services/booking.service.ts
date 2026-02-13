@@ -80,7 +80,7 @@ export interface CreateBookingPayload {
   doulaProfileId: string;
   serviceId: string;
 
-  seviceStartDate: string;
+  serviceStartDate: string;
   serviceEndDate: string;
 
   visitDays?: string[];

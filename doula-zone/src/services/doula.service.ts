@@ -1,10 +1,5 @@
 import api from "./api";
 
-export interface Language {
-  id: string;
-  name: string;
-}
-
 export interface AvailableSlot {
   id: string;
   date: string;
@@ -40,7 +35,6 @@ export interface DoulaProfile {
   Region: Region[];
   // ServicePricing: ServicePricing[];
   AvailableSlotsForService: AvailableSlot[];
-  Languages: Language[];
 }
 
 export interface Doula {
@@ -240,24 +234,24 @@ export interface DoulaProfileResponse {
   userId: string;
   name: string;
   email: string;
+
   experience: number;
-  about: string;
+  description: string;
+  achievements: string;
   qualification: string;
+
+  languages: string[];
   specialities: string[];
+
   ratings: number | null;
   reviewsCount: number;
   profileImage: string | null;
   isActive: boolean;
-  // services: {
-  //   servicePricingId: string;
-  //   serviceId: string;
-  //   serviceName: string;
-  //   price: number;
-  // }[];
-  regions: string[];
+
   certificates: Certificate[];
   galleryImages: DoulaGalleryImage[];
 }
+
 
 /* =====================
    FETCH DOULA PROFILE
@@ -272,57 +266,56 @@ export const fetchDoulaProfile = async (
   const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
   return {
-    userId: d.userId,
-    name: d.name,
-    email: d.email,
-    experience: d.yoe ?? 0,
-    about: d.description ?? "",
-    qualification: d.qualification ?? "",
-    specialities: d.specialities ?? [],
-    ratings: d.ratings ?? null,
-    reviewsCount: d.reviewsCount ?? 0,
-    isActive: d.isActive ?? true,
+  userId: d.userId,
+  name: d.name,
+  email: d.email,
 
-    profileImage: d.profileImage
-      ? d.profileImage.startsWith("http")
-        ? d.profileImage
-        : `${IMAGE_BASE_URL}/${d.profileImage}`
-      : null,
+  experience: d.experience ?? d.yoe ?? 0,
+  description: d.description ?? "",
+  achievements: d.achievements ?? "",
+  qualification: d.qualification ?? "",
 
-    // services: (d.serviceNames ?? []).map((s: any) => ({
-    //   servicePricingId: s.servicePricingId,
-    //   serviceId: s.serviceId,
-    //   serviceName: s.serviceName,
-    //   price: Number(s.price),
-    // })),
-    certificates: (d.certificates ?? []).map((c: any) => ({
-      id: c.id,
-      name: c.name,
-      issuedBy: c.issuedBy,
-      year: c.year,
-    })),
+  languages: (d.languages ?? []).map((l: any) => l.name ?? l),
+  specialities: d.specialities ?? [],
 
-    regions: (d.regionNames ?? []).map((r: any) => r.name),
+  ratings: d.ratings ?? null,
+  reviewsCount: d.reviewsCount ?? 0,
+  isActive: d.isActive ?? true,
 
-    galleryImages: (d.galleryImages ?? []).map((g: any) => ({
-      id: g.id,
-      url: g.url.startsWith("http")
-        ? g.url
-        : `${IMAGE_BASE_URL}/${g.url}`,
-    })),
-  };
+  profileImage: d.profileImage
+    ? d.profileImage.startsWith("http")
+      ? d.profileImage
+      : `${IMAGE_BASE_URL}/${d.profileImage}`
+    : null,
+
+  certificates: (d.certificates ?? []).map((c: any) => ({
+    certificateId: c.id ?? c.certificateId,
+    name: c.name,
+    issuedBy: c.issuedBy,
+    year: c.year,
+  })),
+
+  galleryImages: (d.galleryImages ?? []).map((g: any) => ({
+    id: g.id,
+    url: g.url.startsWith("http")
+      ? g.url
+      : `${IMAGE_BASE_URL}/${g.url}`,
+  })),
+};
+
 };
 
 /* =====================
    UPDATE DOULA PROFILE
 ===================== */
-
 export interface UpdateDoulaProfilePayload {
   name: string;
   is_active: boolean;
   about: string;
+  achievements: string;
   qualification: string;
   experience: number;
+  languages: string[];
   specialities: string[];
 
   certificates?: {
@@ -387,5 +380,27 @@ export const deleteDoulaCertificate = async (certificateId: string) => {
   const res = await api.delete(
     `/doula/list/certificates/${certificateId}`
   );
+  return res.data;
+};
+
+export const uploadDoulaProfileImage = async (
+  doulaId: string,
+  file: File
+) => {
+  const formData = new FormData();
+  formData.append("profile_image", file);
+
+  const res = await api.post("/doula/profile/images", formData, {
+    params: { doulaId },
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+  return res.data;
+};
+
+export const deleteDoulaProfileImage = async (doulaId: string) => {
+  const res = await api.delete("/doula/profile/images", {
+    params: { doulaId },
+  });
   return res.data;
 };

@@ -9,25 +9,40 @@ import styles from "./ViewDoula.module.css";
 import { useToast } from "../../../shared/ToastContext";
 import api from "../../../services/api";
 
-const mapBackendToView = (d: any) => {
+const capitalize = (s: string) =>
+  s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 
+const mapBackendToView = (d: any) => {
   return {
     userId: d.userId,
     name: d.name,
+    email: d.email ?? "—",
+    phone: d.phone ?? "—",
+    isActive: true,
+
     yoe: d.yoe ?? 0,
 
     profileImage: d.profileImage ?? null,
 
-    galleryImages: d.galleryImages?.length
-      ? d.galleryImages.map((img: any) => ({
-          id: img.id,
-          url: img.url,
-        }))
-      : [],
+    galleryImages: (d.galleryImages ?? []).map((img: any) => ({
+      id: img.id,
+      url: img.url,
+    })),
 
     description: d.description ?? "—",
-    regionNames: d.regionNames?.map((r: any) => r.name) ?? [],
+    achievements: d.achievements ?? "",
+
+    regionNames: (d.regionNames ?? []).map((r: any) => r.name),
+
     qualification: d.qualification ?? "—",
+
+    languages: (d.languages ?? []).map(capitalize),
+
+    services: (d.serviceNames ?? []).map((name: string, i: number) => ({
+      id: i,
+      name,
+      price: null,
+    })),
 
     certificates: (d.certificates ?? []).map((c: any) => ({
       id: c.id,
@@ -40,16 +55,18 @@ const mapBackendToView = (d: any) => {
 
     testimonials: (d.testimonials ?? []).map((t: any) => ({
       id: t.id,
-      comment: t.review,          
+      comment: t.review,
       clientName: t.clientName,
       rating: t.rating,
       createdAt: t.createdAt,
     })),
 
-    ratings: d.ratings,
+    ratings: d.ratings ?? null,
     reviewsCount: d.reviewsCount ?? 0,
   };
 };
+
+
 
 const ViewDoulaPage = () => {
   const { id } = useParams();

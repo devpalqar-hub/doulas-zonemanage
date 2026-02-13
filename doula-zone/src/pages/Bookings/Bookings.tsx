@@ -132,8 +132,6 @@ const Bookings = () => {
         return ["ACTIVE", "CANCELED"];
       case "CANCELED":
         return ["ACTIVE", "COMPLETED"];
-      case "PENDING":
-        return ["ACTIVE", "CANCELED", "COMPLETED"];
       default:
         return [];
     }
@@ -244,7 +242,7 @@ const Bookings = () => {
                   <option value="">All</option>
                   <option value="ACTIVE">Active</option>
                   <option value="COMPLETED">Completed</option>
-                  {/* <option value="CANCELLED">Cancelled</option> */}
+                  <option value="CANCELED">Cancelled</option>
                 </select>
               </div>
 

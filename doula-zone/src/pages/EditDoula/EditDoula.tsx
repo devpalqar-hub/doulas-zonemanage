@@ -18,12 +18,15 @@ import {
   updateDoulaProfile,
   uploadDoulaGalleryImages,
   deleteDoulaGalleryImage,
+  uploadDoulaProfileImage,
+  deleteDoulaProfileImage,
   // deleteDoulaCertificate,
 } from "../../services/doula.service";
 
 import { useToast } from "../../shared/ToastContext";
 import { FiTrash } from "react-icons/fi";
 import { FaArrowLeft } from "react-icons/fa6";
+import LanguageSelector from "../../components/LanguageSelector";
 
 const EditDoula = () => {
   const { doulaId } = useParams<{ doulaId: string }>();
@@ -38,15 +41,23 @@ const EditDoula = () => {
 
   const [name, setName] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
-  const [yoe, setYoe] = useState<string>("0");
+  const [experience, setExperience] = useState<string>("0");
   const [description, setDescription] = useState("");
   const [qualification, setQualification] = useState("");
   const [certificates, setCertificates] = useState<CertificateForm[]>([]);
   // const [achievements, setAchievements] = useState("");
   const [specialities, setSpecialities] = useState<string[]>([]);
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [achievements, setAchievements] = useState("");
+
   const [isActive, setIsActive] = useState(true);
 
   const [fileInputKey, setFileInputKey] = useState(0);
+  
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  // const [profilePreview, setProfilePreview] = useState<string | null>(null);
+  const [profileCropSrc, setProfileCropSrc] = useState<string | null>(null);
+  // const [profileUploading, setProfileUploading] = useState(false);
 
 
   const [gallery, setGallery] = useState<
@@ -61,8 +72,13 @@ const EditDoula = () => {
 
         setName(data.name);
         setUserId(data.userId);
-        setYoe(String(data.experience ?? 0));
-        setDescription(data.about);
+        setDescription(data.description ?? "");
+        setAchievements(data.achievements ?? "");
+        setExperience(String(data.experience ?? 0));
+        setLanguages(data.languages ?? []);
+        setProfileImage(data.profileImage);
+
+
         setQualification(data.qualification);
         setCertificates(
           (data.certificates ?? []).map((c: any) => ({
@@ -87,9 +103,9 @@ const EditDoula = () => {
   }, [doulaId, navigate, showToast]);
 
   const handleSave = async () => {
-    const experienceValue = Number(yoe);
+    const experienceValue = Number(experience);
       if (Number.isNaN(experienceValue)) {
-          showToast("Years of experience is invalid", "error");
+          showToast("Experience is invalid", "error");
           return;
         }
     try {
@@ -97,18 +113,21 @@ const EditDoula = () => {
         name,
         is_active: isActive,
         about: description,
+        achievements,
         qualification,
         experience: experienceValue,
+        languages,
         specialities,
         certificates: certificates.map((c) => ({
-        certificateId: c.certificateId, 
-        data: {
-          name: c.name,
-          issuedBy: c.issuedBy,
-          year: c.year,
-        },
-      })),
+          certificateId: c.certificateId,
+          data: {
+            name: c.name,
+            issuedBy: c.issuedBy,
+            year: c.year,
+          },
+        })),
       });
+
 
       showToast("Doula updated successfully", "success");
       navigate("/doulas");
@@ -187,6 +206,58 @@ const EditDoula = () => {
     return <div className={styles.state}>Loading…</div>;
   }
 
+  const handleProfileImageSelect = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (!e.target.files?.[0]) return;
+
+    const file = e.target.files[0];
+
+    if (file.size > 2 * 1024 * 1024) {
+      showToast("Max 2MB image allowed", "error");
+      return;
+    }
+
+    setProfileCropSrc(URL.createObjectURL(file));
+  };
+
+  const handleProfileCropComplete = async (blob: Blob) => {
+    if (!doulaId) return;
+
+    const file = new File([blob], `profile_${Date.now()}.jpg`, {
+      type: "image/jpeg",
+    });
+
+    // setProfileUploading(true);
+
+    try {
+      await uploadDoulaProfileImage(doulaId, file);
+      showToast("Profile image updated", "success");
+
+      const refreshed = await fetchDoulaProfile(doulaId);
+      setProfileImage(refreshed.profileImage);
+    } catch {
+      showToast("Failed to upload image", "error");
+    } finally {
+      // setProfileUploading(false);
+      URL.revokeObjectURL(profileCropSrc!);
+      setProfileCropSrc(null);
+    }
+  };
+
+  const handleDeleteProfileImage = async () => {
+    if (!doulaId) return;
+
+    try {
+      await deleteDoulaProfileImage(doulaId);
+      setProfileImage(null);
+      showToast("Profile image removed", "success");
+    } catch {
+      showToast("Failed to delete image", "error");
+    }
+  };
+
+
 //   const handleDeleteCertificate = async (idx: number) => {
 //   const cert = certificates[idx];
 
@@ -220,6 +291,35 @@ const EditDoula = () => {
           </button>
           <div className={styles.card}>
             <h2>Edit Doula</h2>
+            <div className={styles.profileSection}>
+              <div className={styles.avatarWrapper}>
+                <img
+                  src={ profileImage || "/default-avatar.png"}
+                  alt="profile"
+                />
+
+                <label className={styles.changeBtn}>
+                  Change
+                  <input
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={handleProfileImageSelect}
+                  />
+                </label>
+
+                {profileImage && (
+                  <button
+                    type="button"
+                    className={styles.removeBtn}
+                    onClick={handleDeleteProfileImage}
+                  >
+                    X
+                  </button>
+                )}
+              </div>
+            </div>
+
 
             <div className={styles.formGrid}>
               <div>
@@ -233,22 +333,22 @@ const EditDoula = () => {
                   type="number"
                   min={0}
                   step={1}
-                  value={yoe}
+                  value={experience}
                   onChange={(e) => {
                     const value = e.target.value;
 
                     if (value === "") {
-                      setYoe("");
+                      setExperience("");
                       return;
                     }
 
                     if (/^\d+$/.test(value)) {
-                      setYoe(value);
+                      setExperience(value);
                     }
                   }}
                   onBlur={() => {
-                    if (yoe === "") {
-                      setYoe("0");
+                    if (experience === "") {
+                      setExperience("0");
                     }
                   }}
                 />
@@ -270,7 +370,14 @@ const EditDoula = () => {
                   onChange={(e) => setQualification(e.target.value)}
                 />
               </div>
-
+              <div className={styles.full}>
+                <label>Achievements</label>
+                <textarea
+                  value={achievements}
+                  onChange={(e) => setAchievements(e.target.value)}
+                  placeholder="e.g. Supported 300+ successful births"
+                />
+              </div>
               {/* <div>
                 <label>Achievements</label>
                 <input
@@ -349,6 +456,15 @@ const EditDoula = () => {
                   }
                 />
               </div>
+             <div className={styles.full}>
+              <label>Languages</label>
+              <LanguageSelector
+                value={languages}
+                onChange={setLanguages}
+              />
+            </div>
+
+
             </div>
 
             {/* Gallery */}
@@ -421,6 +537,31 @@ const EditDoula = () => {
           </div>
         </div>
       </div>
+      {profileCropSrc && (
+        <div className={styles.cropOverlay}>
+          <div className={styles.cropModal}>
+            <h3>Crop Profile Photo</h3>
+
+            <AvatarCropper
+              image={profileCropSrc}
+              aspect={1}
+              shape="round"
+              onCropComplete={handleProfileCropComplete}
+            />
+
+            <button
+              className={styles.cancelCrop}
+              onClick={() => {
+                URL.revokeObjectURL(profileCropSrc);
+                setProfileCropSrc(null);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

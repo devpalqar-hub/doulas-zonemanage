@@ -34,57 +34,61 @@ const StatsCards = ({ data, loading }: Props) => {
     // pendingUrgent,
   } = data;
 
+  const stats = [
+    {
+      icon: <TbUsers size={24} color="white" />,
+      iconClass: styles.iconBlue,
+      label: "Total Doulas",
+      value: totalDoulas,
+      // sub: `+${totalDoulasChange} this month`,
+      // subClass: styles.subPositive,
+    },
+    {
+      icon: <TbUsers size={24} color="white" />,
+      iconClass: styles.iconPurple,
+      label: "Active Clients",
+      value: activeClients,
+      // sub: `+${activeClientsChange} this month`,
+      // subClass: styles.subPositive,
+    },
+    {
+      icon: <SlCalender color="white" size={20} />,
+      iconClass: styles.iconGreen,
+      label: "Today's Meetings",
+      value: todaysMeetings,
+      // sub: `${todaysUpcoming} upcoming`,
+      // subClass: styles.subMuted,
+    },
+    {
+      icon: <FiBookOpen color="white" size={20} />,
+      iconClass: styles.iconOrange,
+      label: "Active Bookings",
+      value: activeBookings,
+      // sub: `${bookingsEndingSoon} ending soon`,
+      // subClass: styles.subMuted,
+    },
+    {
+      icon: <LuClock4 color="white" size={20} />,
+      iconClass: styles.iconRed,
+      label: "Pending Meeting",
+      value: pendingMeetings,
+      // sub: `${pendingUrgent} urgent`,
+      // subClass: styles.subNegative,
+    },
+  ];
+
   return (
     <div className={styles.grid}>
-      {/* Total Doulas */}
-      <div className={styles.card}>
-        <div className={styles.iconBlue}>
-          <TbUsers size={24} color="white" />
+      {stats.map((stat, idx) => (
+        <div key={idx} className={styles.card}>
+          <div className={stat.iconClass}>{stat.icon}</div>
+          <div className={styles.cardContent}>
+            <div className={styles.label}>{stat.label}</div>
+            <div className={styles.value}>{stat.value}</div>
+            {/* {stat.sub && <div className={stat.subClass}>{stat.sub}</div>} */}
+          </div>
         </div>
-        <div className={styles.label}>Total Doulas</div>
-        <div className={styles.value}>{totalDoulas}</div>
-        {/* <div className={styles.subPositive}>+{totalDoulasChange} this month</div> */}
-      </div>
-
-      {/* Active Clients */}
-      <div className={styles.card}>
-        <div className={styles.iconPurple}>
-          <TbUsers size={24} color="white" />
-        </div>
-        <div className={styles.label}>Active Clients</div>
-        <div className={styles.value}>{activeClients}</div>
-        {/* <div className={styles.subPositive}>+{activeClientsChange} this month</div> */}
-      </div>
-
-      {/* Today's Meetings */}
-      <div className={styles.card}>
-        <div className={styles.iconGreen}>
-          <SlCalender color="white" size={20}/>
-        </div>
-        <div className={styles.label}>Today's Meetings</div>
-        <div className={styles.value}>{todaysMeetings}</div>
-        {/* <div className={styles.subMuted}>{todaysUpcoming} upcoming</div> */}
-      </div>
-
-      {/* Active Bookings */}
-      <div className={styles.card}>
-        <div className={styles.iconOrange}>
-          <FiBookOpen color="white" size={20}/>
-        </div>
-        <div className={styles.label}>Active Bookings</div>
-        <div className={styles.value}>{activeBookings}</div>
-        {/* <div className={styles.subMuted}>{bookingsEndingSoon} ending soon</div> */}
-      </div>
-
-      {/* Pending Meeting */}
-      <div className={styles.card}>
-        <div className={styles.iconRed}>
-          <LuClock4 color="white" size={20}/>
-        </div>
-        <div className={styles.label}>Pending Meeting</div>
-        <div className={styles.value}>{pendingMeetings}</div>
-        {/* <div className={styles.subNegative}>{pendingUrgent} urgent</div> */}
-      </div>
+      ))}
     </div>
   );
 };

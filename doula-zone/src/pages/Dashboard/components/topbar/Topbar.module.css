@@ -25,6 +25,15 @@
   position: relative;
   flex-shrink: 0;
 }
+.logoutButton {
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 500;
+  background-color: rgb(255, 0, 0);
+  color: #ffff;
+  border: solid 1px rgb(255, 0, 0);
+}
 @media (max-width: 768px) {
   .topbar {
     padding: 0 15px 0 70px;
