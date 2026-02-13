@@ -1,0 +1,22 @@
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.chip {
+  border-radius: 999px;
+  border: 1px solid #E2E8F0;
+  padding: 4px 10px;
+  font-size: 12px;
+  background: #ffffff;
+  color: #314158;
+  cursor: pointer;
+}
+
+.active {
+  background: #EEF2FF;
+  border-color: #8335A0;
+  color: #8335A0;
+}

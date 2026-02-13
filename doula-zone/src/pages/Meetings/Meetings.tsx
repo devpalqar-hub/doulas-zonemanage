@@ -18,11 +18,11 @@ const Meetings = () => {
   // filters
   const [search, setSearch] = useState("");
   const [services, setServices] = useState<Service[]>([]);
-  const [serviceId, setServiceId] = useState("");
+  const [serviceName, setServiceName] = useState("");
   const [status, setStatus] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-
+  const [date1, setStartDate] = useState("");
+  const [date2, setEndDate] = useState("");
+  
   // pagination
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -50,10 +50,10 @@ const Meetings = () => {
 
         const { meetings: items, meta } = await fetchMeetings({
           search: search.trim(),
-          serviceId,
+          serviceName,
           status,
-          startDate,
-          endDate,
+          date1,
+          date2,
           page,
           limit,
         });
@@ -71,7 +71,7 @@ const Meetings = () => {
     };
 
     load();
-  }, [search, serviceId, status, startDate, endDate, page]);
+  }, [search, serviceName, status, date1, date2, page]);
 
   const visibleRange = useMemo(() => {
     if (total === 0) return { from: 0, to: 0 };
@@ -85,7 +85,7 @@ const Meetings = () => {
     setStatus("");
     setStartDate("");
     setEndDate("");
-    setServiceId("");
+    setServiceName("");
     setPage(1);
   };
 
@@ -101,6 +101,10 @@ const Meetings = () => {
   //       return styles.statusPill;
   //   }
   // };
+const isDoulaCreated = (val: any) =>
+  String(val ?? "")
+    .trim()
+    .toUpperCase() === "DOULA";
 
   return (
     <div className={styles.root}>
@@ -118,53 +122,93 @@ const Meetings = () => {
             </div>
           </div>
 
-          {/* FILTERS */}
+                   {/* FILTERS CARD */}
           <div className={styles.filtersCard}>
+            {/* Search Input */}
             <div className={styles.searchRow}>
               <div className={styles.searchInput}>
                 <FiSearch className={styles.searchIcon} />
                 <input
                   type="text"
-                  placeholder="Search by client name, remarks..."
+                  placeholder="Search by client or doula name..."
                   value={search}
-                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                  }}
                 />
               </div>
             </div>
 
             <div className={styles.filterRow}>
+              {/* SERVICE – dropdown */}
               <div className={styles.filterSelect}>
                 <label>Service</label>
-                <select value={serviceId} onChange={(e) => { setServiceId(e.target.value); setPage(1); }}>
+                <select
+                  value={serviceName}
+                  onChange={(e) => {
+                    setServiceName(e.target.value);
+                    setPage(1);
+                  }}
+                >
                   <option value="">All Services</option>
-                  {services.map(s => (
-                    <option key={s.id} value={s.id}>{s.name}</option>
+                  {services.map((s) => (
+                    <option key={s.id} value={s.name}>
+                      {s.name}
+                    </option>
                   ))}
                 </select>
               </div>
 
+              {/* STATUS */}
               <div className={styles.filterSelect}>
                 <label>Status</label>
-                <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }}>
+                <select
+                  value={status}
+                  onChange={(e) => {
+                    setStatus(e.target.value);
+                    setPage(1);
+                  }}
+                >
                   <option value="">All</option>
                   <option value="SCHEDULED">Scheduled</option>
                   <option value="COMPLETED">Completed</option>
-                  <option value="CANCELLED">Cancelled</option>
+                  <option value="CANCELED">Cancelled</option>
                 </select>
+
               </div>
 
+              {/* DATE RANGE – start */}
               <div className={styles.filterSelect}>
                 <label>Date Range</label>
-                <input type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); setPage(1); }} />
+                <input
+                  type="date"
+                  value={date1}
+                  onChange={(e) => {
+                    setStartDate(e.target.value);
+                    setPage(1);
+                  }}
+                />
               </div>
 
+              {/* DATE RANGE – end */}
               <div className={styles.filterSelect}>
                 <label style={{ opacity: 0 }}>hidden</label>
-                <input type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setPage(1); }} />
+                <input
+                  type="date"
+                  value={date2}
+                  onChange={(e) => {
+                    setEndDate(e.target.value);
+                    setPage(1);
+                  }}
+                />
               </div>
 
+              {/* RESET */}
               <div className={styles.resetContainer}>
-                <button className={styles.resetBtn} onClick={resetFilters}>Reset</button>
+                <button className={styles.resetBtn} onClick={resetFilters}>
+                  Reset
+                </button>
               </div>
             </div>
           </div>
@@ -179,10 +223,11 @@ const Meetings = () => {
               <div className={styles.stateRow}>No meetings found.</div>
             ) : (
               meetings.map((m) => {
-                const [start, end] = m.meetingsTimeSlots.split("-");
 
+                const [start, end] = m.meetingsTimeSlots.split("-");
+                const canJoin = m.status === "SCHEDULED";
                 return (
-                  <div key={m.id} className={styles.meetingRow}>
+                  <div key={m.meetingId} className={styles.meetingRow}>
                     <div className={styles.meetingLeft}>
                       <div className={styles.avatar}>
                         {m.name.slice(0, 2).toUpperCase()}
@@ -191,9 +236,22 @@ const Meetings = () => {
                       <div className={styles.meetingInfo}>
                         <div className={styles.metaRow}>
                           <div className={styles.clientName}>{m.name}</div>
-                            <span className={`${styles.statusPill} ${styles.scheduled}`}>
-                              Scheduled
+                            <span
+                              className={`${styles.statusPill} ${
+                                m.status === "COMPLETED"
+                                  ? styles.completed
+                                  : m.status === "CANCELLED"
+                                  ? styles.cancelled
+                                  : styles.scheduled
+                              }`}
+                            >
+                              {m.status}
                             </span>
+                                {isDoulaCreated(m.createdby) && (
+                                  <span className={styles.createdByDoula}>
+                                    Created by Doula
+                                  </span>
+                                )}
                           </div>
 
                           {/* <span className={styles.meetingId}>
@@ -230,13 +288,24 @@ const Meetings = () => {
                     <div className={styles.meetingRight}>
                       <button
                           className={styles.viewBtn}
-                          onClick={() => navigate(`/meetings/${m.meetingsId}`)}
+                          onClick={() => navigate(`/meetings/${m.meetingId}`)}
                         >
                           View Details
                         </button>
-                      <button className={styles.joinBtn} disabled>
-                        Join Meeting
+                      <button
+                        className={`${styles.joinBtn} ${
+                          !canJoin ? styles.disabledBtn : ""
+                        }`}
+                        onClick={() => navigate(`/joinmeeting/${m.meetingId}`)}
+                        disabled={!canJoin}
+                      >
+                        {m.status === "COMPLETED"
+                          ? "Meeting Completed"
+                          : m.status === "CANCELED" || m.status === "CANCELLED"
+                          ? "Meeting Cancelled"
+                          : "Join Meeting"}
                       </button>
+                          
                     </div>
                   </div>
                 );

@@ -4,6 +4,8 @@ import { useState } from "react";
 type Props = {
   image: string;
   onCropComplete: (croppedBlob: Blob) => void;
+  aspect?: number;
+  shape?: "rect" | "round";
 };
 
 const createImage = (url: string): Promise<HTMLImageElement> =>
@@ -18,6 +20,7 @@ const getCroppedImg = async (
   pixelCrop: any
 ): Promise<Blob> => {
   const image = await createImage(imageSrc);
+
   const canvas = document.createElement("canvas");
   canvas.width = pixelCrop.width;
   canvas.height = pixelCrop.height;
@@ -40,46 +43,53 @@ const getCroppedImg = async (
   });
 };
 
-const AvatarCropper = ({ image, onCropComplete }: Props) => {
+const AvatarCropper = ({
+  image,
+  onCropComplete,
+  aspect = 1,
+  shape = "round",
+}: Props) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
 
   return (
-    <div style={{ width: 300, height: 300, position: "relative" }}>
+    <div style={{ width: 320, height: 320, position: "relative" }}>
       <Cropper
         image={image}
         crop={crop}
         zoom={zoom}
-        aspect={1}
-        cropShape="round"
+        aspect={aspect}
+        cropShape={shape}
         showGrid={false}
         onCropChange={setCrop}
         onZoomChange={setZoom}
-        onCropComplete={(_, areaPixels) =>
-          setCroppedAreaPixels(areaPixels)
-        }
+        onCropComplete={(_, areaPixels) => setCroppedAreaPixels(areaPixels)}
       />
 
       <button
         disabled={!croppedAreaPixels}
         style={{
-            position: "absolute",
-            bottom: 10,
-            left: "50%",
-            transform: "translateX(-50%)",
-            opacity: !croppedAreaPixels ? 0.6 : 1,
-            cursor: !croppedAreaPixels ? "not-allowed" : "pointer",
+          position: "absolute",
+          bottom: 12,
+          left: "50%",
+          transform: "translateX(-50%)",
+          opacity: !croppedAreaPixels ? 0.6 : 1,
+          cursor: !croppedAreaPixels ? "not-allowed" : "pointer",
+          borderRadius: "8px",
+          padding: "8px 16px",
+          background: "#8335A0",
+          color: "#F7EBED",
+          border: "none",
         }}
         onClick={async () => {
-            if (!croppedAreaPixels) return;
-            const blob = await getCroppedImg(image, croppedAreaPixels);
-            onCropComplete(blob);
+          if (!croppedAreaPixels) return;
+          const blob = await getCroppedImg(image, croppedAreaPixels);
+          onCropComplete(blob);
         }}
-        >
+      >
         Crop & Save
-        </button>
-
+      </button>
     </div>
   );
 };

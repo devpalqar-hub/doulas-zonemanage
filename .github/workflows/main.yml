@@ -1,0 +1,29 @@
+name: Auto Deploy to VPS (Password SSH)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy using SSH password
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 31.97.237.63
+          username: root
+          password: Parasya@2025
+          port: 22
+          script: |
+            cd /var/www/doulas-zone-site/doula-zone
+            git pull origin main
+            devpalqar-hub
+            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
+            npm install
+            npm run build
+            chown -R www-data:www-data /var/www/doulas-zone-site
+            echo "Deploy complete"
+            

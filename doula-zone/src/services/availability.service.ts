@@ -6,12 +6,10 @@ export interface TimeSlot {
   endTime: string;     
   availabe: boolean;
   isBooked: boolean;
-  dateId: string;
 }
 
 export interface DaySlot {
   id: string;
-  date: string;
   weekday: string;     
   availabe: boolean;
   ownerRole: string;
@@ -31,8 +29,6 @@ export interface SlotsResponseMeta {
 
 export interface FlatSlot {
   id: string;
-  dateId: string;
-  date: string;
   weekday: string;
   startTime: string;
   endTime: string;
@@ -40,82 +36,118 @@ export interface FlatSlot {
 }
 
 
-const formatDate = (d: Date) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-    d.getDate()
-  ).padStart(2, "0")}`;
+export const fetchSlots = async () => {
+  const res = await api.get("/slots/my/availability");
 
-export const fetchSlots = async (
-  regionId: string,
-  startDate: Date,
-  endDate: Date,
-  page = 1,
-  limit = 20
-) => {
-  try {
-    const res = await api.get("/slots/my/availability", {
-      params: {
-        regionId,
-        startDate: formatDate(startDate),
-        endDate: formatDate(endDate),
-        page,
-        limit,
-      },
-    });
+  const data: DaySlot[] = res.data.data;
 
-    const data: DaySlot[] = res.data.data;
-    const meta: SlotsResponseMeta = res.data.meta;
+  const slots: FlatSlot[] = data.flatMap((day) =>
+    (day.AvailableSlotsTimeForMeeting || []).map((ts) => ({
+      id: ts.id,
+      weekday: day.weekday,
+      startTime: ts.startTime,
+      endTime: ts.endTime,
+      isBooked: ts.isBooked,
+    }))
+  );
 
-    const slots: FlatSlot[] = data.flatMap((day) =>
-      (day.AvailableSlotsTimeForMeeting || []).map((ts) => ({
-        id: ts.id,
-        dateId: day.id,
-        date: day.date,
-        weekday: day.weekday,
-        startTime: ts.startTime,
-        endTime: ts.endTime,
-        isBooked: ts.isBooked,
-      }))
-    );
-
-    return { slots, meta };
-  } catch (err: any) {
-
-    if (err?.response?.status === 404) {
-      return {
-        slots: [],
-        meta: {
-          total: 0,
-          page: 1,
-          limit: 20,
-          totalPages: 1,
-          hasNextPage: false,
-          hasPrevPage: false,
-        },
-      };
-    }
-
-    throw err; 
-  }
+  return slots;
 };
 
 
 export const createSlot = async (payload: {
-  date: string; 
+  weekday: string; 
   startTime: string; 
   endTime: string;
 }) => {
   
-  const res = await api.post("/slots", {
-    date: payload.date,
-      startTime: payload.startTime,
-      endTime: payload.endTime,
-  });
+  const res = await api.post("/slots", payload);
   return res.data;
 };
 
 
 export const deleteSlot = async (timeSlotId: string) => {
-  const res = await api.delete(`/slots/${timeSlotId}`);
+  const res = await api.delete(`/slots/delete/${timeSlotId}`);
   return res.data;
+};
+
+export interface OffDay {
+  id: string;
+  date: string;
+  startTime: string | null;
+  endTime: string | null;
+}
+
+export const fetchOffDays = async (): Promise<OffDay[]> => {
+  const res = await api.get("/slots/mark/offdays");
+  return res.data.data;
+};
+
+export const createOffDay = async (payload: {
+  startDate: string;
+  endDate: string;
+  startTime?: string;
+  endTime?: string;
+}) => {
+  const res = await api.post("/slots/mark/offdays", payload);
+  return res.data;
+};
+
+export const deleteOffDay = async (id: string) => {
+  const res = await api.delete(`/slots/mark/offdays/${id}`);
+  return res.data;
+};
+
+export type TimeShift = "MORNING" | "NIGHT" | "FULLDAY";
+
+export interface AvailabilityItem {
+  id: string;
+  date: string;
+  availability: Record<TimeShift, boolean>;
+  doulaId: string;
+}
+
+export const fetchDoulaAvailability = async (
+  doulaId: string
+): Promise<AvailabilityItem[]> => {
+  const res = await api.get("/service/availability");
+
+  return (res.data.data || []).filter(
+    (a: any) => a.doulaId === doulaId
+  );
+};
+
+export const fetchAvailabilityById = async (id: string) => {
+  const res = await api.get(`/service/availability/${id}`);
+  return res.data.data;
+};
+
+export type AvailableDoula = {
+  doulaName: string;
+  shift: string[];
+  noOfUnavailableDaysInThatPeriod: number;
+  availableServices: string[];
+};
+
+export const fetchAvailableDoulas = async (params: {
+  startDate: string;
+  endDate: string;
+  shift?: "MORNING" | "NIGHT" | "FULLDAY";
+  serviceId?: string;
+  regionId?: string;
+}) => {
+  const res = await api.get(
+    "/service/availability/doula/available-doulas/list",
+    {
+      params: {
+        startDate: params.startDate,
+        endDate: params.endDate,
+        shift: params.shift,
+        serviceId: params.serviceId,
+        regionId: params.regionId,
+      },
+    }
+  );
+
+  return res.data.data as AvailableDoula[];
 };

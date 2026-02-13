@@ -9,41 +9,63 @@ import styles from "./ViewDoula.module.css";
 import { useToast } from "../../../shared/ToastContext";
 import api from "../../../services/api";
 
-const mapBackendToView = (d: any) => {
-  const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL;
+const capitalize = (s: string) =>
+  s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 
+const mapBackendToView = (d: any) => {
   return {
     userId: d.userId,
     name: d.name,
+    email: d.email ?? "—",
+    phone: d.phone ?? "—",
+    isActive: true,
+
     yoe: d.yoe ?? 0,
 
-    profileImage: d.profileImage
-      ? `${baseUrl}/${d.profileImage}`
-      : null,
+    profileImage: d.profileImage ?? null,
 
-    galleryImages: d.galleryImages?.length
-      ? d.galleryImages.map((img: any) => ({
-          id: img.id,
-          url: `${baseUrl}/${img.url}`,
-        }))
-      : [],
+    galleryImages: (d.galleryImages ?? []).map((img: any) => ({
+      id: img.id,
+      url: img.url,
+    })),
 
     description: d.description ?? "—",
-    regionNames: d.regionNames?.map((r: any) => r.name) ?? [],
+    achievements: d.achievements ?? "",
 
-    services: d.serviceNames?.map((s: any) => ({
-      serviceId: s.serviceId,
-      serviceName: s.serviceName,
-      price: s.price,
-    })) ?? [],
+    regionNames: (d.regionNames ?? []).map((r: any) => r.name),
+
+    qualification: d.qualification ?? "—",
+
+    languages: (d.languages ?? []).map(capitalize),
+
+    services: (d.serviceNames ?? []).map((name: string, i: number) => ({
+      id: i,
+      name,
+      price: null,
+    })),
+
+    certificates: (d.certificates ?? []).map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      issuedBy: c.issuedBy,
+      year: c.year,
+    })),
 
     specialities: d.specialities ?? [],
-    testimonials: d.testimonials ?? [],
 
-    ratings: d.ratings,
+    testimonials: (d.testimonials ?? []).map((t: any) => ({
+      id: t.id,
+      comment: t.review,
+      clientName: t.clientName,
+      rating: t.rating,
+      createdAt: t.createdAt,
+    })),
+
+    ratings: d.ratings ?? null,
     reviewsCount: d.reviewsCount ?? 0,
   };
 };
+
 
 
 const ViewDoulaPage = () => {

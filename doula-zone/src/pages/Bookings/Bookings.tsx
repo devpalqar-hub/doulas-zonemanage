@@ -1,16 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Sidebar from "../Dashboard/components/sidebar/Sidebar";
 import Topbar from "../Dashboard/components/topbar/Topbar";
 import styles from "./Bookings.module.css";
-import { fetchBookings, type Booking } from "../../services/booking.service";
+import { fetchBookings, type Booking, updateBookingStatus } from "../../services/booking.service";
 import { fetchServices, type Service } from "../../services/doula.service";
 import { useToast } from "../../shared/ToastContext";
 import { FiSearch } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import Modal from "../../components/Modal/Modal";
 
 const Bookings = () => {
   const { showToast } = useToast();
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(false);
@@ -19,7 +21,7 @@ const Bookings = () => {
   // filters
   const [search, setSearch] = useState("");
   const [services, setServices] = useState<Service[]>([]);
-  const [serviceId, setServiceId] = useState("");
+  const [serviceName, setServiceName] = useState("");
   const [status, setStatus] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -30,7 +32,29 @@ const Bookings = () => {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
+  //Tool Tip
+  const[openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const[updatingId, setUpdatingId] = useState<string | null>(null);
+
   const navigate = useNavigate();
+  const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
+
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      menuRef.current &&
+      !menuRef.current.contains(event.target as Node)
+    ) {
+      setOpenMenuId(null);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
 
   useEffect(() => {
     const loadServices = async () => {
@@ -45,7 +69,6 @@ const Bookings = () => {
     loadServices();
   }, []);
 
-  // fetch data
   useEffect(() => {
     const load = async () => {
       try {
@@ -54,7 +77,7 @@ const Bookings = () => {
 
         const { bookings, meta } = await fetchBookings({
           search: search.trim(),
-          serviceId,
+          serviceName,
           status,
           startDate,
           endDate,
@@ -75,7 +98,7 @@ const Bookings = () => {
     };
 
     load();
-  }, [search, serviceId, status, startDate, endDate, page, showToast]);
+  }, [search, serviceName, status, startDate, endDate, page, showToast]);
 
   const visibleRange = useMemo(() => {
     if (total === 0) return { from: 0, to: 0 };
@@ -84,21 +107,66 @@ const Bookings = () => {
     return { from, to };
   }, [page, limit, total]);
 
+
   const resetFilters = () => {
     setSearch("");
     setStatus("");
     setStartDate("");
     setEndDate("");
-    setServiceId("");
+    setServiceName("");
     setPage(1);
   };
 
   const getStatusClass = (status: string) => {
     if (status === "ACTIVE") return `${styles.statusPill} ${styles.statusActive}`;
     if (status === "COMPLETED") return `${styles.statusPill} ${styles.statusCompleted}`;
+    if (status === "CANCELED") return `${styles.statusPill} ${styles.statusCancelled}`;
     return styles.statusPill;
   };
 
+  const getNextStatuses = (current: string) => {
+    switch(current) {
+      case "ACTIVE":
+        return ["COMPLETED", "CANCELED"];
+      case "COMPLETED":
+        return ["ACTIVE", "CANCELED"];
+      case "CANCELED":
+        return ["ACTIVE", "COMPLETED"];
+      default:
+        return [];
+    }
+  }
+
+  const handleStatusChange = async(
+    bookingId: string,
+    newStatus: "COMPLETED" | "CANCELED" | "ACTIVE"
+  ) => {
+    const booking = bookings.find(b => b.id === bookingId);
+    if (booking?.status === "CANCELED") {
+      showToast("Cancelled bookings cannot be updated", "warning");
+      return;
+    }
+
+    try {
+      setUpdatingId(bookingId);
+      await updateBookingStatus(bookingId, newStatus);
+
+      setBookings((prev) => 
+      prev.map((b) => {
+        if (b.id === bookingId) {
+          return { ...b, status: newStatus };
+        }
+        return b;
+      }))
+      showToast("Booking status updated successfully", "success");
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to update booking status", "error");  
+    } finally {
+      setUpdatingId(null);
+      setOpenMenuId(null);
+    }
+  }
   return (
     <div className={styles.root}>
       <Sidebar />
@@ -118,7 +186,7 @@ const Bookings = () => {
 
             {/* CREATE BOOKING */}
             <button className={styles.createBtn} 
-            onClick={() => navigate("/doulas/create")}>
+            onClick={() => navigate("/bookings/create")}>
               +  Create Booking
             </button>
           </div>
@@ -146,15 +214,15 @@ const Bookings = () => {
               <div className={styles.filterSelect}>
                 <label>Service</label>
                 <select
-                  value={serviceId}
+                  value={serviceName}
                   onChange={(e) => {
-                    setServiceId(e.target.value);
+                    setServiceName(e.target.value);
                     setPage(1);
                   }}
                 >
                   <option value="">All Services</option>
                   {services.map((s) => (
-                    <option key={s.id} value={s.id}>
+                    <option key={s.id} value={s.name}>
                       {s.name}
                     </option>
                   ))}
@@ -174,7 +242,7 @@ const Bookings = () => {
                   <option value="">All</option>
                   <option value="ACTIVE">Active</option>
                   <option value="COMPLETED">Completed</option>
-                  {/* <option value="CANCELLED">Cancelled</option> */}
+                  <option value="CANCELED">Cancelled</option>
                 </select>
               </div>
 
@@ -222,7 +290,7 @@ const Bookings = () => {
                 <div>Service</div>
                 <div>Start Date</div>
                 <div>End Date</div>
-                <div>Time Slot</div>
+                <div>Shift</div>
                 <div>Status</div>
                 <div>Actions</div>
               </div>
@@ -235,7 +303,10 @@ const Bookings = () => {
               ) : bookings.length === 0 ? (
                 <div className={styles.stateRow}>No bookings found</div>
               ) : (
-                bookings.map((b) => (
+                bookings.map((b) => {
+                const isCancelled = b.status === "CANCELED";
+
+                return (
                   <div key={b.id} className={styles.tableRow}>
                     {/* NAME */}
                     <div className={styles.mainText}>{b.clientName}</div>
@@ -261,36 +332,16 @@ const Bookings = () => {
 
                     {/* END DATE */}
                     <div className={styles.mainText}>
-                      {new Date(b.endDate).toLocaleDateString("en-IN", {
+                      {b.serviceName === "BIRTH" || !b.endDate ? "-" : new Date(b.endDate).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
                       })}
                     </div>
 
-                    {/* TIME SLOT */}
+                    {/* TIME SHIFT */}
                     <div className={styles.mainText}>
-                      {b.slots.length > 0 ? (
-                        <>
-                          {new Date(b.slots[0].startTime).toLocaleTimeString(
-                            "en-IN",
-                            {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                          {" - "}
-                          {new Date(b.slots[0].endTime).toLocaleTimeString(
-                            "en-IN",
-                            {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </>
-                      ) : (
-                        "—"
-                      )}
+                      {b.timeshift}
                     </div>
 
                     {/* STATUS */}
@@ -300,17 +351,90 @@ const Bookings = () => {
                       </span>
                     </div>
 
-                    {/* ACTION DOTS */}
+                    {/* ACTIONS */}
                     <div className={styles.actionsCell}>
-                      <button className={styles.iconBtn}>
-                        <BsThreeDotsVertical />
-                      </button>
+                      <div
+                        className={styles.actionWrapper}
+                        ref={openMenuId === b.id ? menuRef : null}
+                      >
+                        <button
+                          className={`${styles.iconBtn} ${
+                            isCancelled ? styles.disabledAction : ""
+                          }`}
+                          disabled={isCancelled}
+                          title={
+                            isCancelled
+                              ? "This booking is cancelled and cannot be changed"
+                              : ""
+                          }
+                          onClick={() => {
+                            if (isCancelled) return;
+                            setOpenMenuId(openMenuId === b.id ? null : b.id);
+                          }}
+                        >
+                          <BsThreeDotsVertical />
+                        </button>
+
+                        {openMenuId === b.id && (
+                          <div className={styles.dropdown}>
+                            {getNextStatuses(b.status).map((s) => (
+                              <button
+                                key={s}
+                                className={`${styles.dropdownItem} ${styles[s.toLowerCase()]}`}
+                                disabled={updatingId === b.id}
+                                onClick={() => {
+                                  if (s === "CANCELED") {
+                                    setConfirmCancelId(b.id);
+                                    setOpenMenuId(null);
+                                  } else {
+                                    handleStatusChange(b.id, s as any);
+                                  }
+                                }}
+                              >
+                                {updatingId === b.id ? "Updating..." : s}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                ))
-              )}
-            </div>
+                );
+              })
 
+              )}
+              <Modal
+                isOpen={!!confirmCancelId}
+                onClose={() => setConfirmCancelId(null)}
+                title="Confirm Cancellation"
+              >
+                <p>
+                  Are you sure you want to cancel this booking?
+                  <br />
+                  <strong>This action cannot be undone.</strong>
+                </p>
+
+                <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
+                  <button
+                    className={styles.secondaryBtn}
+                    onClick={() => setConfirmCancelId(null)}
+                  >
+                    No, Keep Booking
+                  </button>
+
+                  <button
+                    className={styles.dangerBtn}
+                    onClick={() => {
+                      if (!confirmCancelId) return;
+                      handleStatusChange(confirmCancelId, "CANCELED");
+                      setConfirmCancelId(null);
+                    }}
+                  >
+                    Yes, Cancel Booking
+                  </button>
+                </div>
+              </Modal>
+            </div>
             {/* FOOTER */}
             <div className={styles.tableFooter}>
               <div className={styles.rowsInfo}>

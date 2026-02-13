@@ -27,6 +27,7 @@
   border: 1px solid #dcdcdc;
   font-size: 14px;
   outline: none;
+  box-sizing: border-box;
 }
 
 .field input:focus {
@@ -36,7 +37,7 @@
 
 .saveBtn {
   margin-top: 10px;
-  background: #F94355;
+  background: #8335A0;
   color: white;
   padding: 12px;
   border-radius: 8px;

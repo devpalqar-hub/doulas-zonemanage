@@ -11,7 +11,6 @@ type Service = {
 type Props = {
   data: {
     services: Array<{ serviceId: string; 
-      serviceName?: string;
       price: string }>;
   };
   setFormData: (fn: (prev: any) => any) => void;

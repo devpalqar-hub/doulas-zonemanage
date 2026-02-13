@@ -16,6 +16,19 @@
   overflow: auto;
 }
 
+.backLink {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: #0A0A0A;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 25px;
+  cursor: pointer;
+}
+
 h2 {
   font-size: 24px;
   font-weight: 500;

@@ -20,56 +20,75 @@
   color: #111827;
 }
 
-.subtitle {
-  margin-top: 4px;
-  font-size: 14px;
-  color: #6b7280;
-}
+/* ================= TABS ROW ================= */
 
-/* card */
-.card {
-  margin-top: 24px;
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 20px 22px 20px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.02);
-}
-
-.cardHeader {
+.tabsRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
+  gap: 16px;
+  margin: 16px 0 24px;
 }
 
-.cardTitle {
-  font-size: 16px;
+/* ================= TABS ================= */
+
+.tabs {
+  display: flex;
+  gap: 28px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 12px 2px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  position: relative;
+}
+
+.tab:hover {
+  color: #0f172b;
+}
+
+.activeTab {
+  color: #8335A0;
   font-weight: 600;
-  color: #111827;
 }
 
-.cardSubtitle {
-  font-size: 13px;
-  color: #9ca3af;
-  margin-top: 2px;
+.activeTab::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: #8335A0;
+  border-radius: 2px;
 }
+
+/* ================= ADD BUTTON ================= */
 
 .addBtn {
   border: none;
   border-radius: 999px;
-  padding: 8px 16px;
-  background: #F94355;
-  color: #ffffff;
+  padding: 8px 18px;
+  background: #8335A0;
+  color: #F7EBED;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .addBtn:disabled {
   opacity: 0.6;
   cursor: default;
 }
+
+/* ================= ROWS ================= */
 
 .rows {
   display: flex;
@@ -81,25 +100,14 @@
   display: grid;
   grid-template-columns: 2fr 1.2fr 1.2fr auto;
   gap: 12px;
-  padding: 14px 14px;
+  padding: 14px;
   border-radius: 12px;
-  background: #f9fafb;
+  background: #ffffff;
   border: 1px solid #e5e7eb;
   align-items: center;
 }
 
-.fieldGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.fieldGroup label {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.fieldGroup input {
+.row input {
   border-radius: 10px;
   border: 1px solid #e5e7eb;
   padding: 8px 10px;
@@ -107,13 +115,17 @@
   background: #ffffff;
 }
 
+/* ================= DELETE ================= */
+
 .deleteBtn {
   border: none;
   background: transparent;
   cursor: pointer;
   font-size: 18px;
-  color: #ef4444;
+  color: #8335A0;
 }
+
+/* ================= STATES ================= */
 
 .empty {
   padding: 16px;
@@ -121,8 +133,26 @@
   color: #6b7280;
 }
 
-.error {
-  padding: 16px;
-  font-size: 14px;
-  color: #dc2626;
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+  .tabsRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .addBtn {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabs {
+    gap: 20px;
+  }
+
+  .tab {
+    font-size: 13px;
+  }
 }

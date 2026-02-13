@@ -8,13 +8,12 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
   overflow-x: hidden;
 }
 
 .pageContent {
   padding: 24px 28px;
-  overflow: auto;
+  overflow-y: auto;
 }
 
 .backLink {
@@ -99,9 +98,9 @@
 }
 
 .stepCircleCompleted {
-  border-color: #F94355;
-  background: #F94355;
-  color: #ffff;
+  border-color: #8335A0;
+  background: #8335A0;
+  color: #F7EBED;
 }
 
 .stepConnector {
@@ -114,7 +113,7 @@
 }
 
 .stepConnectorActive {
-  background: #F94355;
+  background: #8335A0;
 }
 
 .stepLabel {
@@ -122,7 +121,7 @@
   font-size: 12px;
   color: #64748b;
   text-align: center;
-  padding-right: 60px;
+  padding-right: 100px;
 }
 
 /* Step body */
@@ -173,14 +172,14 @@
 }
 
 .required {
-  color: #ef4444;
+  color: #8335A0;
   margin-left: 2px;
 }
 
 .errorText {
   margin-top: 4px;
   font-size: 11px;
-  color: #ef4444;
+  color: #8335A0;
 }
 
 /* Upload */
@@ -271,8 +270,8 @@
   padding: 10px 18px;
   border-radius: 10px;
   border: none;
-  background: #F94355;
-  color: #ffffff;
+  background: #8335A0;
+  color: #F7EBED;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -621,14 +620,14 @@
 }
 
 .req {
-  color: #ef4444;
+  color: #8335A0;
   margin-left: 2px;
 }
 
 .errorText {
   margin-top: 4px;
   font-size: 12px;
-  color: #ef4444;
+  color: #8335A0;
 }
 
 .langChips {
@@ -650,8 +649,8 @@
 
 .langChipActive {
   background: #EEF2FF;
-  border-color: #F94355;
-  color: #F94355;
+  border-color: #8335A0;
+  color: #8335A0;
 }
 
 .stepFooter {
@@ -664,9 +663,9 @@
 .primaryBtn {
   padding: 9px 22px;
   border-radius: 10px;
-  background: #EF4444;
+  background: #8335A0;
   border: none;
-  color: #ffffff;
+  color: #F7EBED;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -718,13 +717,13 @@
 }
 
 .serviceCard:hover {
-  border-color: #F94355;
+  border-color: #741e93;
 }
 
 .serviceCardActive {
   background: #F7EBED;
-  border: 2px solid #F94355;
-  color: #070707;
+  border: 2px solid #8335A0;
+  color: #F7EBED;
 }
 
 /* Pricing section */
@@ -779,18 +778,17 @@
 }
 
 .pricingInput:focus {
-  border-color: #EF4444;
+  border-color: #6e2489;
   outline: none;
 }
 
 /* Error */
 .errorText {
   margin-top: 8px;
-  color: #EF4444;
+  color: #8335A0;
   font-size: 13px;
 }
 
-/* ///// REVIEW AND SUBMIT ///// */
 
 .reviewCard {
   background: #f8fafc;
@@ -819,8 +817,6 @@
   font-weight: 600;
   color: #0f172b;
 }
-
-/* GALLERY STEP */
 
 .uploadBox {
   display: flex;
@@ -887,5 +883,47 @@
   object-fit: cover;
 }
 
+.certificatesList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px; 
+  margin-top: 8px;
+}
+
+.certificateRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.addCertificateBtn {
+  margin-top: 18px; 
+}
+
+.cropOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.cropModal {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.cancelCrop {
+  margin-top: 12px;
+  background: #eee;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
 

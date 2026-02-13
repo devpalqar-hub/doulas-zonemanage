@@ -1,7 +1,7 @@
 /* ===================== Layout ===================== */
 .root {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   background: #f8fafc;
 }
 
@@ -168,7 +168,7 @@
 /* ===================== Actions ===================== */
 .joinBtn {
   display: block;
-  width: 90%;
+  width: 100%;
   padding: 10px 14px;
   border-radius: 10px;
   background: #8335A0;
@@ -177,6 +177,35 @@
   font-weight: 600;
   text-decoration: none;
   margin-bottom: 10px;
+  transition: opacity 0.2s ease, background 0.2s ease;
+  cursor: pointer;
+}
+.disabledBtn {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.scheduleBtn {
+    display: block;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #8335A0;
+  background: #ffff;
+  color: #8335A0;
+  text-align: center;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.disabledInfo {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 6px;
+  line-height: 1.4;
 }
 
 .secondaryBtn {
@@ -237,3 +266,124 @@
   text-align: center;
   color: #64748b;
 }
+
+/* ===================== Tablets (≤ 1024px) ===================== */
+@media (max-width: 1024px) {
+  .pageContent {
+    padding: 20px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr 280px;
+    gap: 16px;
+  }
+
+  .infoRow {
+    gap: 24px;
+  }
+}
+
+/* ===================== Small Tablets & Large Phones (≤ 768px) ===================== */
+@media (max-width: 768px) {
+  /* Layout */
+  .pageContent {
+    padding: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* Grid becomes single column */
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sideCard {
+    order: 2; /* Actions come after details */
+  }
+
+  /* Info rows stack */
+  .infoRow {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Pills & status safety */
+  .status,
+  .pill {
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  /* Buttons */
+  .joinBtn,
+  .secondaryBtn,
+  .dangerBtn {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  /* Link row wraps nicely */
+  .linkRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .linkRow button {
+    width: 100%;
+  }
+}
+
+/* ===================== Mobile (≤ 480px) ===================== */
+@media (max-width: 480px) {
+  .pageContent {
+    padding: 12px;
+  }
+
+  .backLink {
+    font-size: 13px;
+    gap: 10px;
+  }
+
+  .header h2 {
+    font-size: 18px;
+  }
+
+  .status {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  .card,
+  .sideCard {
+    padding: 14px;
+  }
+
+  .card h4,
+  .sideCard h4 {
+    font-size: 15px;
+  }
+
+  /* Client section */
+  .clientRow {
+    align-items: flex-start;
+  }
+
+  .avatar {
+    width: 42px;
+    height: 42px;
+    font-size: 14px;
+  }
+
+  .clientRow strong {
+    font-size: 13px;
+  }
+
+  .clientRow p {
+    font-size: 12px;
+  }
+}
+

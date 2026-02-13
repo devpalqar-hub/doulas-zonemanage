@@ -1,9 +1,11 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import styles from "./Login.module.css";
+import styles from "./login.module.css";
 import { sendOtp, verifyOtp } from "../../services/auth.service";
 import { useToast } from "../../shared/ToastContext";
 import { getZoneManagerProfile } from "../../services/zoneManager.service";
+import {  LuCircleCheckBig, LuLock } from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,7 +13,7 @@ const Login = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
-
+  const navigate = useNavigate();
   // Send OTP
 const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
   e.preventDefault();
@@ -34,43 +36,41 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
 
 
   // Verify OTP
-  const handleVerifyOtp = async (e: FormEvent<HTMLFormElement>) => {
+const handleVerifyOtp = async (e: FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   setLoading(true);
 
   try {
     const res = await verifyOtp(email, otp);
-    console.log("VERIFY OTP RESPONSE:", res);
 
-    // Store token and user
-    localStorage.setItem("token", res.data.accessToken);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-
-    // Fetch Zone Manager Profile
     const profileRes = await getZoneManagerProfile(res.data.user.id);
-
-    console.log("ZONE MANAGER PROFILE:", profileRes);
-
     const zm = profileRes;
-
+    const token = res.data.accessToken;
+    // Store auth data
     if (!zm) {
       showToast("Zone Manager profile not found", "error");
       setLoading(false);
       return;
     }
-
-    if (!zm.regions || zm.regions.length === 0) {
-      showToast("No region assigned to this Zone Manager", "error");
+    
+    if (!zm.is_active) {
+      showToast("Your account has been disabled. Please contact administrator.", "error");
+      setOtp("");
+      setOtpSent(false);
       setLoading(false);
       return;
     }
-
-    // Store values
+    localStorage.setItem("userId", res.data.user.id);
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
     localStorage.setItem("zoneManagerProfileId", zm.profileId);
-    localStorage.setItem("regionId", zm.regions[0].id);
 
-    window.location.href = "/dashboard";
+    if (zm.regions && zm.regions.length > 0) {
+      localStorage.setItem("regionId", zm.regions[0].id);
+    } 
 
+    showToast("Login successfull!", "success");
+    navigate("/dashboard", { replace: true });
 
   } catch (err) {
     console.error("LOGIN ERROR:", err);
@@ -80,12 +80,11 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
   setLoading(false);
 };
 
-
   return (
     <div className={styles.container}>
       {/* Left Section */}
       <div className={styles.leftSection}>
-        <img className={styles.logoCircle} src="/D-icon.png"></img>
+        <img className={styles.avatar} src="/doula-branding.png" alt="logo" ></img>
         <h2>Doula Service Management</h2>
         <p>
           Comprehensive platform for managing doula services, appointments, and
@@ -93,12 +92,12 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
         </p>
 
         <div className={styles.checkItem}>
-          <img src="/green-tick-icon.png"/> Streamlined Operations
+          <LuCircleCheckBig color="green" size={20} /> Streamlined Operations
         </div>
         <p className={styles.subtext}>Manage all aspects of your zone in one place</p>
 
         <div className={styles.checkItem}>
-          <img src="/green-tick-icon.png"/> Real-time Insights
+          <LuCircleCheckBig color="green" size={20} /> Real-time Insights
         </div>
         <p className={styles.subtext}>Track performance and availability instantly</p>
       </div>
@@ -137,7 +136,7 @@ const handleSendOtp = async (e: FormEvent<HTMLFormElement>) => {
           </button>
           <div className={styles.footerNote}>
             
-                <img src="/lock-icon.png" className={styles.lockIcon}/>
+                <LuLock size={20} style={{marginRight: "5px"}}/>
             Your credentials are encrypted and stored securely. We take your privacy seriously.
            
           </div>

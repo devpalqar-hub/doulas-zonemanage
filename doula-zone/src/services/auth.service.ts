@@ -1,8 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://31.97.237.63/doulas/backend/v1";
+const API_URL = "https://staging.bambinidoulas.com/backend/v1";
 
-//  Send OTP
 export const sendOtp = async (email: string) => {
   return await axios.post(`${API_URL}/auth/send/otp`, 
     { email: email},
@@ -10,13 +9,11 @@ export const sendOtp = async (email: string) => {
   );
 };
 
-//  Verify OTP
 export const verifyOtp = async (email:string, otp:string) => {
-  const res = await axios.post(`${API_URL}/auth/verify/otp`, {
+  const res = await axios.post(`${API_URL}/auth/verify/otp/zonemanager`, {
     email: email,
     otp: otp
   });
-
   return res.data;
 };
 

@@ -13,82 +13,123 @@ import Meetings from './pages/Meetings/Meetings';
 import Schedules from './pages/Schedules/Schedules';
 import ViewDoulaPage from './pages/Doulas/ViewDoula';
 import MeetingDetailsPage from './pages/Meetings/MeetingDetails';
+import CreateBooking from './pages/Bookings/CreateBooking';
+import EditDoula from './pages/EditDoula/EditDoula';
+import ScheduleMeetingPage from './pages/Meetings/scheduleMeetings/ScheduleMeetingPage';
+import CheckAvailability from './pages/Schedules/CheckAvailability';
+import JoinMeeting from './pages/Meetings/JoinMeeting';
 
-function PrivaterRoute({ children }: { children: React.ReactNode }) {
+function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/" />;
+
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 }
+
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Login />} />
+        <Route path='/' element={localStorage.getItem("token") ? <Navigate to ="/dashboard" replace/> : <Login />} />
 
         <Route path='/dashboard' element={
-          <PrivaterRoute>
+          <PrivateRoute>
             <Dashboard />
-          </PrivaterRoute>
+          </PrivateRoute>
         } />
 
         <Route path='/availability' element={
-          <PrivaterRoute>
+          <PrivateRoute>
             <MyAvailability />
-          </PrivaterRoute>
+          </PrivateRoute>
         } />
 
         <Route path='/doulas' element={
-          <PrivaterRoute>
+          <PrivateRoute>
             <ManageDoulas />
-          </PrivaterRoute>
+          </PrivateRoute>
         } />
 
         <Route path='/doulas/:id' element={
-          <PrivaterRoute>
+          <PrivateRoute>
             <ViewDoulaPage />
-          </PrivaterRoute>
+          </PrivateRoute>
         } />
 
         <Route path='/doulas/create' element={
-          <PrivaterRoute>
+          <PrivateRoute>
             <CreateDoula />
-          </PrivaterRoute>
+          </PrivateRoute>
         } />
 
-        <Route path="meetings" element={
-          <PrivaterRoute>
+        <Route path='/doulas/:doulaId/edit' element={
+          <PrivateRoute>
+            <EditDoula />
+          </PrivateRoute>
+        } />
+
+        <Route path="/meetings" element={
+          <PrivateRoute>
             <Meetings />
-          </PrivaterRoute>
+          </PrivateRoute>
         } />
 
         <Route path="meetings/:id" element={
-          <PrivaterRoute>
+          <PrivateRoute>
             <MeetingDetailsPage />
-          </PrivaterRoute>
+          </PrivateRoute>
+        } />
+
+        <Route path="/joinmeeting/:meetingId" element={
+          <PrivateRoute>
+            <JoinMeeting />
+          </PrivateRoute>
+        } />
+
+        <Route path="meetings/:enquiryId/schedule" element={
+          <PrivateRoute>
+            <ScheduleMeetingPage />
+          </PrivateRoute>
         } />
 
         <Route path="/bookings" element={
-          <PrivaterRoute>
+          <PrivateRoute>
             <Bookings />
-          </PrivaterRoute>
+          </PrivateRoute>
+        } />
+
+        <Route path="/bookings/create" element={
+          <PrivateRoute>
+            <CreateBooking />
+          </PrivateRoute>
         } />
 
         <Route path="/schedules" element={
-          <PrivaterRoute>
+          <PrivateRoute>
             <Schedules />
-          </PrivaterRoute>
+          </PrivateRoute>
+        } />
+
+        <Route path="/schedules/check-availability" element={
+          <PrivateRoute>
+            <CheckAvailability />
+          </PrivateRoute>
         } />
 
         <Route path="/testimonials" element={
-          <PrivaterRoute>
+          <PrivateRoute>
             <Testimonials />
-          </PrivaterRoute>
+          </PrivateRoute>
         } />
 
         <Route path="/testimonials/:id" element={
-          <PrivaterRoute>
+          <PrivateRoute>
             <TestimonialView />
-          </PrivaterRoute>
+          </PrivateRoute>
         } />     
 
       </Routes>

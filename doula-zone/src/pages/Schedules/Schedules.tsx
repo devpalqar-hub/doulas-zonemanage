@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Sidebar from "../Dashboard/components/sidebar/Sidebar";
 import Topbar from "../Dashboard/components/topbar/Topbar";
 import styles from "./Schedules.module.css";
@@ -9,9 +9,12 @@ import { useToast } from "../../shared/ToastContext";
 
 import { FiSearch } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { updateScheduleStatus } from "../../services/schedule.service";
+import { useNavigate } from "react-router-dom";
 
 const Schedules = () => {
   const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState(false);
@@ -19,7 +22,7 @@ const Schedules = () => {
 
   const [search, setSearch] = useState("");
   const [services, setServices] = useState<Service[]>([]);
-  const [serviceId, setServiceId] = useState("");
+  const [serviceName, setServiceName] = useState("");
   const [status, setStatus] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -28,6 +31,12 @@ const Schedules = () => {
   const limit = 10;
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+
+const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+const [updatingId, setUpdatingId] = useState<string | null>(null);
+const menuRef = useRef<HTMLDivElement | null>(null);
+
+
 
   useEffect(() => {
     const loadServices = async () => {
@@ -52,7 +61,7 @@ const Schedules = () => {
           page,
           limit,
           search,
-          serviceId,
+          serviceName,
           status,
           startDate,
           endDate,
@@ -71,11 +80,11 @@ const Schedules = () => {
     };
 
     load();
-  }, [page, search, serviceId, status, startDate, endDate, showToast]);
+  }, [page, search, serviceName, status, startDate, endDate, showToast]);
 
   const resetFilters = () => {
     setSearch("");
-    setServiceId("");
+    setServiceName("");
     setStatus("");
     setStartDate("");
     setEndDate("");
@@ -88,6 +97,82 @@ const Schedules = () => {
     const to = Math.min(total, page * limit);
     return { from, to };
   }, [page, limit, total]);
+
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      menuRef.current &&
+      !menuRef.current.contains(event.target as Node)
+    ) {
+      setOpenMenuId(null);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () =>
+    document.removeEventListener("mousedown", handleClickOutside);
+}, []);
+
+const getNextScheduleStatuses = (current: string) => {
+  switch (current) {
+    case "PENDING":
+      return ["IN_PROGRESS", "CANCELED", "COMPLETED"];
+    case "IN_PROGRESS":
+      return ["COMPLETED", "CANCELED", "PENDING"];
+    case "COMPLETED":
+      return ["PENDING", "CANCELED", "IN_PROGRESS"];
+    case "CANCELED":
+      return ["PENDING", "IN_PROGRESS", "COMPLETED"];
+    default:
+      return [];
+  }
+};
+
+
+const getScheduleStatusClass = (status: string) => {
+  switch (status) {
+    // case "ACTIVE":
+    //   return `${styles.statusPill} ${styles.statusActive}`;
+    case "COMPLETED":
+      return `${styles.statusPill} ${styles.statusCompleted}`;
+    case "CANCELED":
+      return `${styles.statusPill} ${styles.statusCancelled}`;
+    case "PENDING":
+      return `${styles.statusPill} ${styles.statusPending}`;
+    case "IN_PROGRESS":
+      return `${styles.statusPill} ${styles.statusInProgress}`;
+    default:
+      return styles.statusPill;
+  }
+};
+
+const handleScheduleStatusChange = async (
+  scheduleId: string,
+  newStatus: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELED"
+) => {
+  try {
+    setUpdatingId(scheduleId);
+
+    await updateScheduleStatus(scheduleId, newStatus);
+
+    setSchedules((prev) =>
+      prev.map((s) =>
+        s.scheduleId === scheduleId
+          ? { ...s, status: newStatus }
+          : s
+      )
+    );
+
+    showToast("Schedule status updated", "success");
+  } catch (err) {
+    console.error(err);
+    showToast("Failed to update schedule status", "error");
+  } finally {
+    setUpdatingId(null);
+    setOpenMenuId(null);
+  }
+};
+
 
   return (
     <div className={styles.root}>
@@ -105,7 +190,14 @@ const Schedules = () => {
                 Manage all client schedules ({total} total)
               </p>
             </div>
+          <button
+            className={styles.checkAvailabilityBtn}
+            onClick={() => navigate("/schedules/check-availability")}
+          >
+            Check Availability
+          </button>
           </div>
+
 
            {/* FILTERS CARD */}
           <div className={styles.filtersCard}>
@@ -130,15 +222,15 @@ const Schedules = () => {
               <div className={styles.filterSelect}>
                 <label>Service</label>
                 <select
-                  value={serviceId}
+                  value={serviceName}
                   onChange={(e) => {
-                    setServiceId(e.target.value);
+                    setServiceName(e.target.value);
                     setPage(1);
                   }}
                 >
                   <option value="">All Services</option>
                   {services.map((s) => (
-                    <option key={s.id} value={s.id}>
+                    <option key={s.id} value={s.name}>
                       {s.name}
                     </option>
                   ))}
@@ -156,9 +248,10 @@ const Schedules = () => {
                   }}
                 >
                   <option value="">All</option>
-                  <option value="ACTIVE">Active</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="IN_PROGRESS">In progress</option>
+                  <option value="CANCELED">Cancelled</option>
                   <option value="COMPLETED">Completed</option>
-                  {/* <option value="CANCELLED">Cancelled</option> */}
                 </select>
               </div>
 
@@ -204,7 +297,7 @@ const Schedules = () => {
                 <div>Doula</div>
                 <div>Service</div>
                 <div>Start Date</div>
-                <div>Duration</div>
+                <div>Time shift</div>
                 <div>Status</div>
                 <div>Actions</div>
               </div>
@@ -230,21 +323,61 @@ const Schedules = () => {
                     </div>
 
                     <div className={styles.mainText}>
-                      {new Date(s.startDate).toLocaleDateString("en-IN", {
+                      {new Date(s.scheduleDate).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
                       })}
                     </div>
 
-                    <div className={styles.mainText}>{s.duration}</div>
+                    <div className={styles.mainText}>{s.serviceTimeshift}</div>
 
-                    <div className={styles.mainText}>{s.status}</div>
+                    <div>
+                      <span className={getScheduleStatusClass(s.status)}>
+                        {s.status.replace("_", " ")}
+                      </span>
+                    </div>
+
 
                     <div className={styles.actionsCell}>
-                      <button className={styles.iconBtn}>
-                        <BsThreeDotsVertical />
-                      </button>
+                      <div
+                        className={styles.actionWrapper}
+                        ref={openMenuId === s.scheduleId ? menuRef : null}
+                      >
+                        <button
+                          className={styles.iconBtn}
+                          onClick={() =>
+                            setOpenMenuId(
+                              openMenuId === s.scheduleId ? null : s.scheduleId
+                            )
+                          }
+                        >
+                          <BsThreeDotsVertical />
+                        </button>
+
+                        {openMenuId === s.scheduleId && (
+                          <div className={styles.dropdown}>
+                            {getNextScheduleStatuses(s.status).map((st) => (
+                              <button
+                                key={st}
+                                className={`${styles.dropdownItem} ${
+                                  styles[st.toLowerCase()]
+                                }`}
+                                disabled={updatingId === s.scheduleId}
+                                onClick={() =>
+                                  handleScheduleStatusChange(
+                                    s.scheduleId,
+                                    st as any
+                                  )
+                                }
+                              >
+                                {updatingId === s.scheduleId ? "Updating..." : st}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
                     </div>
                   </div>
                 ))

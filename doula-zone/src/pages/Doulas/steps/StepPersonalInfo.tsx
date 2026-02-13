@@ -48,7 +48,7 @@ const StepPersonalInfo = ({ data, onChange, onNext }: Props) => {
     if (!data.fullName.trim()) newErrors.fullName = "Full name is required";
     if (!data.email.trim()) newErrors.email = "Email is required";
     if (!data.phone.trim()) newErrors.phone = "Phone number is required";
-    if (!data.password.trim()) newErrors.password = "Password is required";
+
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -113,21 +113,6 @@ const StepPersonalInfo = ({ data, onChange, onNext }: Props) => {
           )}
         </div>
 
-        <div className={styles.fieldGroup}>
-          <label>
-            Password <span className={styles.required}>*</span>
-          </label>
-          <input
-            type="password"
-            placeholder="Enter password"
-            value={data.password}
-            onChange={(e) => handleInputChange("password", e.target.value)}
-            className={errors.password ? styles.inputError : undefined}
-          />
-          {errors.password && (
-            <p className={styles.errorText}>{errors.password}</p>
-          )}
-        </div>
       </div>
 
       {/* Profile picture upload */}

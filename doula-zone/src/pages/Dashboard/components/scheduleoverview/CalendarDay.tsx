@@ -2,20 +2,32 @@ import styles from "./ScheduleOverview.module.css";
 
 interface CalendarDayProps {
   day: number;
+  meetingCount: number;
+  scheduleCount: number;
+  isToday: boolean;
+  isSelected: boolean;
+  onSelect: () => void;
 }
 
-export default function CalendarDay({ day }: CalendarDayProps) {
-  const meetings = [24, 26, 28];
-  const bookings = [25, 27, 29];
-  const today = new Date().getDate();
-
+export default function CalendarDay({
+  day,
+  meetingCount,
+  scheduleCount,
+  isToday,
+  isSelected,
+  onSelect,
+}: CalendarDayProps) {
   return (
-    <div className={`${styles.day} ${day === today ? styles.today : ""}`}>
+    <div
+      className={`${styles.day} ${isSelected ? styles.selected : ""}`}
+      onClick={onSelect}
+    >
       <span>{day}</span>
 
       <div className={styles.bars}>
-        {meetings.includes(day) && <div className={styles.meeting} />}
-        {bookings.includes(day) && <div className={styles.booking} />}
+        {meetingCount > 0 && <div className={styles.meeting} />}
+        {scheduleCount > 0 && <div className={styles.booking} />}
+        {isToday && <div className={styles.todayBar} />}
       </div>
     </div>
   );

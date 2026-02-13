@@ -1,7 +1,7 @@
 /* ===================== Layout ===================== */
 .root {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   background: #f8fafc;
 }
 
@@ -54,35 +54,42 @@
   opacity: 0.7;
 }
 
-/* ===================== Filters ===================== */
+/* Filters */
 .filtersCard {
   background: #ffffff;
-  border-radius: 8px;
-  border: 1px solid #0000001A;
-  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #0000001a;
+  padding: 24px 24px 24px;
   margin-bottom: 18px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .searchRow {
-  display: flex;
-  align-items: center;
+  width: 95%;
 }
 
 .searchInput {
   position: relative;
+  width: 100%;
 }
 
 .searchInput input {
-  width: 1100px;
+  width: 100%;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
-  padding: 8px 12px 8px 34px;
+  padding: 8px 12px;
+  padding-left: 30px;
   font-size: 14px;
-  background: #F3F3F5;
+  background: #f3f3f5;
   color: #717182;
+  outline: none;
+}
+
+.searchInput input:focus {
+  border-color: #4f46e5;
+  background: #ffffff;
 }
 
 .searchIcon {
@@ -90,51 +97,69 @@
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 14px;
+  font-size: 13px;
   color: #94a3b8;
 }
 
 .filterRow {
   display: flex;
-  gap: 24px;
-  align-items: flex-end;
   flex-wrap: wrap;
+  gap: 56px;
+  align-items: flex-end;
+  margin-top: 15px;
 }
 
 .filterSelect {
   display: flex;
   flex-direction: column;
+  gap: 6px;
 }
 
 .filterSelect label {
   font-size: 14px;
   color: #314158;
-  margin-bottom: 7px;
 }
 
 .filterSelect select,
-.filterSelect input {
-  width: 200px;
-  border-radius: 8px;
-  border: 1px solid #E2E8F0;
+.filterSelect input[type='date'] {
+  width: 190px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
   padding: 7px 10px;
   font-size: 13px;
-  background: #fff;
+  background: #ffffff;
+  outline: none;
+}
+
+.filterSelect select:focus,
+.filterSelect input[type='date']:focus {
+  border-color: #4f46e5;
+}
+
+.filterIcon {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+  color: #94a3b8;
 }
 
 .resetContainer {
-  padding-left: 4px;
+  padding-left: 20px;
 }
 
 .resetBtn {
-  width: 200px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 8px 14px;
-  border-radius: 8px;
-  border: 1px solid #E2E8F0;
-  background: #fff;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 500;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #0a0a0a;
   cursor: pointer;
 }
-
 /* ===================== List Cards ===================== */
 .listCard {
   display: flex;
@@ -214,7 +239,8 @@
 .remarks {
   margin-top: 6px;
   font-size: 14px;
-  width: 685px;
+  max-width: 685px;
+  width: 100%;
   height: 34px;
   color: #45556C;
   background: #F8FAFC;
@@ -222,6 +248,15 @@
   border-radius: 10px;
   display: flex;
   align-items: center;
+}
+.createdByDoula {
+  background: #f3e8ff;
+  color: #7c3aed;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-left: 8px;
 }
 
 /* ===================== Actions ===================== */
@@ -252,6 +287,7 @@
   background: #8335A0;
   color: #fff;
   text-decoration: none;
+  transition: opacity 0.2s ease, background 0.2s ease;
 }
 
 .joinBtn:hover {
@@ -328,5 +364,144 @@
   padding: 4px 8px;
   border-radius: 999px;
   max-width: 100px;
+}
+.disabledBtn {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+/* ===================== Responsive ===================== */
+
+/* -------- Large tablets & below -------- */
+@media (max-width: 1024px) {
+  .pageContent {
+    padding: 20px;
+  }
+
+  .filterRow {
+    gap: 24px;
+  }
+
+  .filterSelect select,
+  .filterSelect input[type='date'] {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .searchInput input {
+    width: 105%;
+  }
+
+  .remarks {
+    width: 100%;
+  }
+}
+
+/* -------- Tablets -------- */
+@media (max-width: 768px) {
+  .headerRow {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .createBtn {
+    align-self: stretch;
+    text-align: center;
+  }
+
+  .filtersCard {
+    padding: 18px;
+  }
+
+  .filterRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .resetContainer {
+    padding-left: 0;
+  }
+
+  /* Card layout */
+  .meetingRow {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .meetingLeft {
+    width: 100%;
+  }
+
+  .meetingRight {
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 12px;
+    padding-top: 0;
+  }
+
+  .remarks {
+    width: 100%;
+    height: auto;
+    padding: 8px 10px;
+  }
+}
+
+/* -------- Mobile -------- */
+@media (max-width: 480px) {
+  .pageContent {
+    padding: 14px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .clientName {
+    font-size: 14px;
+  }
+
+  .metaRow {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .whenRow {
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .remarks {
+    font-size: 13px;
+    box-sizing: border-box;
+  }
+
+  .meetingRight {
+    justify-content: space-between;
+  }
+
+  .viewBtn,
+  .joinBtn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .footerRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 }
 
