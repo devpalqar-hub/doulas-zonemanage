@@ -165,8 +165,8 @@ export const fetchZoneManagerDoulas = async (params?: {
   const cleanParams: any = {};
 
   if (params?.search?.trim()) cleanParams.search = params.search;
-  if (params?.page) cleanParams.page = 1//params.page;
-  if (params?.limit) cleanParams.limit = 100// params.limit;
+  if (params?.page) cleanParams.page = params.page;
+  if (params?.limit) cleanParams.limit = params.limit;
 
   if (params?.serviceName) cleanParams.serviceName = params.serviceName;
   if (params?.isAvailable !== undefined)
