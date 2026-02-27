@@ -214,8 +214,6 @@ export const fetchZoneManagerDoulas = async (params?: {
   };
 };
 
-
-
 export interface DoulaGalleryImage {
   id: string;
   url: string;

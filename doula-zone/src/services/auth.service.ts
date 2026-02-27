@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://api.bambinidoulas.com/backend/v1";
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const sendOtp = async (email: string) => {
   return await axios.post(`${API_URL}/auth/send/otp`, 
